@@ -1,0 +1,37 @@
+Template instantiation is done at compile-time.
+C++ metaprogramming is the technique of using template instantiation to drive compile-time evaluation.
+___
+
+Metafunctions are template structs.
+The field called 'value' is the "return" value.
+operator() can be used as synonym
+the function call is like f<T>::value (or f<T>())
+--> there is also other waye to request value and type returned by metafunction
+- f<int>::value --> f_v<int> // note '_v'
+- f<int>::type  --> f_t<int> // note '_t'
+___
+
+ITERATOR_TRAITS
+- was designed way before metaprogramming being popular.
+- returns many things (but not standard returnable names 'value' and 'type').
+--> is it a traits class or multiple metafuncions bind together ?
+___
+
+SFINAE
+- pattern matching related
+___
+
+ALLOCATOR
+allocate -> construct -> destruct -> deallocate
+___
+
+vector --> random access iterator
+map    --> bidirectional iterator
+
+base_iterator (iterator traits typedefs + operateurs comparaison)
+___
+
+- `typename` and `class` are strictly equivalents
+- `const` in front of type
+- operateurs : fonction membre ou non membre ?
+___

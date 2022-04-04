@@ -27,13 +27,20 @@ ___
 
 ### TODO
 
-- iterators_traits
-- reverse_iterator
-- enable_if (cf. SFINAE)
+__type_trait__
 - is_integral
+- enable_if (cf. SFINAE)
+
+__algorithm__
 - equal and/or lexicographical_compare
+
+__utility__
 - std::pair
 - std::make_pair
+
+__iterators__
+- iterators_traits
+- reverse_iterator
 
 ___
 

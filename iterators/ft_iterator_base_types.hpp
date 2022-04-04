@@ -1,8 +1,7 @@
 #ifndef ITERATOR_BASE_TYPES_H
 #define ITERATOR_BASE_TYPES_H 1
 
-// need to define these types
-typedef int ptrdiff_t; // ARBITRARY !
+#include <memory>
 
 namespace ft
 {
@@ -38,18 +37,18 @@ namespace ft
     template
     <
         typename Category,
-        typename Tp,
+        typename T,
         typename Distance = ptrdiff_t,
-        typename Pointer = Tp*,
-        typename Reference = Tp&
+        typename Pointer = T *,
+        typename Reference = T &
     >
     struct iterator
     {
-        typedef Category     iterator_category; // One of the iterator_tags.
-        typedef Tp           value_type;        // What iterator points to.
-        typedef Distance     difference_type;	// Distance between iterators.
-        typedef Pointer      pointer;	        // Pointer-to-value's type.
-        typedef Reference    reference;         // Reference-to-value's type.
+        typedef Category    iterator_category;  // One of the iterator_tags.
+        typedef T	        value_type;         // What iterator points to.
+        typedef Distance    difference_type;    // Distance between iterators.
+        typedef Pointer     pointer;	        // Pointer-to-value's type.
+        typedef Reference   reference;          // Reference-to-value's type.
     };
 
     /**
@@ -71,7 +70,5 @@ namespace ft
     };
 
 } // namespace ft
-
-//typedef ft::iterator<typename ft::input_iterator_tag, int> foo;
 
 #endif /* ITERATOR_BASE_TYPES_H */
