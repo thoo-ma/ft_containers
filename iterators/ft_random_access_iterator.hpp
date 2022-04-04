@@ -226,7 +226,6 @@ class random_access_iterator : public iterator<std::random_access_iterator_tag, 
     random_access_iterator &
     operator-=(const difference_type & n)
     {
-        //return *this += -n;
         return operator+=(-n);
     }
 
@@ -243,15 +242,14 @@ class random_access_iterator : public iterator<std::random_access_iterator_tag, 
     operator-(const difference_type & n) const
     {
         //std::cout << "iterator member function '-'" << std::endl;
-        return random_access_iterator<T>(this->_data - n);
-        //return operator+(-n); // WHY THIS DOESN'T WORK ??
+        return operator+(-n);
     }
 
     // substraction between iterators
     difference_type
     operator-(const random_access_iterator<T> & rhs) const
     {
-        return *this > rhs
+        return this->_data > rhs._data
         ? this->_data - rhs._data
         : -(rhs._data - this->_data);
     }
@@ -259,28 +257,27 @@ class random_access_iterator : public iterator<std::random_access_iterator_tag, 
     // brackets operator
     value_type &
     operator[](const difference_type n) const
-    { return *this + n; }
+    { return this->_data[n]; }
 
     // Less than
     bool
     operator<(const random_access_iterator<T> & rhs) const
-    //{ return *this - rhs > 0; }
-    { return this->_data > rhs._data; }
+    { return *this - rhs < 0; }
 
-   // // Greather than
+    // Greather than
     bool
     operator>(const random_access_iterator<T> & rhs) const
     { return rhs < *this; }
 
-   // // Less or equal than
-   // bool
-   // operator<=(const random_access_iterator<T> & rhs) const
-   // { return !(*this > rhs); }
+    // Less or equal than
+    bool
+    operator<=(const random_access_iterator<T> & rhs) const
+    { return !(*this > rhs); }
 
-   // // Greather or equal than
-   // bool
-   // operator>=(const random_access_iterator<T> & rhs) const
-   // { return !(*this < rhs); }
+    // Greather or equal than
+    bool
+    operator>=(const random_access_iterator<T> & rhs) const
+    { return !(*this < rhs); }
 
 };
 

@@ -5,7 +5,7 @@ namespace ft {
 
     // arbitrary for now
     typedef unsigned int size_t;
-    typedef unsigned int ptrdiff_t;
+    typedef long ptrdiff_t;
 
     /****** enable_if *********************************************************/
 

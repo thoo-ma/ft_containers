@@ -1,6 +1,8 @@
 #ifndef FT_VECTOR_H
 #define FT_VECTOR_H 1
 
+//#include <iostream>
+
 //#include "ft_type_traits.hpp"
 #include "ft_random_access_iterator.hpp"
 #include "ft_iterator_base_types.hpp"
@@ -88,10 +90,10 @@ class vector {
     //                 const allocator_type& alloc = allocator_type());
 
     // by copy
-  //  vector (const vector<value_type, allocator_type> & x)
-  //  : _size(x._size), _capacity(x._capacity), _max_size(alloc.max_size()),
-  //      _alloc(alloc)
-  //  { *this = x; }
+ //   vector (const vector<value_type, allocator_type> & v)
+ //   : _size(v._size), _capacity(v._capacity), _max_size(v.max_size()),
+ //       _alloc(v._alloc)
+ //   { *this = v; }
 
 
     /****** Destructor ********************************************************/
@@ -137,8 +139,6 @@ class vector {
     //        vecto<value_type> tmp(n);
     //        tmp.assign(begin(), end());
     //        ~
-
-
     //    }
 
     }
@@ -219,9 +219,17 @@ class vector {
     /****** Operators *********************************************************/
 
     // operator=
-   // vector<value_type, allocator_type> &
-   // operator=(const vector<value_type, allocator_type> & x)
-   // { }
+  //  vector<value_type, allocator_type> &
+  //  operator=(const vector<value_type, allocator_type> & v)
+  //  {
+  //      if (*this != v)
+  //      {
+  //          if (this->_capacity < v._size())
+
+  //          else
+
+  //      }
+  //  }
 
     // doesn't check boundaries
     reference

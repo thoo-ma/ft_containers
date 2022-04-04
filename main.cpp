@@ -11,6 +11,9 @@ class Foo { public: int a, b, c; };
 
 //std::vector<int>::iterator = v.begin(); TRY THIS ???
 
+//ft::vector<int> v(5, 42);
+//std::cout << std::distance(v.begin(), v.end()) << std::endl;
+
 #define RESET       "\033[0m"
 #define BLACK       "\033[30m"          /* Black */
 #define RED         "\033[31m"          /* Red */
@@ -31,120 +34,134 @@ class Foo { public: int a, b, c; };
 
 /****** type traits test ******************************************************/
 
-// rewrite with static_assert
 void
 is_integral_test()
 {
-    std::cout << "== std ==" << std::endl;
     // true
-    std::cout << std::boolalpha << std::is_integral<int>::value << std::endl;
-    std::cout << std::boolalpha << std::is_integral<int>() << std::endl;
-    std::cout << std::boolalpha << std::is_integral<const int>() << std::endl;
-    std::cout << std::boolalpha << ft::is_integral<signed char>() << std::endl;
-    // false
-    std::cout << std::boolalpha << std::is_integral<float>() << std::endl;
-    std::cout << std::boolalpha << std::is_integral<const float>() << std::endl;
-    // typeid
-    std::cout << typeid(std::is_integral<int>::type).name() << std::endl;
 
-    std::cout << "==  ft ==" << std::endl;
-    // true
-    std::cout << std::boolalpha << ft::is_integral<int>::value << std::endl;
-    std::cout << std::boolalpha << ft::is_integral<int>() << std::endl;
-    std::cout << std::boolalpha << ft::is_integral<const int>() << std::endl;
-    std::cout << std::boolalpha << std::is_integral<signed char>() << std::endl;
-    // false
-    std::cout << std::boolalpha << ft::is_integral<float>() << std::endl;
-    std::cout << std::boolalpha << ft::is_integral<const float>() << std::endl;
-    // typeid
-    std::cout << typeid(ft::is_integral<int>::type).name() << std::endl;
+    // int
+    assert(std::is_integral<int>::value == ft::is_integral<int>::value);
+    // const int
+    assert(std::is_integral<const int>::value == ft::is_integral<const int>::value);
+    // ::() synonym of ::value
+    assert(std::is_integral<int>() == ft::is_integral<int>());
+    // signed char (is an edge case)
+    assert(std::is_integral<signed char>::value == ft::is_integral<signed char>::value);
 
+    // false
+
+    // float
+    assert(std::is_integral<float>::value == ft::is_integral<float>::value);
+    // const float
+    assert(std::is_integral<const float>::value == ft::is_integral<const float>::value);
+
+    // typeid -- FIX THIS !
+    //assert(typeid(std::is_integral<int>::type).name() == typeid(ft::is_integral<int>::type).name());
 }
 
 /****** Constructors test *****************************************************/
 
-// rewrite with static_assert
 void
-constructor_test()
+constructor_by_default_test()
 {
-//    {
-//        std::cout << "== by default ==" << std::endl;
-//
-//        std::cout << "-- std --" << std::endl;
-//        std::vector<int> a;
-//        std::cout << "size: " << a.size() << std::endl;
-//        std::cout << "max_size: " << a.max_size() << std::endl;
-//        std::cout << "capacity: " << a.capacity() << std::endl;
-//
-//        std::cout << "--  ft --" << std::endl;
-//        ft::vector<int> b;
-//        std::cout << "size: " << b.size() << std::endl;
-//        std::cout << "max_size: " << b.max_size() << std::endl;
-//        std::cout << "capacity: " << b.capacity() << std::endl;
-//    }
-//    {
-//        std::cout << "== by fill (without value) ==" << std::endl;
-//
-//        std::cout << "-- std --" << std::endl;
-//        std::vector<int> a(10);
-//        std::cout << "size: " << a.size() << std::endl;
-//        std::cout << "capacity: " << a.capacity() << std::endl;
-//
-//        std::cout << "--  ft --" << std::endl;
-//        ft::vector<int> b(10);
-//        std::cout << "size: " << b.size() << std::endl;
-//        std::cout << "capacity: " << b.capacity() << std::endl;
-//    }
-//    {
-//        std::cout << "== by fill (with value) ==" << std::endl;
-//
-//        std::cout << "-- std --" << std::endl;
-//        std::vector<int> a(10, 42);
-//        std::cout << "size: " << a.size() << std::endl;
-//        std::cout << "capacity: " << a.capacity() << std::endl;
-//
-//        std::cout << "--  ft --" << std::endl;
-//        ft::vector<int> b(10, 42);
-//        std::cout << "size: " << b.size() << std::endl;
-//        std::cout << "capacity: " << b.capacity() << std::endl;
-//    }
-//    {
-//        std::cout << "== by copy ==" << std::endl;
-//
-//        std::vector<int> v(10, 42);
-//
-//        std::vector<int> a(v);
-//        std::cout << "size: " << a.size() << std::endl;
-//        std::cout << "capacity: " << a.capacity() << std::endl;
-//
-//        ft::vector<int> b(v);
-//        std::cout << "size: " << b.size() << std::endl;
-//        std::cout << "capacity: " << b.capacity() << std::endl;
-//    }
-//    {
-//        std::cout << "== by range ==" << std::endl;
-//
-//        std::vector<int> v(10, 42);
-//
-//        std::vector<int> a(v.begin(), v.end());
-//        std::cout << "size: " << a.size() << std::endl;
-//        std::cout << "capacity: " << a.capacity() << std::endl;
-//
-//        std::vector<int> b(v.begin(), v.end());
-//        std::cout << "size: " << b.size() << std::endl;
-//        std::cout << "capacity: " << b.capacity() << std::endl;
-//    }
-//    {
-//        // heap
-//        {
-//            ft::vector<int> * v = new ft::vector<int>;
-//            delete v;
-//        }
-//        {
-//            ft::vector<int> * v = new ft::vector<int>[10];
-//            delete [] v;
-//        }
-//    }
+    ft::vector<int> a;
+    std::vector<int> b;
+
+    assert(a.size() == b.size());
+    assert(a.capacity() == b.capacity());
+    //assert(a.max_size() == b.max_size()); // FIX THIS
+
+    std::cout << "constructor by default " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+constructor_by_fill_test()
+{
+    {
+        // without value
+
+        ft::vector<int> a(10);
+        std::vector<int> b(10);
+
+        assert(a.size() == b.size());
+        assert(a.capacity() == b.capacity());
+        //assert(a.max_size() == b.max_size()); // FIX THIS
+
+        std::cout << "constructor by fill (without value) " << GREEN << "OK" << RESET << std::endl;
+    }
+    {
+        // with value
+
+        std::vector<int> a(10, 42);
+        ft::vector<int> b(10, 42);
+
+        assert(a.size() == b.size());
+        assert(a.capacity() == b.capacity());
+        //assert(a.max_size() == b.max_size()); // FIX THIS
+
+        std::cout << "constructor by fill (with value) " << GREEN << "OK" << RESET << std::endl;
+    }
+}
+
+/*
+void
+constructor_by_copy_test()
+{
+    // FIX THIS --> need assignation operator
+
+    std::vector<int> v(10, 42);
+
+    ft::vector<int> a(v);
+    std::vector<int> b(v);
+
+    assert(a.size() == v.size());
+    assert(a.size() == b.size());
+    assert(a.capacity() == v.capacity());
+    assert(a.capacity() == b.capacity());
+    assert(a == v);
+    assert(a == b);
+
+    std::cout << "constructor by copy " << GREEN << "OK" << RESET << std::endl;
+}
+*/
+
+/*
+void
+constructor_by_iterator_range_test()
+{
+    // FIX THIS --> need appropriate constructor
+    
+    std::vector<int> v(10, 42);
+    
+    ft::vector<int> a(v.begin(), v.end());
+    std::vector<int> b(v.begin(), v.end());
+    
+    assert(a.size() == v.size());
+    assert(a.size() == b.size());
+    assert(a.capacity() == v.capacity());
+    assert(a.capacity() == b.capacity());
+    assert(a == v);
+    assert(a == b);
+    
+    std::cout << "constructor by iterator range " << GREEN << "OK" << RESET << std::endl;
+}
+*/
+
+void
+constructor_upon_heap_test()
+{
+    { ft::vector<int> * v = new ft::vector<int>; delete v; }
+    { ft::vector<int> * v = new ft::vector<int>[10]; delete [] v; }
+}
+
+void
+constructors_test()
+{
+    constructor_by_default_test();
+    constructor_by_fill_test();
+//    constructor_by_copy_test(); // TODO
+//    constructor_by_iterator_range_test() // TODO
+    constructor_upon_heap_test();
 }
 
 /****** Allocator test ********************************************************/
@@ -470,7 +487,7 @@ operators_tests()
 
 /****** Iterators tests *******************************************************/
 
-// random_access_iterator only
+// random_access_iterator only (for now)
 
 void
 iterator_constructors_test()
@@ -671,13 +688,13 @@ iterator_substraction_test()
         // with number
         ft::vector<int> v(5, 42);
         ft::vector<int>::iterator it = v.end();
-    
+
        // v.end().debug();
        // (v.end() - 1).debug();
        // (v.end() - 2).debug();
        // (v.end() - 3).debug();
        // (v.end() - 4).debug();
-    
+
         assert(it - 0 == it);
         assert(it - 2 == it - 1 - 1);
         assert(it - 5 == v.begin());
@@ -691,10 +708,7 @@ iterator_substraction_test()
         assert(it - it  == 0);
         assert(ite - ite == 0);
 
-        std::cout << it - it << std::endl;
-        std::cout << ite - ite << std::endl;
-
-        std::cout << ite - it << std::endl;
+        //std::cout << ite - it << std::endl;
         //std::cout << it - ite << std::endl;
 
         assert(ite - it == 5);
@@ -703,7 +717,6 @@ iterator_substraction_test()
     std::cout << "operator- " << GREEN << "OK" << RESET << std::endl;
 }
 
-/*
 void
 iterator_less_than_test()
 {
@@ -712,38 +725,132 @@ iterator_less_than_test()
     ft::vector<int>::iterator ite = v.end();
 
     assert(it < ite);
+    assert(it < it + 1);
+    assert(it + 1 < it + 2);
 
     std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
 }
-*/
 
-// vector/random_access iterator at this point
+void
+iterator_greather_than_test()
+{
+    ft::vector<int> v(5, 42);
+    ft::vector<int>::iterator it = v.begin();
+    ft::vector<int>::iterator ite = v.end();
+
+    assert(ite > it);
+    assert(it + 1 > it);
+    assert(it + 2 > it + 1);
+
+    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+iterator_less_than_or_equal_test()
+{
+    ft::vector<int> v(5, 42);
+    ft::vector<int>::iterator it = v.begin();
+    ft::vector<int>::iterator ite = v.end();
+
+    assert(it <= it);
+    assert(ite <= ite);
+    assert(it <= it + 1);
+    assert(it + 1 <= it + 2);
+    assert(it <= ite);
+
+    std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+iterator_greather_than_or_equal_test()
+{
+    ft::vector<int> v(5, 42);
+    ft::vector<int>::iterator it = v.begin();
+    ft::vector<int>::iterator ite = v.end();
+
+    assert(it >= it);
+    assert(ite >= ite);
+    assert(it + 1 >= it);
+    assert(it + 2 >= it + 1);
+    assert(ite >= it);
+
+    std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+iterator_add_then_assign_test()
+{
+    ft::vector<int> v(5, 42);
+    ft::vector<int>::iterator it = v.begin();
+
+    assert((it += 1) == v.begin() + 1);
+    assert((it += 1) == v.begin() + 2);
+    assert((it += 2) == v.begin() + 4);
+
+    std::cout << "operator+= " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+iterator_sub_then_assign_test()
+{
+    ft::vector<int> v(5, 42);
+    ft::vector<int>::iterator ite = v.end();
+
+    assert((ite -= 1) == v.end() - 1);
+    assert((ite -= 1) == v.end() - 2);
+    assert((ite -= 2) == v.end() - 4);
+
+    std::cout << "operator-= " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+iterator_brackets_operator_test()
+{
+    ft::vector<int> v(5, 42);
+    ft::vector<int>::iterator it = v.begin();
+
+    assert(it[0] == 42);
+    assert(it[1] == 42);
+    assert(it[2] == 42);
+    assert(it[3] == 42);
+    assert(it[4] == 42);
+
+    std::cout << "operator[] " << GREEN << "OK" << RESET << std::endl;
+}
+
 void
 iterators_tests()
 {
     std::cout << "== Iterators ==" << std::endl;
 
-//    iterator_constructors_test();
-//    assignation_test();
-//    begin_test(); // move to vector test suite ?
-//    end_test();   // move to vector test suite ?
-//    increment_test(); // both prefix and posifix
-//    decrement_test(); // both prefix and posifix
-//    iterator_dereference_test();
-//    iterator_equal_test();
-//    iterator_not_equal_test();
+    iterator_constructors_test();
 
-//    iterator_addition_test();
-    iterator_substraction_test(); // TODO
+    assignation_test();
 
-    // TODO
-   // iterator_addition_equal_test();
-   // iterator_substraction_equal_test();
-//    iterator_less_than_test();
-    //iterator_less_than_or_equaltest();
-    //iterator_greather_than_test();
-    //iterator_greather_than_or_equal_test();
-    //iterator_brackets_operator_test();
+    begin_test(); // move to vector test suite ?
+    end_test();   // move to vector test suite ?
+
+    increment_test(); // both prefix and posifix
+    decrement_test(); // both prefix and posifix
+
+    iterator_dereference_test();
+
+    iterator_equal_test();
+    iterator_not_equal_test();
+
+    iterator_addition_test();
+    iterator_substraction_test();
+
+    iterator_less_than_test();
+    iterator_greather_than_test();
+
+    iterator_less_than_or_equal_test();
+    iterator_greather_than_or_equal_test();
+
+    iterator_add_then_assign_test();
+    iterator_sub_then_assign_test();
+
+    iterator_brackets_operator_test();
 }
 
 /****** All tests *************************************************************/
@@ -751,23 +858,20 @@ iterators_tests()
 int main()
 {
 //    is_integral_test();
-//
+
 //    VECTOR
 //    vector_test<int>()
 //    vector_test<double>()
-//
-//    allocator_test();
-//    constructor_test();
-//
-//    capacity_tests();
+
+//    allocator_test(); // TODO
+//    constructors_test(); // TODO
+
+//    capacity_tests(); // TODO
 //    accessor_tests();
 //    modifiers_tests();
 //    operators_tests();
 
-    iterators_tests();
-
-    //ft::vector<int> v(5, 42);
-    //std::cout << std::distance(v.begin(), v.end()) << std::endl;
+//    iterators_tests();
 
     return 0;
 }
