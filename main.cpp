@@ -252,10 +252,10 @@ void
 reserve_test()
 {
     {
-        ft::vector<int> a;
+     //   ft::vector<int> a;
 
-        //try { a.reserve(10); }
-        //catch (...) { /* log */ }
+     //   try { a.reserve(10); }
+     //   catch (...) { /* log */ }
 
        // assert(a.capacity() == 10);
 
@@ -284,7 +284,7 @@ capacity_tests()
     //size_test();
     //max_size_test();
     //capacity_test();
-    //reserve_test(); // bug
+    //reserve_test(); // TODO
 }
 
 /****** Accessors test ********************************************************/
@@ -408,31 +408,118 @@ clear_tests()
     std::cout << "clear " << GREEN << "OK" << RESET << std::endl;
 }
 
-// todo
 void
 erase_tests()
 {
+    // TODO try with different values (fill with push back)
+    // TODO maybe add some tricky cases like overflow size or capacity
     {
-        // erase by iterator position
-        ft::vector<int> v(3, 21);
+        // erase by position
+        ft::vector<int> a(21, 42);
+        std::vector<int> b(21, 42);
 
-        for (ft::vector<int>::size_type i = 0; i < v.size(); i++)
-        { std::cout << v.at(i) << " "; } std::cout << std::endl;
+        // begin
+        assert(a.erase(a.begin()) == a.begin());
+        assert(b.erase(b.begin()) == b.begin());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
 
-        //v.erase(v.begin());
-        //v.erase(v.begin() + 1);
+        // begin + n
+        assert(a.erase(a.begin() + 2) == a.begin() + 2);
+        assert(b.erase(b.begin() + 2) == b.begin() + 2);
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
 
-        for (ft::vector<int>::size_type i = 0; i < v.size(); i++)
-        { std::cout << v.at(i) << " "; } std::cout << std::endl;
+        // end - n
+        assert(a.erase(a.end() - 2) - a.begin()
+            == b.erase(b.end() - 2) - b.begin());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
+
+        // end --> segfault
+        //assert(a.erase(a.end()) == a.end());
+        //assert(b.erase(b.end()) == b.end());
+        //assert(a.size() == b.size());
+        //for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        //{ assert(a.at(i) == b.at(i)); }
     }
+    {
+        // erase by range
+        ft::vector<int> a(21, 42);
+        std::vector<int> b(21, 42);
+
+        // [begin, begin)
+        assert(a.erase(a.begin(), a.begin()) == a.begin());
+        assert(b.erase(b.begin(), b.begin()) == b.begin());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
+
+        // [end, end)
+        assert(a.erase(a.end(), a.end()) == a.end());
+        assert(b.erase(b.end(), b.end()) == b.end());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
+
+        // [begin, begin + n)
+        assert(a.erase(a.begin(), a.begin() + 2) == a.begin());
+        assert(b.erase(b.begin(), b.begin() + 2) == b.begin());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
+
+        // [end - n, end)
+        assert(a.erase(a.end() - 2, a.end()) - a.begin()
+            == b.erase(b.end() - 2, b.end()) - b.begin());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
+
+        // [begin + n, end - m)
+        assert(a.erase(a.begin() + 2, a.end() - 4) - a.begin()
+            == b.erase(b.begin() + 2, b.end() - 4) - b.begin());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
+
+        // [begin, end)
+        assert(a.erase(a.begin(), a.end()) == a.begin());
+        assert(b.erase(b.begin(), b.end()) == b.begin());
+        assert(a.size() == b.size());
+        for (std::vector<int>::size_type i = 0; i < b.size(); i++)
+        { assert(a.at(i) == b.at(i)); }
+    }
+    std::cout << "erase " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+insert_tests()
+{
+    {
+        // fill
+       // ft::vector<int> a(4, 21);
+       // a.insert(a.begin() + 2, 4, 42);
+
+       // std::vector<int> v;
+       // //v.reserve(50);
+       // v.push_back(0);
+       // v.push_back(0);
+       // v.insert(v.begin()+1, 2, 42);
+    }
+    std::cout << "insert " << GREEN << "OK" << RESET << std::endl;
 }
 
 void
 modifiers_tests()
 {
     std::cout << "== Modifiers ==" << std::endl;
-//    clear_tests();
-    erase_tests(); // todo
+  //  clear_tests();
+  //  erase_tests(); // TODO
+    insert_tests(); // TODO
 }
 
 /****** Operators tests *******************************************************/
@@ -474,15 +561,50 @@ not_equal_test()
 void
 less_than()
 {
+    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+vector_assignation_test()
+{
+   // {
+   //     // same size
+   //     ft::vector<int> a(5, 21);
+   //     ft::vector<int> b(5, 42);
+
+   //     assert(a != b);
+   //     a = b;
+   //     assert(a == b);
+   // }
+   // {
+   //     // upper size
+   //     ft::vector<int> a(9, 21);
+   //     ft::vector<int> b(5, 42);
+
+   //     assert(a != b);
+   //     a = b;
+   //     assert(a == b);
+   // }
+    {
+        // lower size
+        ft::vector<int> a(5, 21);
+        ft::vector<int> b(9, 42);
+
+        assert(a != b);
+        a = b;
+        assert(a == b);
+    }
+    std::cout << "operator= " << GREEN << "OK" << RESET << std::endl;
 }
 
 void
 operators_tests()
 {
     std::cout << "== Operators ==" << std::endl;
-    equal_test();
-    not_equal_test();
-    less_than();
+   // equal_test();
+   // not_equal_test();
+   // less_than();
+    vector_assignation_test();
 }
 
 /****** Iterators tests *******************************************************/
@@ -504,7 +626,7 @@ iterator_constructors_test()
 }
 
 void
-assignation_test()
+iterator_assignation_test()
 {
     int i = 42;
     int * p = &i;
@@ -825,7 +947,7 @@ iterators_tests()
 
     iterator_constructors_test();
 
-    assignation_test();
+    iterator_assignation_test();
 
     begin_test(); // move to vector test suite ?
     end_test();   // move to vector test suite ?
@@ -868,8 +990,8 @@ int main()
 
 //    capacity_tests(); // TODO
 //    accessor_tests();
-//    modifiers_tests();
-//    operators_tests();
+//    modifiers_tests(); // TODO
+    operators_tests(); // TODO
 
 //    iterators_tests();
 
