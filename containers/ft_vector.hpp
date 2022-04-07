@@ -10,7 +10,24 @@
 #include <memory> // std::allocator
 #include <stdexcept> // std::out_of_range --> rewrite it for namespace ft ?
 
-namespace ft {L
+/*
+ * TODO
+ *
+ * - bien templater les iterateurs en arguments de certaines fonctions
+ * - ne jamais set _capacity ou _size avant d'avoir appele allocate()
+ * - bien gerer les allocations et les exceptions
+ * - bien prendre en compte size_max pour jeter les exceptions appropriees
+ *
+ * MAYBE
+ *
+ * - add some private functions like STL (like internal primitives for public methods)
+ *   --> _reallocate_and_copy(position, n, first, last)
+ *  @def: reallocate n * sizeof(T) at position and copy there values inside [first,last)
+ *
+ * - use `_first` and `_finish` instead of `_size`
+ */
+
+namespace ft {
 
 template <class T, class Allocator = std::allocator<T>>
 class vector {
@@ -69,6 +86,7 @@ class vector {
     // by default - add 'explicit' qualifier ?
     vector (const allocator_type & alloc = allocator_type())
     : _size(0), _capacity(0), _max_size(alloc.max_size()), _alloc(alloc) { }
+    // _data = NULL
 
     // by fill - add 'explicit' qualifier ?
     vector (
@@ -83,15 +101,31 @@ class vector {
     }
 
     // by iterator range
-    // template <class InputIterator>
-    //         vector (InputIterator first, InputIterator last,
-    //                 const allocator_type& alloc = allocator_type());
+   // template <class InputIterator>
+   // vector (InputIterator first, InputIterator last,
+   // const allocator_type & alloc = allocator_type())
+    vector (
+        iterator first,
+        iterator last,
+        const allocator_type & alloc = allocator_type()
+    ) : _alloc(alloc)
+    {
+        size_type len = last - first;
+        // allocate...
+        _data = _alloc.allocate(len);
+        // then assign capacity
+        _capacity = len;
+        // fill...
+        for (size_type i = 0; i < len; i++)
+            _data[i] = *(first++);
+        // then assign size
+        _size = len;
+    }
 
     // by copy
- //   vector (const vector<value_type, allocator_type> & v)
- //   : _size(v._size), _capacity(v._capacity), _max_size(v.max_size()),
- //       _alloc(v._alloc)
- //   { *this = v; }
+    vector (const vector<value_type, allocator_type> & v)
+    : _size(0), _capacity(0), _max_size(v.max_size()), _alloc(v._alloc)
+    { *this = v; }
 
     /****** Destructor ********************************************************/
 
@@ -103,6 +137,7 @@ class vector {
 
     /****** Element access ****************************************************/
 
+    // TODO
     // add 'const_reference' return type overload for each function below
 
     reference at(size_type n)
@@ -162,106 +197,82 @@ class vector {
     {
         if (_capacity < n)
         {
-            vector<value_type> tmp(n);
-            tmp.assign(begin(), end());
+   //         // reallocate
+   //         pointer tmp = _alloc.allocate(n);
+   //         // recopy
+   //         for (size_type i = 0; i < size(); i++)
+   //             tmp[i] = at(i);
+   //         clear();
+            vector<value_type> tmp(*this);
+            clear();
+            _data = _alloc.allocate(n);
+            _capacity = n;
             *this = tmp;
         }
     }
-    //{ if (_capacity < n) { &_data[_size] = _alloc.allocate(n - _capacity); } } // bug
-    //{ if (_capacity < n) { back() = _alloc.allocate(n - _capacity); } } // fix ?
 
     /****** Modifiers *********************************************************/
 
+    // TODO
     void
     clear()
     { erase(begin(), end()); }
 
-    /****** insert ******/
-
     // single element (1)
-   // iterator
-   // insert (iterator position, const value_type & val)
-   // { return (insert(position, 1, val)); }
+    iterator
+    insert (iterator position, const value_type & val)
+    {
+        size_type offset = position - begin();
+        insert(position, 1, val);
+        return begin() + offset;
+    }
 
     // fill (2)
     void
     insert (iterator position, size_type n, const value_type & val)
     {
+        // reallocate
         if (_size + n > _capacity)
         {
-            // 1
-            vector<value_type> tmp;
-
-            tmp.reserve(_size + n);
-
-            tmp.insert(tmp.begin(), begin(), end());
-
-            tmp.insert(tmp.begin() + (position - begin()), n, val);
-
-            *this = tmp;
-
-            return;
-
-            // 2
-            
-            // reallocation (might fail. if so, do we exit current function here ?)
-//            value_type * tmp = NULL;
-//            try { tmp = _alloc.allocate(_size + n); }
-//            catch (std::bad_alloc & ba) { std::cout << ba.what() << std::endl; } // log ?
-//
-//            // copy before position
-//            for (size_type i = 0; i < position - begin(); i++)
-//            {
-//                tmp[i] = _data[i];
-//                _alloc.destroy(&_data[i]);
-//            }
-
-            // update capacity
-     //       if (_capacity)
-     //           _alloc.deallocate(_data, _capacity);
-     //       _capacity = _size + n;
-
-//            _data = tmp;
+            // because of reallocation, position need to be reset
+            size_type offset = position - begin();
+            reserve(_size + n);
+            position = begin() + offset;
         }
-//        size_type lo = position - begin();
-//        size_type hi = lo + n;
-//        while (lo < hi)
-//        {
-//            _data[_size] = _data[lo];
-//            _data[lo] = val;
-//            _size++;
-//            lo++;
-//        }
-        for (size_type i = position - begin(); i < position - begin() + n; i++)
+        // insert
+        for (size_type i = 0; i < n; i++)
         {
-            _data[_size] = _data[i];
-            _data[i] = val;
+            _data[_size] = *position;
+            _data[position - begin()] = val;
             _size++;
+            position++;
         }
     }
 
     // range (3)
-    template <class InputIterator>
+    //template <class InputIterator>
     void
-    insert (iterator position, InputIterator first, InputIterator last)
+    insert (iterator position, iterator first, iterator last)
+    //insert (iterator position, InputIterator first, InputIterator last)
     {
-        std::cout << "hi" << std::endl;
+        // reallocate
         if (_capacity - _size < last - first)
         {
-            vector<value_type, allocator_type> tmp(_size + (last - first)); // reserve ? construct by copy ?
-            
-            return tmp.insert(tmp.begin(), begin(), end());
-
+            // because of reallocation, position need to be reset
+            size_type pos = position - begin();
+            reserve(_size + (last - first));
+            position = begin() + pos;
         }
+        // insert
         while (first != last)
         {
+            _data[_size] = *position;
             _data[position - begin()] = *first;
             first++;
+            position++;
+            _size++;
         }
-        std::cout << "bye" << std::endl;
     }
-
-    /****** erase ******/
 
     // erase by position
     iterator
@@ -321,9 +332,11 @@ class vector {
 
     /****** Iterators *********************************************************/
 
+    // TODO
     // add 'const_reference' return type overload for each function below
 
 	iterator begin() { return iterator(&_data[0]); }
+	//iterator begin() { return iterator(_data); }
 
 	iterator end() { return iterator(&_data[_size]); }
 
@@ -338,22 +351,17 @@ class vector {
     {
         if (*this != v)
         {
+            // reallocate
             if (_capacity < v.size())
-            {
-                std::cout << "here" << std::endl;
-                vector<value_type, allocator_type> tmp(v.size()); // reserve ?
-                tmp.insert(tmp.begin(), begin(), end()); // here
-                *this = tmp; // recursive call
-                return *this;
-            }
-            std::cout << "ici" << std::endl;
+                reserve(v.size());
+            // copy values
             for (size_type i = 0; i < v.size(); i++)
-            {
-                _alloc.destroy(&_data[i]);
                 _data[i] = v.at(i);
-            }
+            // destroy unused left values
+            for (size_type i = v.size(); i < _size; i++)
+                _alloc.destroy(&_data[i]);
+            // update size
             _size = v.size();
-            std::cout << "la" << std::endl;
         }
         return *this;
     }
@@ -368,6 +376,7 @@ class vector {
 
     /****** Miscellaneous *****************************************************/
 
+    // TODO
     // get_allocator()
 };
 
@@ -416,3 +425,4 @@ bool operator>=(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 
 } // namespace ft
 
+#endif /* FT_VECTOR_H */

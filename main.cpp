@@ -85,7 +85,7 @@ constructor_by_fill_test()
 
         assert(a.size() == b.size());
         assert(a.capacity() == b.capacity());
-        //assert(a.max_size() == b.max_size()); // FIX THIS
+        //assert(a.max_size() == b.max_size()); // TODO
 
         std::cout << "constructor by fill (without value) " << GREEN << "OK" << RESET << std::endl;
     }
@@ -97,55 +97,49 @@ constructor_by_fill_test()
 
         assert(a.size() == b.size());
         assert(a.capacity() == b.capacity());
-        //assert(a.max_size() == b.max_size()); // FIX THIS
+        //assert(a.max_size() == b.max_size()); // TODO
 
         std::cout << "constructor by fill (with value) " << GREEN << "OK" << RESET << std::endl;
     }
 }
 
-/*
 void
 constructor_by_copy_test()
 {
-    // FIX THIS --> need assignation operator
+    {
+        // from empty
+        ft::vector<int> a;
+        ft::vector<int> b(a);
+        assert(a == b);
+    }
+    { // from non-empty
+        ft::vector<int> a(10, 42);
+        ft::vector<int> b(a);
 
-    std::vector<int> v(10, 42);
-
-    ft::vector<int> a(v);
-    std::vector<int> b(v);
-
-    assert(a.size() == v.size());
-    assert(a.size() == b.size());
-    assert(a.capacity() == v.capacity());
-    assert(a.capacity() == b.capacity());
-    assert(a == v);
-    assert(a == b);
-
+        assert(a == b);
+    }
     std::cout << "constructor by copy " << GREEN << "OK" << RESET << std::endl;
 }
-*/
 
-/*
 void
 constructor_by_iterator_range_test()
 {
-    // FIX THIS --> need appropriate constructor
-    
-    std::vector<int> v(10, 42);
-    
-    ft::vector<int> a(v.begin(), v.end());
-    std::vector<int> b(v.begin(), v.end());
-    
-    assert(a.size() == v.size());
-    assert(a.size() == b.size());
-    assert(a.capacity() == v.capacity());
-    assert(a.capacity() == b.capacity());
-    assert(a == v);
-    assert(a == b);
-    
+    {
+        // empty range
+        ft::vector<int> a;
+        ft::vector<int> b(a.begin(), a.end());
+
+        assert(a == b);
+    }
+    {
+        // non-empty range
+        ft::vector<int> a(10, 42);
+        ft::vector<int> b(a.begin(), a.end());
+
+        assert(a == b);
+    }
     std::cout << "constructor by iterator range " << GREEN << "OK" << RESET << std::endl;
 }
-*/
 
 void
 constructor_upon_heap_test()
@@ -158,9 +152,9 @@ void
 constructors_test()
 {
     constructor_by_default_test();
-    constructor_by_fill_test();
-//    constructor_by_copy_test(); // TODO
-//    constructor_by_iterator_range_test() // TODO
+    constructor_by_fill_test(); // TODO
+    constructor_by_copy_test();
+    constructor_by_iterator_range_test();
     constructor_upon_heap_test();
 }
 
@@ -252,27 +246,36 @@ void
 reserve_test()
 {
     {
-     //   ft::vector<int> a;
+        ft::vector<int> a;
 
-     //   try { a.reserve(10); }
-     //   catch (...) { /* log */ }
+        assert(a.capacity() == 0);
 
-       // assert(a.capacity() == 10);
+        // increase capacity
+        try {
+            a.reserve(10);
+            assert(a.capacity() == 10);
+        } catch (...) { /* log */ }
 
-       // try { a.reserve(10); }
-       // catch (...) { /* log */ }
+        // don't increase capacity
+        try {
+            a.reserve(10);
+            assert(a.capacity() == 10);
+        } catch (...) { /* log */ }
 
-       // assert(a.capacity() == 10);
+        // increase again
+        try {
+            a.reserve(11);
+            assert(a.capacity() == 11);
+        } catch (...) { /* log */ }
 
-       // try { a.reserve(11); }
-       // catch (...) { /* log */ }
-
-       // assert(a.capacity() == 11);
-
-       // try { a.reserve(-1); }
-       // catch (...) { /* log */ }
-
-       // assert(a.capacity() == 11);
+        // TODO
+        // With stl, since `size_type` is unsigned,
+        // -1 would be converted into some big number.
+        // Then `reserve` would throw an `std::length_error`.
+        try {
+            a.reserve(-1);
+            assert(a.capacity() == 11);
+        } catch (...) { /* log */ }
     }
     std::cout << "reserve " << GREEN << "OK" << RESET << std::endl;
 }
@@ -499,18 +502,96 @@ erase_tests()
 void
 insert_tests()
 {
+    // TODO
+    // - add tests with reallocations
+    // - add tests like nested or invalid intervals
+    // - add tests with differents values with push back
     {
-        // fill
-       // ft::vector<int> a(4, 21);
-       // a.insert(a.begin() + 2, 4, 42);
+        // single element (1)
+        {
+            // to empty
+            ft::vector<int> a;
+            ft::vector<int> b(1, 21);
 
-       // std::vector<int> v;
-       // //v.reserve(50);
-       // v.push_back(0);
-       // v.push_back(0);
-       // v.insert(v.begin()+1, 2, 42);
+            a.insert(a.begin(), 21);
+            assert(a == b);
+        }
+        std::cout << "insert single element (1) " << GREEN << "OK" << RESET << std::endl;
     }
-    std::cout << "insert " << GREEN << "OK" << RESET << std::endl;
+    {
+        // fill (2)
+        {
+            // to empty
+            ft::vector<int> a;
+            ft::vector<int> b(4, 21);
+
+            a.insert(a.begin(), 4, 21);
+            assert(a == b);
+        }
+        {
+            // in middle
+            ft::vector<int> a(2, 21);
+            ft::vector<int> b(4, 42);
+
+            a.insert(a.begin() + 1, 2, 42);
+
+            assert(a.size() == 4);
+            assert(*(a.begin() + 0) == 21);
+            assert(*(a.begin() + 1) == 42);
+            assert(*(a.begin() + 2) == 42);
+            assert(*(a.begin() + 3) == 21);
+        }
+        {
+            // n = 0
+            ft::vector<int> a;
+            a.insert(a.begin(), 0, 21);
+            assert(a == a);
+        }
+        std::cout << "insert by fill (2) " << GREEN << "OK" << RESET << std::endl;
+    }
+    {
+        // range (3)
+        {
+            // to empty
+            ft::vector<int> a;
+            ft::vector<int> b(4, 21);
+
+            a.insert(a.begin(), b.begin(), b.end());
+            assert(a == b);
+        }
+        {
+            // insert empty interval
+            ft::vector<int> a;
+            ft::vector<int> b(4, 21);
+            ft::vector<int> c(b);
+
+            // at begin
+            b.insert(b.begin(), a.begin(), a.end());
+            assert(b == c);
+
+            // at end
+            b.insert(b.end(), a.begin(), a.end());
+            assert(b == c);
+
+            // in middle
+            b.insert(b.begin() + 2, a.begin(), a.end());
+            assert(b == c);
+        }
+        {
+            // in middle
+            ft::vector<int> a(2, 21);
+            ft::vector<int> b(2, 42);
+
+            a.insert(a.begin() + 1, b.begin(), b.end());
+
+            assert(a.size() == 4);
+            assert(*(a.begin() + 0) == 21);
+            assert(*(a.begin() + 1) == 42);
+            assert(*(a.begin() + 2) == 42);
+            assert(*(a.begin() + 3) == 21);
+        }
+        std::cout << "insert by range (3) " << GREEN << "OK" << RESET << std::endl;
+    }
 }
 
 void
@@ -519,7 +600,7 @@ modifiers_tests()
     std::cout << "== Modifiers ==" << std::endl;
   //  clear_tests();
   //  erase_tests(); // TODO
-    insert_tests(); // TODO
+  //  insert_tests(); // TODO
 }
 
 /****** Operators tests *******************************************************/
@@ -567,27 +648,45 @@ less_than()
 void
 vector_assignation_test()
 {
-   // {
-   //     // same size
-   //     ft::vector<int> a(5, 21);
-   //     ft::vector<int> b(5, 42);
+    {
+        // same size
+        ft::vector<int> a(5, 21);
+        ft::vector<int> b(5, 42);
 
-   //     assert(a != b);
-   //     a = b;
-   //     assert(a == b);
-   // }
-   // {
-   //     // upper size
-   //     ft::vector<int> a(9, 21);
-   //     ft::vector<int> b(5, 42);
+        assert(a != b);
+        a = b;
+        assert(a == b);
+    }
+    {
+        // upper size
+        ft::vector<int> a(9, 21);
+        ft::vector<int> b(5, 42);
 
-   //     assert(a != b);
-   //     a = b;
-   //     assert(a == b);
-   // }
+        assert(a != b);
+        a = b;
+        assert(a == b);
+    }
     {
         // lower size
         ft::vector<int> a(5, 21);
+        ft::vector<int> b(9, 42);
+
+        assert(a != b);
+        a = b;
+        assert(a == b);
+    }
+    {
+        // assign from empty
+        ft::vector<int> a(9, 21);
+        ft::vector<int> b;
+
+        assert(a != b);
+        a = b;
+        assert(a == b);
+    }
+    {
+        // assign to empty
+        ft::vector<int> a;
         ft::vector<int> b(9, 42);
 
         assert(a != b);
@@ -601,9 +700,9 @@ void
 operators_tests()
 {
     std::cout << "== Operators ==" << std::endl;
-   // equal_test();
-   // not_equal_test();
-   // less_than();
+    equal_test();
+    not_equal_test();
+    less_than();
     vector_assignation_test();
 }
 
@@ -986,12 +1085,12 @@ int main()
 //    vector_test<double>()
 
 //    allocator_test(); // TODO
-//    constructors_test(); // TODO
+    constructors_test(); // TODO
 
-//    capacity_tests(); // TODO
-//    accessor_tests();
-//    modifiers_tests(); // TODO
-    operators_tests(); // TODO
+ //   capacity_tests();
+ //   accessor_tests();
+ //   modifiers_tests(); // TODO
+ //   operators_tests();
 
 //    iterators_tests();
 
