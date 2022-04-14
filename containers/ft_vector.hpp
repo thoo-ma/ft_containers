@@ -1,7 +1,7 @@
 #ifndef FT_VECTOR_H
 #define FT_VECTOR_H 1
 
-#include <iostream>
+#include <iostream> // remove
 
 //#include "ft_type_traits.hpp"
 #include "ft_random_access_iterator.hpp"
@@ -81,6 +81,7 @@ class vector {
     size_type       _capacity;
     size_type       _max_size;  // arbitrary initialized at allocator_type.max_size()
                                 // cf. https://stackoverflow.com/questions/3813124/c-vector-max-size
+                                // TODO
     allocator_type  _alloc;
 
     /**************************************************************************/
@@ -442,7 +443,10 @@ class vector {
 	const_iterator end() const { return iterator(&_data[_size]); }
 
 	// reverse_iterator rbegin() { };
+	// const_reverse_iterator rbegin() const { };
+
 	// reverse_iterator rend() { };
+	// const_reverse_iterator rend() const { };
 
     /****** Operators *********************************************************/
 
@@ -488,6 +492,8 @@ class vector {
 /*      Non member functions                                                  */
 /*                                                                            */
 /******************************************************************************/
+
+// TODO
 
 template <class T, class Alloc>
 bool operator==(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
