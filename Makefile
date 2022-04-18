@@ -54,7 +54,13 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 TIMING_SRC		=	constructor_by_default.cpp \
 					constructor_by_copy.cpp \
 					constructor_by_fill.cpp \
-					constructor_by_range.cpp
+					constructor_by_range.cpp \
+					at.cpp \
+					front.cpp \
+					back.cpp \
+					empty.cpp
+
+#TIMING_SRC		=	size.cpp
 
 OUTPUT_SRC		=	all.cpp
 
