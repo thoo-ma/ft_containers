@@ -1,5 +1,5 @@
 #if defined(STD) == 0 && defined(FT) == 0
-#error Error: need to #define `STD` or `FT`
+#error need to #define `STD` or `FT`
 #endif
 
 #ifdef FT
@@ -19,11 +19,13 @@
 
 int main()
 {
-   // replace `static_assert` to enable compilation with c++98
-   static_assert(XSTR(NAMESPACE) == "std" || XSTR(NAMESPACE) == "ft");
+ //   #ifdef NAMESPACE
+ //  // replace `static_assert` to enable compilation with c++98
+ //   static_assert(XSTR(NAMESPACE) == "std" || XSTR(NAMESPACE) == "ft");
+ //   #endif
 
     for (int i = 0; i < 100000; i++)
-        NAMESPACE::vector<int> v(1000);
+        NAMESPACE::vector<int> v(1000, 42);
 
     return 0;
 }
