@@ -44,7 +44,6 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 					$(ITERATORS_DIR)/ft_random_access_iterator.hpp \
 					$(ITERATORS_DIR)/ft_iterator_base_types.hpp
 
-
 ################################################################################
 #                                                                              #
 #                   SOURCES                                                    #
@@ -117,15 +116,18 @@ debug:
 #					@echo $(foreach header, $(ITERATORS), $(addprefix iterators/, $(header)))
 #					$( join()) !!!
 
+
 ################### TIMING TESTS ###############################################
 
-$(TIMING_OBJECTS):	$(TIMING_SOURCES)
+#$(OBJ_DIR)/$(TIMING_DIR)/%.o: $(SRC_DIR)/$(TIMING_DIR)/%.cpp
+obj/timing/%.o:		src/timing/%.cpp
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -D STD -c $< \
 					-o $(addprefix $(dir $@)std/, $(addprefix std_, $(notdir $@)))
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -D  FT -c $< \
 					-o $(addprefix $(dir $@)ft/,  $(addprefix ft_,  $(notdir $@)))
 
-$(TIMING_BINARIES):	$(TIMING_OBJECTS)
+#$(BIN_DIR)/$(TIMING_DIR)/%.o: $(OBJ_DIR)/$(TIMING_DIR)/%.cpp
+bin/timing/%.out:	obj/timing/%.o
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -D STD \
 					$(addprefix $(dir $<)std/, $(addprefix std_, $(notdir $<))) \
 					-o $(addprefix $(dir $@)std/, $(addprefix std_, $(notdir $@)))
@@ -135,11 +137,11 @@ $(TIMING_BINARIES):	$(TIMING_OBJECTS)
 
 ################### OUTPUT TESTS ###############################################
 
-$(OUTPUT_OBJECTS):	$(OUTPUT_SOURCES)
+obj/output/%.o:		src/output/%.cpp
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< \
 					-o $(addprefix obj/output/, $(notdir $@))
 
-$(OUTPUT_BINARIES):	$(OUTPUT_OBJECTS)
+bin/output/%.out:	obj/output/%.o
 					$(CXX) $(CXXFLAGS) $(INCLUDE) $< \
 					-o $(addprefix bin/output/, $(notdir $@))
 
@@ -160,8 +162,8 @@ timing_dirs:
 #test "output" : dir "obj" "output"
 #test "timing" : dir "obj" "timing"
 
-output:				output_dirs $(OUTPUT_OBJECTS) $(OUTPUT_BINARIES)
-timing:				timing_dirs $(TIMING_OBJECTS) $(TIMING_BINARIES)
+timing:				timing_dirs | $(TIMING_OBJECTS) $(TIMING_BINARIES)
+output:				output_dirs | $(OUTPUT_OBJECTS) $(OUTPUT_BINARIES)
 
 all: 				timing output
 #all: 				$(NAME)
