@@ -1,0 +1,10 @@
+1. timing test for every vector member functions
+2. add reverse iterator to vector + test into all.cpp
+3. add ft_stack.hpp + tests
+4. separate folders between vector and stack (+ map in near futur)
+5. test lexicographical_compare
+6. templated tests (vector, stack, map)
+
+NOTE
+- on s'en tient a un formattage des tests basique -> on paufinera ca a la fin
+- ikos ?
