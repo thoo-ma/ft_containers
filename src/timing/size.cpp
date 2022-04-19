@@ -15,12 +15,12 @@
 int main()
 {
     NAMESPACE::vector<int> v(100000, 42);
-    int x;
+    NAMESPACE::vector<int>::size_type s;
 
-    for (int i = 0; i < 100000; i++)
-        x = v.at(i);
+    for (int i = 0; i < 1000000; i++)
+        s = v.size();
 
-    (void)x;
+    (void)s;
 
     return 0;
 }

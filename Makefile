@@ -50,16 +50,44 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 #                                                                              #
 ################################################################################
 
-TIMING_SRC		=	constructor_by_default.cpp \
-					constructor_by_copy.cpp \
-					constructor_by_fill.cpp \
-					constructor_by_range.cpp \
-					at.cpp \
-					front.cpp \
-					back.cpp \
-					empty.cpp
+#TIMING_SRC		=	constructor_by_default.cpp \
+#					constructor_by_copy.cpp \
+#					constructor_by_fill.cpp \
+#					constructor_by_range.cpp \
+#					at.cpp \
+#					front.cpp \
+#					back.cpp \
+#					empty.cpp \
+#					reserve.cpp \
+#					size.cpp \
+#					max_size.cpp \
+#					capacity.cpp \
+#					clear.cpp \
+#					push_back.cpp \
+#					pop_back.cpp \
+#					resize.cpp \
+#					swap.cpp \
+#					begin.cpp \
+#					end.cpp \
+#					op_bracket.cpp \
+#					op_assign \
+#					get_allocator.cpp \
+#					op_equal.cpp \
+#					op_non_equal.cpp
+# 					clear.cpp # tester independamment du constructor clear
+# 					insert_by_element.cpp
+# 					insert_by_fill.cpp
+# 					insert_by_range.cpp
+# 					erase_by_position.cpp
+# 					erase_by_range.cpp
+# 					assign_by_fill.cpp
+# 					assign_by_range.cpp
+# 					op_less_than.cpp
+# 					op_more_than.cpp
+# 					op_less_than_equal.cpp
+# 					op_more_than_equal.cpp
 
-#TIMING_SRC		=	size.cpp
+TIMING_SRC		=	at.cpp
 
 OUTPUT_SRC		=	all.cpp
 

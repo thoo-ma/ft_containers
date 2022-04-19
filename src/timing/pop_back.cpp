@@ -14,13 +14,10 @@
 
 int main()
 {
-    NAMESPACE::vector<int> v(100000, 42);
-    int x;
+    NAMESPACE::vector<int> v(1000000, 42);
 
-    for (int i = 0; i < 100000; i++)
-        x = v.at(i);
-
-    (void)x;
+    for (int i = 0; i < 1000000; i++)
+        v.pop_back();
 
     return 0;
 }

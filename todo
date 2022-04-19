@@ -8,3 +8,4 @@
 NOTE
 - on s'en tient a un formattage des tests basique -> on paufinera ca a la fin
 - ikos ?
+- au lieu de `time` l'executable, enregistrer avec <chrono> pour tester les fonctions independamment !

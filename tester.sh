@@ -1,5 +1,9 @@
 #!/bin/bash
 
+RED="\e[31m"
+GREEN="\e[32m"
+RESET="\e[0m"
+
 time_command="time" # go `man -f time` and enjoy some reading
 
 record_execution_time ()
@@ -29,7 +33,15 @@ compare_execution_time ()
         echo "min: $min"
         echo "max: $max"
 
-        echo -n "ratio: " ; echo "scale=4; $max/$min" | bc
+        local ratio=$(echo "scale=4; $max/$min" | bc)
+
+        echo -n "ratio: $ratio -- "
+
+        if (( $(echo "$ratio < 20" | bc -l) )); then
+            echo -e "${GREEN}OK${RESET}"
+        else
+            echo -e "${RED}KO${RESET}"
+        fi
 
     done
 }
