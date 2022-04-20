@@ -6,13 +6,57 @@ RESET="\e[0m"
 
 time_command="time" # go `man -f time` and enjoy some reading
 
+create_timing_database()
+{
+    echo "Recording..."
+
+    # TODO fonction pour lire le csv et display tout ca
+    echo "container,function,ft,std,ratio,status" > timing.csv
+
+    for ft_bin in bin/timing/ft/* ; do
+
+        std_bin="bin/timing/std/$(basename $ft_bin | sed 's/ft_/std_/')"
+
+        eval "./$ft_bin"
+        eval "./$std_bin"
+
+        local ft_time=$(cat timing.csv | tail -n 1 | cut -d ',' -f 3)
+        local std_time=$(cat timing.csv | tail -n 1 | cut -d ',' -f 4)
+
+        local ratio=$(echo "scale=4; $ft_time/$std_time" | bc)
+
+        echo -n ",$ratio," >> timing.csv
+
+        if [ $(echo "$ft_time > $std_time" | bc) -eq 1 ] &&
+           [ $(echo "$ratio > 20" | bc) -eq 1 ]; then
+            echo "KO" >> timing.csv
+        else
+            echo "OK" >> timing.csv
+        fi
+
+    done
+}
+
+display_timing_database()
+{
+    # TODO
+    # bold first line
+    # red when KO and green when OK
+    if [ -f timing.csv ]; then
+        column -t -s, -n timing.csv | less -F -S -X -K
+    fi
+}
+
+# DELETE
 record_execution_time ()
 {
     { time "./$1"; } 2>&1 >/dev/null | grep user | awk -F "m" '{ print $2 }'
 }
 
-compare_execution_time ()
+# DELETE
+old_compare_execution_time ()
 {
+
     for ft_bin in bin/timing/ft/* ; do
 
         std_bin="bin/timing/std/$(basename $ft_bin | sed 's/ft_/std_/')"
@@ -85,5 +129,7 @@ test_cc_version()
 #    echo "1"
 #fi
 
-test_cc_version
-#compare_execution_time
+#test_cc_version
+#old_compare_execution_time
+create_timing_database
+display_timing_database

@@ -87,7 +87,7 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 # 					op_less_than_equal.cpp
 # 					op_more_than_equal.cpp
 
-TIMING_SRC		=	at.cpp
+TIMING_SRC		=	at.cpp back.cpp begin.cpp capacity.cpp clear.cpp
 
 OUTPUT_SRC		=	all.cpp
 

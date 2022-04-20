@@ -1,11 +1,14 @@
+todo
 1. timing test for every vector member functions
-2. add reverse iterator to vector + test into all.cpp
-3. add ft_stack.hpp + tests
-4. separate folders between vector and stack (+ map in near futur)
-5. test lexicographical_compare
-6. templated tests (vector, stack, map)
+2. Makefile relink (ex: make timing)
+3. add reverse iterator to vector + test into all.cpp
+4. add ft_stack.hpp + tests
+5. separate folders between vector and stack (+ map in near futur)
+6. test lexicographical_compare
+7. test traits
+8. templated tests (vector, stack, map)
 
-NOTE
-- on s'en tient a un formattage des tests basique -> on paufinera ca a la fin
-- ikos ?
-- au lieu de `time` l'executable, enregistrer avec <chrono> pour tester les fonctions independamment !
+maybe
+- ikos
+- configure script
+- scripts folder
