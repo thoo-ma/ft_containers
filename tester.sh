@@ -46,4 +46,44 @@ compare_execution_time ()
     done
 }
 
-compare_execution_time
+test_cc_version()
+{
+    echo "
+    //#include "ft_type_traits.hpp"
+    //#include "ft_bidirectional_iterator.hpp"
+    //#include "ft_iterator_base_types.hpp"
+    //#include "ft_random_access_iterator.hpp"
+    //#include "ft_vector.hpp"
+    //#include "ft_lexicographical_compare.hpp"
+
+    //#include <chrono>
+
+    int main() { return 0; } " > main.cpp
+
+	g++ -std=c++98 -Wall -Wextra -fsyntax-only \
+    -I include \
+    -I include/containers \
+    -I include/algorithms \
+    -I include/iterators \
+    main.cpp 1>/dev/null 2>log_cc_version.txt
+
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}ERROR${RESET} ft_containers doesn't compile with c++98 standard (cf. log.txt)..."
+        rm main.cpp
+        return 1
+    else
+        echo -e "${GREEN}SUCESS${RESET} ft_containers compile with c++98 standard !"
+        rm log_cc_version.txt
+        rm main.cpp
+        return 0
+    fi
+}
+
+#if test_cc_version; then
+#    echo "0"
+#else
+#    echo "1"
+#fi
+
+test_cc_version
+#compare_execution_time
