@@ -11,6 +11,15 @@ maybe
 - ikos
 - configure script
 - scripts folder
+ -> test_timing
+ -> test_output
+ -> test_lexicographical_compare
+ -> test_type_traits
+ -> test_compiler_version
 - since we test timing with chrono instead of time, we don't need one executable by function.
---> why not put every test into one file ? (done at, back, begin, capacity, clear)
-- remove prefix ft_std des fichiers ? (les placer dans des dossiers ft/ et std/ suffisent)
+ -> why not put every test into one file ? (done at, back, begin, capacity, clear)
+- remove prefix ft_ std_ des fichiers ? (les placer dans des dossiers ft/ et std/ suffisent)
+- `make all` re-mkdir output folders but not timing ones...
+
+Makefile
+- -I when compiling from obj to bin ?
