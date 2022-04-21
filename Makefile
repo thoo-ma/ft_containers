@@ -33,6 +33,8 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 					$(ITERATORS_DIR)/ft_random_access_iterator.hpp \
 					$(ITERATORS_DIR)/ft_iterator_base_types.hpp
 
+HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS)
+
 ################### SOURCES ####################################################
 
 #TIMING_SRC		=	constructor_by_default.cpp \
@@ -109,10 +111,10 @@ NAME			=   a.out
 
 ################### TIMING TARGETS  ############################################
 
-$(TIMING_OBJ_FT):	$(TIMING_SOURCES) | obj/timing/ft
+$(TIMING_OBJ_FT):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/ft
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT -c $< -o $@
 
-$(TIMING_OBJ_STD):	$(TIMING_SOURCES) | obj/timing/std
+$(TIMING_OBJ_STD):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/std
 					$(CXX) $(CXXFLAGS) -D STD -c $< -o $@
 
 $(TIMING_BIN_FT):	$(TIMING_OBJ_FT) | bin/timing/ft
@@ -123,7 +125,7 @@ $(TIMING_BIN_STD):	$(TIMING_OBJ_STD) | bin/timing/std
 
 ################### OUTPUT TARGETS #############################################
 
-$(OUTPUT_OBJECTS):	$(OUTPUT_SOURCES) | obj/output
+$(OUTPUT_OBJECTS):	$(OUTPUT_SOURCES) $(HEADERS) | obj/output
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 $(OUTPUT_BINARIES):	$(OUTPUT_OBJECTS) | bin/output
@@ -139,7 +141,6 @@ bin/timing/ft:
 					mkdir -p bin/timing/ft
 bin/timing/std:
 					mkdir -p bin/timing/std
-
 obj/output:
 					mkdir -p obj/output
 bin/output:
