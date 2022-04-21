@@ -74,7 +74,7 @@ HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS)
 # 					op_less_than_equal.cpp
 # 					op_more_than_equal.cpp
 
-TIMING_SRC		=	at.cpp
+TIMING_SRC		=	at.cpp back.cpp begin.cpp# capacity.cpp clear.cpp
 
 OUTPUT_SRC		=	all.cpp
 
@@ -111,10 +111,12 @@ NAME			=   a.out
 
 ################### TIMING TARGETS  ############################################
 
-$(TIMING_OBJ_FT):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/ft
+#$(TIMING_OBJ_FT):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/ft
+obj/timing/ft/%.o:	src/timing/*.cpp $(HEADERS) | obj/timing/ft
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT -c $< -o $@
 
-$(TIMING_OBJ_STD):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/std
+#$(TIMING_OBJ_STD):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/std
+obj/timing/std/%.o:	src/timing/*.cpp $(HEADERS) | obj/timing/std
 					$(CXX) $(CXXFLAGS) -D STD -c $< -o $@
 
 $(TIMING_BIN_FT):	$(TIMING_OBJ_FT) | bin/timing/ft
@@ -148,7 +150,7 @@ bin/output:
 
 ################### MAIN TARGETS ###############################################
 
-timing:				$(TIMING_BINARIES)
+timing:				$(TIMING_OBJECTS)#$(TIMING_BINARIES)
 
 output:				$(OUTPUT_BINARIES)
 
