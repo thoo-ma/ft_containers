@@ -1,17 +1,10 @@
-################################################################################
-#                                                                              #
-#                   COMPILER                                                   #
-#                                                                              #
-################################################################################
+################### COMPILER ###################################################
 
 CXX				=	g++
+
 CXXFLAGS		=	-std=c++11 -Wall -Wextra# -Wconversion
 
-################################################################################
-#                                                                              #
-#                   DIRECTORIES                                                #
-#                                                                              #
-################################################################################
+################### DIRECTORIES ################################################
 
 SRC_DIR 		= 	src
 OBJ_DIR 		= 	obj
@@ -30,11 +23,7 @@ INCLUDE			=	-I include \
 					-I $(ALGORITHMS_DIR) \
 					-I $(ITERATORS_DIR)
 
-################################################################################
-#                                                                              #
-#                   HEADERS                                                    #
-#                                                                              #
-################################################################################
+################### HEADERS ####################################################
 
 CONTAINERS 		= 	$(CONTAINERS_DIR)/ft_vector.hpp
 
@@ -44,11 +33,7 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 					$(ITERATORS_DIR)/ft_random_access_iterator.hpp \
 					$(ITERATORS_DIR)/ft_iterator_base_types.hpp
 
-################################################################################
-#                                                                              #
-#                   SOURCES                                                    #
-#                                                                              #
-################################################################################
+################### SOURCES ####################################################
 
 #TIMING_SRC		=	constructor_by_default.cpp \
 #					constructor_by_copy.cpp \
@@ -94,11 +79,7 @@ OUTPUT_SRC		=	all.cpp
 TIMING_SOURCES	=	$(addprefix src/timing/, $(TIMING_SRC))
 OUTPUT_SOURCES	=	$(addprefix src/output/, $(OUTPUT_SRC))
 
-################################################################################
-#                                                                              #
-#                   OBJECTS                                                    #
-#                                                                              #
-################################################################################
+################### OBJECTS ####################################################
 
 TIMING_OBJ		=	$(addsuffix .o, $(basename $(TIMING_SRC)))
 OUTPUT_OBJ		=	$(addsuffix .o, $(basename $(OUTPUT_SRC)))
@@ -109,11 +90,7 @@ TIMING_OBJ_STD	=	$(addprefix obj/timing/std/std_, $(TIMING_OBJ))
 TIMING_OBJECTS	=	$(TIMING_OBJ_FT) $(TIMING_OBJ_STD)
 OUTPUT_OBJECTS	=	$(addprefix obj/output/, $(OUTPUT_OBJ))
 
-################################################################################
-#                                                                              #
-#                   BINARIES                                                   #
-#                                                                              #
-################################################################################
+################### BINARIES ###################################################
 
 TIMING_BIN		=	$(addsuffix .out, $(basename $(TIMING_SRC)))
 OUTPUT_BIN		=	$(addsuffix .out, $(basename $(OUTPUT_SRC)))
@@ -124,20 +101,11 @@ TIMING_BIN_STD	=	$(addprefix bin/timing/std/std_, $(TIMING_BIN))
 TIMING_BINARIES	=	$(TIMING_BIN_FT) $(TIMING_BIN_STD)
 OUTPUT_BINARIES	=	$(addprefix bin/output/, $(OUTPUT_BIN))
 
-################################################################################
-#                                                                              #
-#                   UTILS                                                      #
-#                                                                              #
-################################################################################
+################### UTILS  #####################################################
 
 RM				=	rm -rf
-NAME			=   a.out
 
-################################################################################
-#                                                                              #
-#                   TARGETS                                                    #
-#                                                                              #
-################################################################################
+NAME			=   a.out
 
 ################### TIMING TARGETS  ############################################
 
@@ -187,9 +155,6 @@ all: 				timing output # $(NAME)
 
 ################### UTILS TARGETS ##############################################
 
-help:
-					@echo "Usage: make output|timing|all"
-
 clean:
 					$(RM) $(OBJ_DIR)
 
@@ -198,6 +163,9 @@ fclean: 			clean
 
 re: 				fclean all
 
+help:
+					@echo "Usage: make output|timing|all"
+
 ################### PHONY FTW ##################################################
 
-.PHONY: 			obj/* bin/* timing output all help clean fclean re
+.PHONY: 			obj/* bin/* timing output all clean fclean re help
