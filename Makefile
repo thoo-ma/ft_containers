@@ -5,7 +5,7 @@
 ################################################################################
 
 CXX				=	g++
-CXXFLAGS		=	-std=c++11 -Wall -Wextra # -Wconversion
+CXXFLAGS		=	-std=c++11 -Wall -Wextra# -Wconversion
 
 ################################################################################
 #                                                                              #
@@ -87,12 +87,12 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 # 					op_less_than_equal.cpp
 # 					op_more_than_equal.cpp
 
-TIMING_SRC		=	at.cpp back.cpp begin.cpp capacity.cpp clear.cpp
+TIMING_SRC		=	at.cpp
 
 OUTPUT_SRC		=	all.cpp
 
-TIMING_SOURCES	=	$(addprefix $(SRC_DIR)/,$(addprefix timing/,$(TIMING_SRC)))
-OUTPUT_SOURCES	=	$(addprefix $(SRC_DIR)/,$(addprefix output/,$(OUTPUT_SRC)))
+TIMING_SOURCES	=	$(addprefix src/timing/, $(TIMING_SRC))
+OUTPUT_SOURCES	=	$(addprefix src/output/, $(OUTPUT_SRC))
 
 ################################################################################
 #                                                                              #
@@ -103,8 +103,11 @@ OUTPUT_SOURCES	=	$(addprefix $(SRC_DIR)/,$(addprefix output/,$(OUTPUT_SRC)))
 TIMING_OBJ		=	$(addsuffix .o, $(basename $(TIMING_SRC)))
 OUTPUT_OBJ		=	$(addsuffix .o, $(basename $(OUTPUT_SRC)))
 
-TIMING_OBJECTS	=	$(addprefix $(OBJ_DIR)/,$(addprefix timing/,$(TIMING_OBJ)))
-OUTPUT_OBJECTS	=	$(addprefix $(OBJ_DIR)/,$(addprefix output/,$(OUTPUT_OBJ)))
+TIMING_OBJ_FT	=	$(addprefix obj/timing/ft/ft_,   $(TIMING_OBJ))
+TIMING_OBJ_STD	=	$(addprefix obj/timing/std/std_, $(TIMING_OBJ))
+
+TIMING_OBJECTS	=	$(TIMING_OBJ_FT) $(TIMING_OBJ_STD)
+OUTPUT_OBJECTS	=	$(addprefix obj/output/, $(OUTPUT_OBJ))
 
 ################################################################################
 #                                                                              #
@@ -115,8 +118,11 @@ OUTPUT_OBJECTS	=	$(addprefix $(OBJ_DIR)/,$(addprefix output/,$(OUTPUT_OBJ)))
 TIMING_BIN		=	$(addsuffix .out, $(basename $(TIMING_SRC)))
 OUTPUT_BIN		=	$(addsuffix .out, $(basename $(OUTPUT_SRC)))
 
-TIMING_BINARIES	=	$(addprefix $(BIN_DIR)/,$(addprefix timing/,$(TIMING_BIN)))
-OUTPUT_BINARIES	=	$(addprefix $(BIN_DIR)/,$(addprefix output/,$(OUTPUT_BIN)))
+TIMING_BIN_FT	=	$(addprefix bin/timing/ft/ft_,   $(TIMING_BIN))
+TIMING_BIN_STD	=	$(addprefix bin/timing/std/std_, $(TIMING_BIN))
+
+TIMING_BINARIES	=	$(TIMING_BIN_FT) $(TIMING_BIN_STD)
+OUTPUT_BINARIES	=	$(addprefix bin/output/, $(OUTPUT_BIN))
 
 ################################################################################
 #                                                                              #
@@ -133,68 +139,53 @@ NAME			=   a.out
 #                                                                              #
 ################################################################################
 
-debug:
-#					@echo "TIMING_SRC: " $(TIMING_SRC)
-#					@echo "TIMING_OBJ: " $(TIMING_OBJ)
-#					@echo "TIMING_BIN: " $(TIMING_BIN)
-#					@echo "TIMING_SOURCES: " $(TIMING_SOURCES)
-#					@echo "TIMING_OBJECTS: " $(TIMING_OBJECTS)
-#					@echo "TIMING_BINARIES: " $(TIMING_BINARIES)
-#					@echo $(ITERATORS)
-#					@echo $(foreach header, $(ITERATORS), $(addprefix iterators/, $(header)))
-#					$( join()) !!!
+################### TIMING TARGETS  ############################################
 
+$(TIMING_OBJ_FT):	$(TIMING_SOURCES) | obj/timing/ft
+					$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT -c $< -o $@
 
-################### TIMING TESTS ###############################################
+$(TIMING_OBJ_STD):	$(TIMING_SOURCES) | obj/timing/std
+					$(CXX) $(CXXFLAGS) -D STD -c $< -o $@
 
-#$(OBJ_DIR)/$(TIMING_DIR)/%.o: $(SRC_DIR)/$(TIMING_DIR)/%.cpp
-obj/timing/%.o:		src/timing/%.cpp
-					$(CXX) $(CXXFLAGS) $(INCLUDE) -D STD -c $< \
-					-o $(addprefix $(dir $@)std/, $(addprefix std_, $(notdir $@)))
-					$(CXX) $(CXXFLAGS) $(INCLUDE) -D  FT -c $< \
-					-o $(addprefix $(dir $@)ft/,  $(addprefix ft_,  $(notdir $@)))
+$(TIMING_BIN_FT):	$(TIMING_OBJ_FT) | bin/timing/ft
+					$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT $< -o $@
 
-#$(BIN_DIR)/$(TIMING_DIR)/%.o: $(OBJ_DIR)/$(TIMING_DIR)/%.cpp
-bin/timing/%.out:	obj/timing/%.o
-					$(CXX) $(CXXFLAGS) $(INCLUDE) -D STD \
-					$(addprefix $(dir $<)std/, $(addprefix std_, $(notdir $<))) \
-					-o $(addprefix $(dir $@)std/, $(addprefix std_, $(notdir $@)))
-					$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT \
-					-o $(addprefix $(dir $@)ft/,  $(addprefix ft_,  $(notdir $@))) \
-					$(addprefix $(dir $<)ft/, $(addprefix ft_, $(notdir $<)))
+$(TIMING_BIN_STD):	$(TIMING_OBJ_STD) | bin/timing/std
+					$(CXX) $(CXXFLAGS) -D STD $< -o $@
 
-################### OUTPUT TESTS ###############################################
+################### OUTPUT TARGETS #############################################
 
-obj/output/%.o:		src/output/%.cpp
-					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< \
-					-o $(addprefix obj/output/, $(notdir $@))
+$(OUTPUT_OBJECTS):	$(OUTPUT_SOURCES) | obj/output
+					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
-bin/output/%.out:	obj/output/%.o
-					$(CXX) $(CXXFLAGS) $(INCLUDE) $< \
-					-o $(addprefix bin/output/, $(notdir $@))
+$(OUTPUT_BINARIES):	$(OUTPUT_OBJECTS) | bin/output
+					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
 
-################### TARGETS ####################################################
+################### DIRECTORIES TARGETS ########################################
 
-# cf.
-# https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
-output_dirs:
-					mkdir -p $(OBJ_DIR)/output/
-					mkdir -p $(BIN_DIR)/output/
+obj/timing/ft:
+					mkdir -p obj/timing/ft
+obj/timing/std:
+					mkdir -p obj/timing/std
+bin/timing/ft:
+					mkdir -p bin/timing/ft
+bin/timing/std:
+					mkdir -p bin/timing/std
 
-timing_dirs:
-					mkdir -p $(OBJ_DIR)/timing/ft
-					mkdir -p $(OBJ_DIR)/timing/std
-					mkdir -p $(BIN_DIR)/timing/ft
-					mkdir -p $(BIN_DIR)/timing/std
+obj/output:
+					mkdir -p obj/output
+bin/output:
+					mkdir -p bin/output
 
-#test "output" : dir "obj" "output"
-#test "timing" : dir "obj" "timing"
+################### MAIN TARGETS ###############################################
 
-timing:				timing_dirs | $(TIMING_OBJECTS) $(TIMING_BINARIES)
-output:				output_dirs | $(OUTPUT_OBJECTS) $(OUTPUT_BINARIES)
+timing:				$(TIMING_BINARIES)
 
-all: 				timing output
-#all: 				$(NAME)
+output:				$(OUTPUT_BINARIES)
+
+all: 				timing output # $(NAME)
+
+################### UTILS TARGETS ##############################################
 
 help:
 					@echo "Usage: make output|timing|all"
@@ -207,4 +198,6 @@ fclean: 			clean
 
 re: 				fclean all
 
-.PHONY: 			all clean fclean re help directories
+################### PHONY FTW ##################################################
+
+.PHONY: 			obj/* bin/* timing output all help clean fclean re

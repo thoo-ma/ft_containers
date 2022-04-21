@@ -1,14 +1,16 @@
 todo
 1. timing test for every vector member functions
-2. Makefile relink (ex: make timing)
-3. add reverse iterator to vector + test into all.cpp
-4. add ft_stack.hpp + tests
-5. separate folders between vector and stack (+ map in near futur)
-6. test lexicographical_compare
-7. test traits
-8. templated tests (vector, stack, map)
+2. add reverse iterator to vector + test into all.cpp
+3. add ft_stack.hpp + tests
+4. separate folders between vector and stack (+ map in near futur)
+5. test lexicographical_compare
+6. test traits
+7. templated tests (vector, stack, map)
 
 maybe
 - ikos
 - configure script
 - scripts folder
+- since we test timing with chrono instead of time, we don't need one executable by function.
+--> why not put every test into one file ? (done at, back, begin, capacity, clear)
+- remove prefix ft_std des fichiers ? (les placer dans des dossiers ft/ et std/ suffisent)
