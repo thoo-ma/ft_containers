@@ -964,17 +964,11 @@ equal_test()
 void
 not_equal_test()
 {
-    { assert(ft::vector<int>() != ft::vector<int>(10)); }
-    { assert(ft::vector<int>(10) != ft::vector<int>(10, 21)); }
-    { assert(ft::vector<int>(10, 21) != ft::vector<int>(10, 42)); }
-    std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
-}
+    assert(ft::vector<int>() != ft::vector<int>(10));
+    assert(ft::vector<int>(10) != ft::vector<int>(10, 21));
+    assert(ft::vector<int>(10, 21) != ft::vector<int>(10, 42));
 
-void
-less_than()
-{
-    // TODO
-    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+    std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
 }
 
 void
@@ -1029,13 +1023,86 @@ vector_assignation_test()
 }
 
 void
+less_than_test()
+{
+    {
+        // with different sizes
+        assert(ft::vector<int>() < ft::vector<int>(1));
+        assert(ft::vector<int>(0) < ft::vector<int>(1));
+        assert(ft::vector<int>(1) < ft::vector<int>(2));
+
+        // with different values
+        assert(ft::vector<int>(1, 21) < ft::vector<int>(1, 42));
+    }
+    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+greater_than_test()
+{
+    {
+        // with different sizes
+        assert(ft::vector<int>(1) > ft::vector<int>());
+        assert(ft::vector<int>(1) > ft::vector<int>(0));
+        assert(ft::vector<int>(2) > ft::vector<int>(1));
+
+        // with different values
+        assert(ft::vector<int>(1, 42) > ft::vector<int>(1, 21));
+    }
+    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+less_than_equal_test()
+{
+    {
+        // with different sizes
+        assert(ft::vector<int>() <= ft::vector<int>());
+        assert(ft::vector<int>() <= ft::vector<int>(1));
+        assert(ft::vector<int>(0) <= ft::vector<int>(0));
+        assert(ft::vector<int>(0) <= ft::vector<int>(1));
+        assert(ft::vector<int>(1) <= ft::vector<int>(1));
+        assert(ft::vector<int>(1) <= ft::vector<int>(2));
+
+        // with different values
+        assert(ft::vector<int>(1, 21) <= ft::vector<int>(1, 21));
+        assert(ft::vector<int>(1, 21) <= ft::vector<int>(1, 42));
+        assert(ft::vector<int>(1, 21) <= ft::vector<int>(2, 21));
+    }
+    std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+greater_than_equal_test()
+{
+    {
+        // with different sizes
+        assert(ft::vector<int>() >= ft::vector<int>());
+        assert(ft::vector<int>(1) >= ft::vector<int>());
+        assert(ft::vector<int>(0) >= ft::vector<int>(0));
+        assert(ft::vector<int>(1) >= ft::vector<int>(0));
+        assert(ft::vector<int>(1) >= ft::vector<int>(1));
+        assert(ft::vector<int>(2) >= ft::vector<int>(1));
+
+        // with different values
+        assert(ft::vector<int>(1, 21) >= ft::vector<int>(1, 21));
+        assert(ft::vector<int>(1, 42) >= ft::vector<int>(1, 21));
+        assert(ft::vector<int>(2, 21) >= ft::vector<int>(1, 21));
+    }
+    std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
 operators_tests()
 {
     std::cout << "== Operators ==" << std::endl;
     equal_test();
     not_equal_test();
-    less_than();
     vector_assignation_test();
+    less_than_test();
+    greater_than_test();
+    less_than_equal_test();
+    greater_than_equal_test();
 }
 
 /****** Iterators tests *******************************************************/
@@ -1459,15 +1526,15 @@ int main()
     //vector_test<int>();
     //vector_test<double>();
 
-    allocator_test(); // TODO
-    constructors_test(); // TODO
+ //   allocator_test(); // TODO
+ //   constructors_test(); // TODO
 
-    capacity_tests();
-    accessors_tests();
-    modifiers_tests(); // TODO
+ //   capacity_tests();
+ //   accessors_tests();
+ //   modifiers_tests(); // TODO
     operators_tests();
 
-    iterators_tests();
+//    iterators_tests();
 
     return 0;
 }

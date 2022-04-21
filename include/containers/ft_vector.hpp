@@ -6,6 +6,7 @@
 //#include "ft_type_traits.hpp"
 #include "ft_random_access_iterator.hpp"
 #include "ft_iterator_base_types.hpp"
+#include "ft_lexicographical_compare.hpp"
 
 #include <memory> // std::allocator
 #include <stdexcept> // std::out_of_range --> rewrite it for namespace ft ?
@@ -514,10 +515,8 @@ bool operator!=(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 template <class T, class Alloc>
 bool operator<(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 {
-    //return
-    //ft::lexicographical_compare<typename lhs::iterator, typename rhs::iterator>
-    //(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-    return false;
+    return
+    lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template <class T, class Alloc>
@@ -526,11 +525,11 @@ bool operator>(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 
 template <class T, class Alloc>
 bool operator<=(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
-    { return !(rhs > lhs); }
+    { return !(lhs > rhs); }
 
 template <class T, class Alloc>
 bool operator>=(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
-    { return !(lhs > rhs); }
+    { return !(lhs < rhs); }
 
 } // namespace ft
 
