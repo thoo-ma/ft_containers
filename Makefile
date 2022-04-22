@@ -61,7 +61,7 @@ HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS)
 #					get_allocator.cpp \
 #					op_equal.cpp \
 #					op_non_equal.cpp
-# 					clear.cpp # tester independamment du constructor clear
+# 					clear.cpp
 # 					insert_by_element.cpp
 # 					insert_by_fill.cpp
 # 					insert_by_range.cpp
@@ -111,19 +111,17 @@ NAME			=   a.out
 
 ################### TIMING TARGETS  ############################################
 
-#$(TIMING_OBJ_FT):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/ft
-obj/timing/ft/%.o:	src/timing/*.cpp $(HEADERS) | obj/timing/ft
-					$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT -c $< -o $@
+obj/timing/ft/ft_%.o:		src/timing/%.cpp $(HEADERS) | obj/timing/ft
+							$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT -c $< -o $@
 
-#$(TIMING_OBJ_STD):	$(TIMING_SOURCES) $(HEADERS) | obj/timing/std
-obj/timing/std/%.o:	src/timing/*.cpp $(HEADERS) | obj/timing/std
-					$(CXX) $(CXXFLAGS) -D STD -c $< -o $@
+obj/timing/std/std_%.o:		src/timing/%.cpp $(HEADERS) | obj/timing/std
+							$(CXX) $(CXXFLAGS) -D STD -c $< -o $@
 
-$(TIMING_BIN_FT):	$(TIMING_OBJ_FT) | bin/timing/ft
-					$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT $< -o $@
+bin/timing/ft/ft_%.out:		obj/timing/ft/ft_%.o | bin/timing/ft
+							$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT $< -o $@
 
-$(TIMING_BIN_STD):	$(TIMING_OBJ_STD) | bin/timing/std
-					$(CXX) $(CXXFLAGS) -D STD $< -o $@
+bin/timing/std/std_%.out:	obj/timing/std/std_%.o | bin/timing/std
+							$(CXX) $(CXXFLAGS) -D STD $< -o $@
 
 ################### OUTPUT TARGETS #############################################
 
@@ -135,39 +133,35 @@ $(OUTPUT_BINARIES):	$(OUTPUT_OBJECTS) | bin/output
 
 ################### DIRECTORIES TARGETS ########################################
 
-obj/timing/ft:
-					mkdir -p obj/timing/ft
-obj/timing/std:
-					mkdir -p obj/timing/std
-bin/timing/ft:
-					mkdir -p bin/timing/ft
-bin/timing/std:
-					mkdir -p bin/timing/std
-obj/output:
-					mkdir -p obj/output
-bin/output:
-					mkdir -p bin/output
+obj/timing/ft:	; 	mkdir -p obj/timing/ft
+
+obj/timing/std:	;	mkdir -p obj/timing/std
+
+bin/timing/ft:	;	mkdir -p bin/timing/ft
+
+bin/timing/std:	;	mkdir -p bin/timing/std
+
+obj/output:		;	mkdir -p obj/output
+
+bin/output:		;	mkdir -p bin/output
 
 ################### MAIN TARGETS ###############################################
 
-timing:				$(TIMING_OBJECTS)#$(TIMING_BINARIES)
+timing:				$(TIMING_OBJECTS) $(TIMING_BINARIES)
 
-output:				$(OUTPUT_BINARIES)
+output:				$(OUTPUT_OBJECTS) $(OUTPUT_BINARIES)
 
 all: 				timing output # $(NAME)
 
 ################### UTILS TARGETS ##############################################
 
-clean:
-					$(RM) $(OBJ_DIR)
+clean:			;	$(RM) $(OBJ_DIR)
 
-fclean: 			clean
-					$(RM) $(BIN_DIR)
+fclean:	clean	;	$(RM) $(BIN_DIR)
 
-re: 				fclean all
+re:		fclean all
 
-help:
-					@echo "Usage: make output|timing|all"
+help:			;	@echo "Usage: make output|timing|all"
 
 ################### PHONY FTW ##################################################
 
