@@ -107,15 +107,17 @@ void timing_test_vector_back(std::ofstream & outfile)
 template <typename Vector>
 double get_timing_vector_begin()
 {
-    // data we will operate on
-    Vector v(10, 42);
+    Vector v1;
+    Vector v2(10, 42);
 
     // starting point
     time_point<system_clock> start = system_clock::now();
 
     // compute
-    for (int i = 0; i < 100000000; i++)
-        (void)v.begin();
+    for (int i = 0; i < 1000000; i++) {
+        (void)v1.begin();
+        (void)v2.begin();
+    }
 
     // ending point
     time_point<system_clock> end = system_clock::now();
@@ -431,14 +433,17 @@ template <typename Vector>
 double get_timing_vector_end()
 {
     // data we will operate on
-    Vector v(10, 42);
+    Vector v1;
+    Vector v2(10, 42);
 
     // starting point
     time_point<system_clock> start = system_clock::now();
 
     // compute
-    for (int i = 0; i < 100000000; i++)
-        (void)v.end();
+    for (int i = 0; i < 1000000; i++) {
+        (void)v1.end();
+        (void)v2.end();
+    }
 
     // ending point
     time_point<system_clock> end = system_clock::now();
@@ -1224,24 +1229,25 @@ int main()
     // tests (each one append a line to outfile)
 
     // allocator
-    timing_test_vector_get_allocator(outfile);
+//    timing_test_vector_get_allocator(outfile);
 
-  // constructors
-    timing_test_vector_constructor_by_default(outfile);
-    timing_test_vector_constructor_by_fill(outfile);
-    timing_test_vector_constructor_by_copy(outfile);
-    timing_test_vector_constructor_by_range(outfile);
+    // constructors
+//    timing_test_vector_constructor_by_default(outfile);
+//    timing_test_vector_constructor_by_fill(outfile);
+//    timing_test_vector_constructor_by_copy(outfile);
+//    timing_test_vector_constructor_by_range(outfile);
 
-  // capacity
-    timing_test_vector_empty(outfile);
-    timing_test_vector_size(outfile);
-    timing_test_vector_max_size(outfile);
-    timing_test_vector_capacity(outfile);
-    timing_test_vector_reserve(outfile);
+    // capacity
+//    timing_test_vector_empty(outfile);
+//    timing_test_vector_size(outfile);
+//    timing_test_vector_max_size(outfile);
+//    timing_test_vector_capacity(outfile);
+//    timing_test_vector_reserve(outfile);
 
-    // iterators TODO
-//    timing_test_vector_begin(outfile);
-//    timing_test_vector_end(outfile);
+    // iterators
+    timing_test_vector_begin(outfile);
+    timing_test_vector_end(outfile);
+// TODO
 //    timing_test_vector_iterator_constructors(outfile);
 //    timing_test_vector_iterator_assignation(outfile);
 //    timing_test_vector_iterator_dereference(outfile);
@@ -1259,28 +1265,28 @@ int main()
 //    timing_test_vector_iterator_sub_then_assign(outfile);
 
     // accessors
-    timing_test_vector_at(outfile);
-    timing_test_vector_back(outfile);
-    timing_test_vector_front(outfile);
-    timing_test_vector_op_bracket(outfile);
+//    timing_test_vector_at(outfile);
+//    timing_test_vector_back(outfile);
+//    timing_test_vector_front(outfile);
+//    timing_test_vector_op_bracket(outfile);
 
-  // modifiers
-    timing_test_vector_clear(outfile); // KO
-    timing_test_vector_erase(outfile);
-    timing_test_vector_insert(outfile); // KO
-    timing_test_vector_push_back(outfile); // KO
-    timing_test_vector_pop_back(outfile);
-    timing_test_vector_resize(outfile); // KO
-    timing_test_vector_swap(outfile);
+    // modifiers
+//    timing_test_vector_clear(outfile); // KO
+//    timing_test_vector_erase(outfile);
+//    timing_test_vector_insert(outfile); // KO
+//    timing_test_vector_push_back(outfile); // KO
+//    timing_test_vector_pop_back(outfile);
+//    timing_test_vector_resize(outfile); // KO
+//    timing_test_vector_swap(outfile);
 
-  // operators
-    timing_test_vector_op_assign(outfile);
-    timing_test_vector_op_equal(outfile);
-    timing_test_vector_op_not_equal(outfile);
-    timing_test_vector_op_less_than(outfile);
-    timing_test_vector_op_less_than_equal(outfile);
-    timing_test_vector_op_greater_than(outfile);
-    timing_test_vector_op_greater_than_equal(outfile);
+    // operators
+//    timing_test_vector_op_assign(outfile);
+//    timing_test_vector_op_equal(outfile);
+//    timing_test_vector_op_not_equal(outfile);
+//    timing_test_vector_op_less_than(outfile);
+//    timing_test_vector_op_less_than_equal(outfile);
+//    timing_test_vector_op_greater_than(outfile);
+//    timing_test_vector_op_greater_than_equal(outfile);
 
     // close file
     outfile.close();
