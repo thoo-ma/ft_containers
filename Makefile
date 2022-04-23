@@ -35,74 +35,6 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 
 HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS)
 
-################### SOURCES ####################################################
-
-#TIMING_SRC		=	constructor_by_default.cpp \
-#					constructor_by_copy.cpp \
-#					constructor_by_fill.cpp \
-#					constructor_by_range.cpp \
-#					at.cpp \
-#					front.cpp \
-#					back.cpp \
-#					empty.cpp \
-#					reserve.cpp \
-#					size.cpp \
-#					max_size.cpp \
-#					capacity.cpp \
-#					clear.cpp \
-#					push_back.cpp \
-#					pop_back.cpp \
-#					resize.cpp \
-#					swap.cpp \
-#					begin.cpp \
-#					end.cpp \
-#					op_bracket.cpp \
-#					op_assign \
-#					get_allocator.cpp \
-#					op_equal.cpp \
-#					op_non_equal.cpp
-# 					clear.cpp
-# 					insert_by_element.cpp
-# 					insert_by_fill.cpp
-# 					insert_by_range.cpp
-# 					erase_by_position.cpp
-# 					erase_by_range.cpp
-# 					assign_by_fill.cpp
-# 					assign_by_range.cpp
-# 					op_less_than.cpp
-# 					op_more_than.cpp
-# 					op_less_than_equal.cpp
-# 					op_more_than_equal.cpp
-
-TIMING_SRC		=	at.cpp back.cpp begin.cpp# capacity.cpp clear.cpp
-
-OUTPUT_SRC		=	all.cpp
-
-TIMING_SOURCES	=	$(addprefix src/timing/, $(TIMING_SRC))
-OUTPUT_SOURCES	=	$(addprefix src/output/, $(OUTPUT_SRC))
-
-################### OBJECTS ####################################################
-
-TIMING_OBJ		=	$(addsuffix .o, $(basename $(TIMING_SRC)))
-OUTPUT_OBJ		=	$(addsuffix .o, $(basename $(OUTPUT_SRC)))
-
-TIMING_OBJ_FT	=	$(addprefix obj/timing/ft/ft_,   $(TIMING_OBJ))
-TIMING_OBJ_STD	=	$(addprefix obj/timing/std/std_, $(TIMING_OBJ))
-
-TIMING_OBJECTS	=	$(TIMING_OBJ_FT) $(TIMING_OBJ_STD)
-OUTPUT_OBJECTS	=	$(addprefix obj/output/, $(OUTPUT_OBJ))
-
-################### BINARIES ###################################################
-
-TIMING_BIN		=	$(addsuffix .out, $(basename $(TIMING_SRC)))
-OUTPUT_BIN		=	$(addsuffix .out, $(basename $(OUTPUT_SRC)))
-
-TIMING_BIN_FT	=	$(addprefix bin/timing/ft/ft_,   $(TIMING_BIN))
-TIMING_BIN_STD	=	$(addprefix bin/timing/std/std_, $(TIMING_BIN))
-
-TIMING_BINARIES	=	$(TIMING_BIN_FT) $(TIMING_BIN_STD)
-OUTPUT_BINARIES	=	$(addprefix bin/output/, $(OUTPUT_BIN))
-
 ################### UTILS  #####################################################
 
 RM				=	rm -rf
@@ -111,35 +43,25 @@ NAME			=   a.out
 
 ################### TIMING TARGETS  ############################################
 
-obj/timing/ft/ft_%.o:		src/timing/%.cpp $(HEADERS) | obj/timing/ft
-							$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT -c $< -o $@
+obj/timing/%.o:		src/timing/%.cpp $(HEADERS) | obj/timing
+					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
-obj/timing/std/std_%.o:		src/timing/%.cpp $(HEADERS) | obj/timing/std
-							$(CXX) $(CXXFLAGS) -D STD -c $< -o $@
-
-bin/timing/ft/ft_%.out:		obj/timing/ft/ft_%.o | bin/timing/ft
-							$(CXX) $(CXXFLAGS) $(INCLUDE) -D FT $< -o $@
-
-bin/timing/std/std_%.out:	obj/timing/std/std_%.o | bin/timing/std
-							$(CXX) $(CXXFLAGS) -D STD $< -o $@
+bin/timing/%.out:	obj/timing/%.o | bin/timing
+					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
 
 ################### OUTPUT TARGETS #############################################
 
-$(OUTPUT_OBJECTS):	$(OUTPUT_SOURCES) $(HEADERS) | obj/output
+obj/output/%.o:		src/output/%.cpp $(HEADERS) | obj/output
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
-$(OUTPUT_BINARIES):	$(OUTPUT_OBJECTS) | bin/output
+bin/output/%.out:	obj/output/%.o | bin/output
 					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
 
 ################### DIRECTORIES TARGETS ########################################
 
-obj/timing/ft:	; 	mkdir -p obj/timing/ft
+obj/timing:		;	mkdir -p obj/timing
 
-obj/timing/std:	;	mkdir -p obj/timing/std
-
-bin/timing/ft:	;	mkdir -p bin/timing/ft
-
-bin/timing/std:	;	mkdir -p bin/timing/std
+bin/timing:		;	mkdir -p bin/timing
 
 obj/output:		;	mkdir -p obj/output
 
@@ -147,9 +69,17 @@ bin/output:		;	mkdir -p bin/output
 
 ################### MAIN TARGETS ###############################################
 
-timing:				$(TIMING_OBJECTS) $(TIMING_BINARIES)
+output_stack:		bin/output/output_stack.out
 
-output:				$(OUTPUT_OBJECTS) $(OUTPUT_BINARIES)
+output_vector:		bin/output/output_vector.out
+
+output:				output_stack output_vector
+
+timing_stack:		bin/timing/timing_stack.out
+
+timing_vector:		bin/timing/timing_vector.out
+
+timing:				timing_stack timing_vector
 
 all: 				timing output # $(NAME)
 
@@ -163,6 +93,6 @@ re:		fclean all
 
 help:			;	@echo "Usage: make output|timing|all"
 
-################### PHONY FTW ##################################################
+.SECONDARY:			# preserve .o files from automatic deletion
 
 .PHONY: 			obj/* bin/* timing output all clean fclean re help

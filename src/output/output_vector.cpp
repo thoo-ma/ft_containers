@@ -1532,7 +1532,7 @@ int main()
  //   capacity_tests();
  //   accessors_tests();
  //   modifiers_tests(); // TODO
-    operators_tests();
+//    operators_tests();
 
 //    iterators_tests();
 

@@ -1,11 +1,18 @@
 todo
-1. timing test for every vector member functions
-2. add reverse iterator to vector + test into all.cpp
-3. add ft_stack.hpp + tests
-4. separate folders between vector and stack (+ map in near futur)
-5. test lexicographical_compare
-6. test traits
-7. templated tests (vector, stack, map)
+1. add reverse iterator to vector + test into all.cpp
+2. add ft_stack.hpp + tests
+3. separate folders between vector and stack (+ map in near futur)
+4. test lexicographical_compare
+5. test traits
+6. templated tests (vector, stack, map)
+________
+
+vector_timing > 20
+- clear
+- push_back
+- resize
+- insert
+________
 
 maybe
 - ikos
@@ -20,6 +27,8 @@ maybe
  -> why not put every test into one file ? (done at, back, begin, capacity, clear)
 - remove prefix ft_ std_ des fichiers ? (les placer dans des dossiers ft/ et std/ suffisent)
 - `make all` re-mkdir output folders but not timing ones...
+________
 
 Makefile
 - -I when compiling from obj to bin ?
+________
