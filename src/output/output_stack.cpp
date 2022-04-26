@@ -8,6 +8,8 @@
 #include "ft_stack.hpp"
 #include "ft_vector.hpp"
 
+#include "../utils/colors.hpp"
+
 class Foo { };
 
 /****** Constructor test ******************************************************/
@@ -97,8 +99,6 @@ void stack_pop_test()
 
 int main()
 {
-//    allocator_test(); // TODO: first complete into output_vector.cpp
-
 //    stack_constructor_test<int>();
 //    stack_constructor_test<double>();
 //    stack_constructor_test<Foo>(); // TODO: first construct vector with Foo
