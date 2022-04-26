@@ -156,7 +156,7 @@ void
 constructors_test()
 {
     constructor_by_default_test();
-    constructor_by_fill_test(); // TODO
+    constructor_by_fill_test();
     constructor_by_copy_test();
     constructor_by_iterator_range_test();
     constructor_upon_heap_test();
@@ -171,14 +171,11 @@ get_allocator_test()
     assert(ft::vector<int>().get_allocator() == std::allocator<float>());
     assert(ft::vector<int>().get_allocator() == std::vector<int>().get_allocator());
 
-    // Didn't find a way et to test it well.
-    // Can't get (supposed...) type members like `value_type`
+    assert((std::is_same<ft::vector<int>::allocator_type::value_type, int>::value));
+    assert((std::is_same<ft::vector<int>::allocator_type::value_type,
+            std::vector<int>::allocator_type::value_type>::value));
 
-   // asert((std::is_same<
-   //             std::vector<int>().get_allocator()::value_type,
-   //             std::allocator<float>()::value_type >
-   // ));
-   // see. https://stackoverflow.com/a/40598287 for explanation about doubling brackets
+   // see. https://stackoverflow.com/a/40598287 about doubling brackets
 
     std::cout << "get_allocator() " << GREEN << "OK" << RESET << std::endl;
 }
@@ -198,7 +195,7 @@ allocator_test()
 //
 //    std::cout << "max_size allocator<int>:  " << a1.max_size() << std::endl;
 //    std::cout << "max_size allocator<bool>: " << a2.max_size() << std::endl;
-    
+
     get_allocator_test();
 }
 
