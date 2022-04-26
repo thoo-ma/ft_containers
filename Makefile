@@ -42,6 +42,14 @@ RM				=	rm -rf
 
 NAME			=   a.out
 
+################### TRAITS TARGETS  ############################################
+
+obj/traits/%.o:		src/traits/%.cpp $(HEADERS) | obj/traits
+					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
+
+bin/traits/%.out:	obj/traits/%.o | bin/traits
+					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
+
 ################### TIMING TARGETS  ############################################
 
 obj/timing/%.o:		src/timing/%.cpp $(HEADERS) | obj/timing
@@ -59,6 +67,10 @@ bin/output/%.out:	obj/output/%.o | bin/output
 					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
 
 ################### DIRECTORIES TARGETS ########################################
+
+obj/traits:		;	mkdir -p obj/traits
+
+bin/traits:		;	mkdir -p bin/traits
 
 obj/timing:		;	mkdir -p obj/timing
 
@@ -82,7 +94,9 @@ timing_vector:		bin/timing/timing_vector.out
 
 timing:				timing_stack timing_vector
 
-all: 				timing output # $(NAME)
+traits:				bin/traits/is_integral.out
+
+all: 				timing output traits# $(NAME)
 
 ################### UTILS TARGETS ##############################################
 
