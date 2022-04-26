@@ -227,7 +227,7 @@ class vector {
             // save size
             size_type size = _size;
             // destroy (reset size at 0 !)
-            clear();
+            if (_size) clear();
             // update size
             _size = size;
             // deallocate
