@@ -45,7 +45,7 @@ class stack {
     empty() const
     { return _c.empty(); }
 
-    bool
+    size_type
     size() const
     { return _c.size(); }
 
@@ -59,11 +59,11 @@ class stack {
 
     void
     push(const value_type & val)
-    { return _c.push.back(val); }
+    { return _c.push_back(val); }
 
     void
     pop()
-    { return _c.pop.back(); }
+    { return _c.pop_back(); }
 
 };
 
