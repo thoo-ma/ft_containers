@@ -4,8 +4,7 @@ todo
 3. add ft_stack.hpp + tests
 4. add ft_map.hpp + tests + pair/make_pair
 5. test lexicographical_compare
-6. test traits
-7. templated tests (vector, stack, map)
+6. templated tests (vector, stack, map)
 ________
 
 vector_timing > 20
@@ -19,8 +18,6 @@ maybe
 - ikos
 - configure script
 - `make all` re-mkdir output folders but not timing ones...
-________
-
-Makefile
-- -I when compiling from obj to bin ?
+- rename src/ into test/
+- addtype_traits tests
 ________

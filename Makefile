@@ -48,7 +48,7 @@ obj/traits/%.o:		src/traits/%.cpp $(HEADERS) | obj/traits
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 bin/traits/%.out:	obj/traits/%.o | bin/traits
-					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
+					$(CXX) $(CXXFLAGS) $< -o $@
 
 ################### TIMING TARGETS  ############################################
 
@@ -56,7 +56,7 @@ obj/timing/%.o:		src/timing/%.cpp $(HEADERS) | obj/timing
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 bin/timing/%.out:	obj/timing/%.o | bin/timing
-					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
+					$(CXX) $(CXXFLAGS) $< -o $@
 
 ################### OUTPUT TARGETS #############################################
 
@@ -64,7 +64,7 @@ obj/output/%.o:		src/output/%.cpp $(HEADERS) | obj/output
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 bin/output/%.out:	obj/output/%.o | bin/output
-					$(CXX) $(CXXFLAGS) $(INCLUDE) $< -o $@
+					$(CXX) $(CXXFLAGS) $< -o $@
 
 ################### DIRECTORIES TARGETS ########################################
 
