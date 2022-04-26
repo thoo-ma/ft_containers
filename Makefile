@@ -25,7 +25,8 @@ INCLUDE			=	-I include \
 
 ################### HEADERS ####################################################
 
-CONTAINERS 		= 	$(CONTAINERS_DIR)/ft_vector.hpp
+CONTAINERS 		= 	$(CONTAINERS_DIR)/ft_vector.hpp \
+					$(CONTAINERS_DIR)/ft_stack.hpp
 
 ALGORITHMS 		= 	$(ALGORITHMS_DIR)/ft_lexicographical_compare.hpp
 
