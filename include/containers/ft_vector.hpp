@@ -284,7 +284,7 @@ class vector {
     //insert (iterator position, InputIterator first, InputIterator last)
     {
         // reallocate
-        if (_capacity - _size < last - first)
+        if (_capacity - _size < static_cast<size_type>(last - first))
         {
             // because of reallocation, position need to be reset
             size_type pos = position - begin();
