@@ -166,18 +166,18 @@ template <typename Vector>
 double get_timing_vector_clear()
 {
     // data we will operate on
-    Vector vec(1000, 42);
-    Vector arr[1000];
+    Vector vec(10000, 42);
+    Vector arr[10000];
 
     // fill before clear
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 10000; i++)
         arr[i] = vec;
 
     // starting point
     time_point<system_clock> start = system_clock::now();
 
     // compute
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 10000; i++)
         arr[i].clear();
 
     // ending point
@@ -244,7 +244,6 @@ void timing_test_vector_constructor_by_default(std::ofstream & outfile)
 /****** constructor by copy ***************************************************/
 
 template <typename Vector>
-
 double get_timing_vector_constructor_by_copy()
 {
     // data we will operate on
@@ -656,13 +655,13 @@ double get_timing_vector_reserve()
     time_point<system_clock> start = system_clock::now();
 
     // compute
-    for (typename Vector::size_type i = 0; i < 100000; i++)
+    for (typename Vector::size_type i = 0; i < 10000; i++)
         v1.reserve(i);
 
-    for (typename Vector::size_type i = 0; i < 100000; i++)
+    for (typename Vector::size_type i = 0; i < 10000; i++)
         v2.reserve(i);
 
-    for (typename Vector::size_type i = 0; i < 100000; i++)
+    for (typename Vector::size_type i = 0; i < 10000; i++)
         v3.reserve(i);
 
     // ending point
@@ -1111,21 +1110,20 @@ template <typename Vector>
 double get_timing_vector_erase()
 {
     // data we will operate on
-    Vector v[100000];
+    Vector arr[1000];
+    Vector vec(1000, 42);
 
     // fill before erase
-    for (int i = 0; i < 100000; i++) {
-        for (int j = 0; i < 100000; i++) {
-            v[i].push_back(j);
-        }
+    for (int i = 0; i < 1000; i++) {
+        arr[i] = vec;
     }
 
     // starting point
     time_point<system_clock> start = system_clock::now();
 
     // compute (erase by range, not by position)
-    for (int i = 0; i < 100000; i++) {
-        v[i].erase(v[i].begin(), v[i].end());
+    for (int i = 0; i < 1000; i++) {
+        arr[i].erase(arr[i].begin(), arr[i].end());
     }
 
     // ending point
@@ -1169,8 +1167,8 @@ double get_timing_vector_insert()
         v2.insert(v2.begin(), 100, 21);
 
     // insert by fill (3)
-    for (int i = 0; i < 100; i++)
-        v3.insert(v3.begin(), v1.begin(), v1.begin() + i);
+//    for (int i = 0; i < 100; i++)
+//        v3.insert(v3.begin(), v1.begin(), v1.begin() + i);
 
     // ending point
     time_point<system_clock> end = system_clock::now();
@@ -1216,21 +1214,21 @@ int main()
 //    timing_test_vector_get_allocator(outfile);
 
     // constructors
-//    timing_test_vector_constructor_by_default(outfile);
-//    timing_test_vector_constructor_by_fill(outfile);
-//    timing_test_vector_constructor_by_copy(outfile);
-//    timing_test_vector_constructor_by_range(outfile);
+    timing_test_vector_constructor_by_default(outfile);
+    timing_test_vector_constructor_by_fill(outfile);
+    timing_test_vector_constructor_by_copy(outfile);
+    timing_test_vector_constructor_by_range(outfile);
 
     // capacity
-//    timing_test_vector_empty(outfile);
-//    timing_test_vector_size(outfile);
-//    timing_test_vector_max_size(outfile);
-//    timing_test_vector_capacity(outfile);
-//    timing_test_vector_reserve(outfile);
+    timing_test_vector_empty(outfile);
+    timing_test_vector_size(outfile);
+    timing_test_vector_max_size(outfile);
+    timing_test_vector_capacity(outfile);
+    timing_test_vector_reserve(outfile);
 
     // iterators
-//    timing_test_vector_begin(outfile);
-//    timing_test_vector_end(outfile);
+    timing_test_vector_begin(outfile);
+    timing_test_vector_end(outfile);
 // TODO
 //    timing_test_vector_iterator_constructors(outfile);
 //    timing_test_vector_iterator_assignation(outfile);
@@ -1249,28 +1247,28 @@ int main()
 //    timing_test_vector_iterator_sub_then_assign(outfile);
 
     // accessors
-//    timing_test_vector_at(outfile);
-//    timing_test_vector_back(outfile);
-//    timing_test_vector_front(outfile);
-//    timing_test_vector_op_bracket(outfile);
+    timing_test_vector_at(outfile);
+    timing_test_vector_back(outfile);
+    timing_test_vector_front(outfile);
+    timing_test_vector_op_bracket(outfile);
 
     // modifiers
-//    timing_test_vector_clear(outfile); // KO
-//    timing_test_vector_erase(outfile);
-//    timing_test_vector_insert(outfile); // KO
-//    timing_test_vector_push_back(outfile); // KO
-//    timing_test_vector_pop_back(outfile);
-//    timing_test_vector_resize(outfile); // KO
-//    timing_test_vector_swap(outfile);
+    timing_test_vector_clear(outfile); // KO
+    timing_test_vector_erase(outfile);
+    timing_test_vector_insert(outfile); // KO
+    timing_test_vector_push_back(outfile); // KO
+    timing_test_vector_pop_back(outfile);
+    timing_test_vector_resize(outfile); // KO
+    timing_test_vector_swap(outfile);
 
     // operators
-//    timing_test_vector_op_assign(outfile);
-//    timing_test_vector_op_equal(outfile);
-//    timing_test_vector_op_not_equal(outfile);
-//    timing_test_vector_op_less_than(outfile);
-//    timing_test_vector_op_less_than_equal(outfile);
-//    timing_test_vector_op_greater_than(outfile);
-//    timing_test_vector_op_greater_than_equal(outfile);
+    timing_test_vector_op_assign(outfile);
+    timing_test_vector_op_equal(outfile);
+    timing_test_vector_op_not_equal(outfile);
+    timing_test_vector_op_less_than(outfile);
+    timing_test_vector_op_less_than_equal(outfile);
+    timing_test_vector_op_greater_than(outfile);
+    timing_test_vector_op_greater_than_equal(outfile);
 
     // close file
     outfile.close();

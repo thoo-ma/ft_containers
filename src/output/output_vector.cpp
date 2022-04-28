@@ -453,7 +453,8 @@ erase_tests()
         for (std::vector<int>::size_type i = 0; i < b.size(); i++)
         { assert(a.at(i) == b.at(i)); }
 
-        // end --> segfault
+        // erase(end) -> segfault
+        // --> stl segfault but standard says undefined beavior
         //assert(a.erase(a.end()) == a.end());
         //assert(b.erase(b.end()) == b.end());
         //assert(a.size() == b.size());
@@ -1478,14 +1479,14 @@ int main()
     //vector_test<double>();
 
     allocator_test(); // TODO
- //   constructors_test(); // TODO
+    constructors_test(); // TODO
 
- //   capacity_tests();
- //   accessors_tests();
- //   modifiers_tests(); // TODO
-//    operators_tests();
+    capacity_tests();
+    accessors_tests();
+    modifiers_tests(); // TODO
+    operators_tests();
 
-//    iterators_tests();
+    iterators_tests();
 
     return 0;
 }

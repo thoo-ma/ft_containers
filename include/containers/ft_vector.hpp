@@ -2,6 +2,7 @@
 #define FT_VECTOR_H 1
 
 #include <iostream> // remove
+#include <cstring> // std::memmove (cf. erase)
 
 //#include "ft_type_traits.hpp"
 #include "ft_random_access_iterator.hpp"
@@ -129,7 +130,7 @@ class vector {
         _capacity = len;
         // fill...
         for (size_type i = 0; i < len; i++)
-            _data[i] = *(first++);
+            _alloc.construct(&_data[i], *(first++));
         // then assign size
         _size = len;
     }
@@ -246,7 +247,8 @@ class vector {
 
     void
     clear()
-    { erase(begin(), end()); }
+    { erase(begin(), end()); } // x2000
+    //{ for (size_type i = 0; i < _size; i++) { _alloc.destroy(_data + i); } _size = 0; } // x2000
 
     // single element (1)
     iterator
@@ -266,7 +268,7 @@ class vector {
         {
             // because of reallocation, position need to be reset
             size_type offset = position - begin();
-            reserve(_size + n);
+            reserve((_size + n) * 2); // remove *2 and we have terrible perfs.
             position = begin() + offset;
         }
         // insert
@@ -279,9 +281,9 @@ class vector {
 
     // range (3)
     //template <class InputIterator>
+    //insert (iterator position, InputIterator first, InputIterator last)
     void
     insert (iterator position, iterator first, iterator last)
-    //insert (iterator position, InputIterator first, InputIterator last)
     {
         // reallocate
         if (_capacity - _size < static_cast<size_type>(last - first))
@@ -307,62 +309,76 @@ class vector {
     erase(iterator position)
     { return (erase(position, position + 1)); }
 
-    // erase by range
+    // erase by range (x24)
+//    iterator
+//    erase(iterator first, iterator last)
+//    {
+//        // 1. Utils variables (avoid futur computation)
+//        difference_type start = first - begin();
+//        difference_type finish = last - begin();
+//
+//        // 2. Detroy elements in range [first, last)
+//        for (difference_type i = start; i < finish; i++)
+//            _alloc.destroy(&_data[i]);
+//
+//        // 3. Move elements from [last, enf) to [first, ...)
+//        for (difference_type i = finish; i < static_cast<difference_type>(_size); i++)
+//        {
+//            if (start >= finish)
+//                 _data[start++] = _data[i];
+//            else
+//            {
+//                _alloc.construct(&_data[start++], _data[i]);
+//                _alloc.destroy(&_data[i]);
+//            }
+//        }
+//
+//        // 4. Update size
+//        _size = start;
+//
+//        // 5. return
+//        return first;
+//    }
+
+    // erase by range (x27)
+//    iterator
+//    erase(iterator first, iterator last)
+//    {
+//       // 1. Utils variables (avoid futur computation)
+//       difference_type start = first - begin();
+//       difference_type finish = last - begin();
+//
+//       // 2. Copy elements than can be copied
+//       difference_type i = finish;
+//       while (i < static_cast<difference_type>(_size) && start < finish)
+//           _data[start++] = _data[i++];
+//
+//       // 3. Destroy elements not copied to [first, last) until end
+//       while (start < static_cast<difference_type>(_size))
+//           _alloc.destroy(&_data[start++]);
+//
+//       // 4. update size
+//       _size = (first - begin()) + (end() - last);
+//
+//       // 5. return
+//       return first;
+//    }
+
+    // erase by range (incredible performances !!)
+    // cf. https://github.com/ojoubout/ft_containers/blob/main/Vector/Vector.hpp
     iterator
-    erase(iterator first, iterator last)
+    erase (iterator first, iterator last)
     {
-        // 1. Get return value
-        iterator ret = first == last ? last : first;
-
-        // 2. Detroy elements in range [first, last)
-        iterator it = first;
-        while (it != last)
-        {
-            _alloc.destroy(&_data[it - begin()]);
-            it++;
-        }
-
-        // 3. Move elements from [last, enf) to [first, ...)
-        while (it != end())
-        {
-            _data[first - begin()] = _data[it - begin()];
-            _alloc.destroy(&_data[it - begin()]);
-            it++;
-            first++;
-        }
-
-        // 4. Update size
-        if (it != first)
-            _size = first - begin();
-
-        return ret;
+        size_type pos = first - begin();
+        size_type len = last - first;
+        std::memmove(_data + pos, _data + pos + len, (_size - pos - len) * sizeof(value_type));
+        _size -= len;
+        return first;
     }
 
     void
     push_back(const value_type & value)
-    {
-        // need to reallocate
-        if (_size == _capacity)
-        {
-            // update capacity
-            _capacity = _size + 1;
-            // reallocate
-            pointer tmp = _alloc.allocate(_capacity);
-            // copy
-            for (size_type i = 0; i < _size; i++)
-            { _alloc.construct(&tmp[i], _data[i]); }
-            // destroy
-            for (size_type i = 0; i < _size; i++)
-            { _alloc.destroy(&_data[i]); }
-            // deallocate
-            // (`if` needed : otherwise double free can happen)
-            if (_capacity) _alloc.deallocate(_data, _capacity);
-            // pointer to new location
-            _data = tmp;
-        }
-        // append
-        _alloc.construct(&_data[_size++], value);
-    }
+    { insert(end(), value); }
 
     void
     pop_back()
@@ -370,29 +386,7 @@ class vector {
 
     void
     resize(size_type n, value_type value = value_type())
-    {
-        // need to reallocate
-        if (n > _capacity)
-        {
-            // update capacity
-            _capacity = n;
-            // reallocate
-            pointer tmp = _alloc.allocate(_capacity);
-            // copy
-            for (size_type i = 0; i < _size; i++)
-            { _alloc.construct(&tmp[i], _data[i]); }
-            // destroy
-            for (size_type i = 0; i < _size; i++)
-            { _alloc.destroy(&_data[i]); }
-            // deallocate
-            // (`if` needed : otherwise double free can happen)
-            if (_capacity) _alloc.deallocate(_data, _capacity);
-            // pointer to new location
-            _data = tmp;
-        }
-        // expand
-        if (n > _size) insert(end(), n - _size, value);
-    }
+    { if (n > _size) insert(&_data[_size], n, value); }
 
     void
     swap(vector & v)
