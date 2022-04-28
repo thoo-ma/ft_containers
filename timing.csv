@@ -1,0 +1,17 @@
+container,function,ft,std,ratio,status
+vector,get_allocator,4.7325,5.84806,0.809243,[32mOK[0m
+vector,constructor_by_default,0.192413,0.157815,1.21923,[32mOK[0m
+vector,constructor_by_fill,3.78868,1.14832,3.29932,[32mOK[0m
+vector,constructor_by_copy,5.47119,0.414727,13.1923,[32mOK[0m
+vector,constructor_by_range,8.81763,1.38278,6.37673,[32mOK[0m
+vector,empty,1.13241,19.8682,0.056996,[32mOK[0m
+vector,size,1.75109,2.1657,0.808557,[32mOK[0m
+vector,max_size,1.20864,14.6144,0.0827018,[32mOK[0m
+vector,capacity,5.47365,6.21279,0.881028,[32mOK[0m
+vector,reserve,1.56477,0.33421,4.68201,[32mOK[0m
+vector,begin,0.357312,0.406867,0.878203,[32mOK[0m
+vector,end,0.408397,0.3724,1.09666,[32mOK[0m
+vector,at,1.28331,4.20493,0.305193,[32mOK[0m
+vector,back,0.719043,7.74244,0.0928703,[32mOK[0m
+vector,front,0.624112,4.22502,0.147718,[32mOK[0m
+vector,[],0.0730291,0.585919,0.12464,[32mOK[0m

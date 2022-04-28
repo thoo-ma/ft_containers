@@ -215,8 +215,6 @@ class vector {
     void
     reserve(size_type n)
     {
-     //   std::cout << "CAPACITY: " << _capacity << std::endl;
-     //   std::cout << "SIZE: " << _size << std::endl;
         if (n > _max_size) throw std::length_error("vector::reserve");
         if (_capacity < n)
         {
@@ -239,8 +237,6 @@ class vector {
             // update pointer to internal array
             _data = tmp;
         }
-     //   std::cout << "CAPACITY: " << _capacity << std::endl;
-     //   std::cout << "SIZE: " << _size << std::endl;
     }
 
     /****** Modifiers *********************************************************/
@@ -499,6 +495,8 @@ operator==(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
             return false;
     }
     return true;
+//    return
+//    lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 template <class T, class Alloc>
@@ -512,6 +510,7 @@ operator<(const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 {
     return
     lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+   // std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template <class T, class Alloc>

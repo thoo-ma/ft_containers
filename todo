@@ -5,6 +5,7 @@ todo
 4. add ft_map.hpp + tests + pair/make_pair
 5. test lexicographical_compare
 6. templated tests (vector, stack, map)
+7. compile with -Wconversion -fsanitize-address + valgrind EVERYTHING
 ________
 
 vector_timing > 20
@@ -19,5 +20,5 @@ maybe
 - configure script
 - `make all` re-mkdir output folders but not timing ones...
 - rename src/ into test/
-- addtype_traits tests
+- add type_traits tests
 ________

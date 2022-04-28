@@ -1211,7 +1211,7 @@ int main()
     // tests (each one append a line to outfile)
 
     // allocator
-//    timing_test_vector_get_allocator(outfile);
+    timing_test_vector_get_allocator(outfile);
 
     // constructors
     timing_test_vector_constructor_by_default(outfile);
