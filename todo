@@ -1,18 +1,14 @@
 todo
-1. test timing vector iterators
-2. add reverse iterator to vector + tests
-3. add ft_stack.hpp + tests
-4. add ft_map.hpp + tests + pair/make_pair
-5. test lexicographical_compare
-6. templated tests (vector, stack, map)
-7. compile with -Wconversion -fsanitize-address + valgrind EVERYTHING
-________
-
-vector_timing > 20
-- clear
-- push_back
-- resize
-- insert
+1. Compile ouput_vector with the following
+ - -Wconversion compiler flag
+ - -fsanitize=address compiler flag
+ - valgrind
+2. test timing vector iterators
+3. add reverse iterator to vector + tests
+4. add ft_stack.hpp + tests
+5. add ft_map.hpp + tests + pair/make_pair
+6. test lexicographical_compare
+7. templated tests (vector, stack, map)
 ________
 
 maybe
