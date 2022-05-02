@@ -86,6 +86,8 @@ bin/output:		;	mkdir -p bin/output
 
 ################### MAIN TARGETS ###############################################
 
+output_pair:		bin/output/output_pair.out
+
 output_stack:		bin/output/output_stack.out
 
 output_vector:		bin/output/output_vector.out

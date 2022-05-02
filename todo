@@ -1,4 +1,5 @@
 todo
+0. test timing stack
 1. test timing vector iterators
 2. add reverse iterator to vector + tests
 3. add ft_map.hpp + tests + pair/make_pair
@@ -10,7 +11,7 @@ todo
 ________
 
 maybe
-- ikos
+- ikos --> utile pour les uninitialized values (valgrind output_stack)
 - configure script
 - `make all` re-mkdir output folders but not timing ones...
 - rename src/ into test/
