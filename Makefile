@@ -2,7 +2,7 @@
 
 CXX				=	g++
 
-CXXFLAGS		=	-std=c++11 -Wall -Wextra# -Wconversion -g -fsanitize=address
+CXXFLAGS		=	-std=c++11 -Wall -Wextra -Wconversion
 
 ################### DIRECTORIES ################################################
 

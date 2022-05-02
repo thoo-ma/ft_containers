@@ -1,14 +1,12 @@
 todo
-1. Compile ouput_vector with the following
- - -Wconversion compiler flag
- - -fsanitize=address compiler flag
- - valgrind
-2. test timing vector iterators
-3. add reverse iterator to vector + tests
-4. add ft_stack.hpp + tests
-5. add ft_map.hpp + tests + pair/make_pair
-6. test lexicographical_compare
+1. test timing vector iterators
+2. add reverse iterator to vector + tests
+3. add ft_stack.hpp + tests
+4. add ft_map.hpp + tests + pair/make_pair
+5. test lexicographical_compare
+6. test type_traits
 7. templated tests (vector, stack, map)
+8. test _everyting_ with -Wconversion and valgrind
 ________
 
 maybe
@@ -16,5 +14,4 @@ maybe
 - configure script
 - `make all` re-mkdir output folders but not timing ones...
 - rename src/ into test/
-- add type_traits tests
 ________

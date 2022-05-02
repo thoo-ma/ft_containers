@@ -296,7 +296,7 @@ at_test()
 
             try
             {
-                ft::vector<int>::size_type i = v.end() - v.begin() - 1;
+                ft::vector<int>::size_type i = static_cast<size_t>(v.end() - v.begin() - 1);
                 v.at(i);
                 assert(v.at(i) == 42);
             }
@@ -1304,7 +1304,7 @@ iterator_substraction_test()
         //std::cout << it - ite << std::endl;
 
         assert(ite - it == 5);
-        assert(ite - it == v.size());
+        assert(ite - it == static_cast<ptrdiff_t>(v.size()));
     }
     std::cout << "operator- " << GREEN << "OK" << RESET << std::endl;
 }

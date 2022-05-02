@@ -108,9 +108,16 @@ class vector {
         const allocator_type & alloc = allocator_type()
     ) : _size(n), _capacity(n), _max_size(alloc.max_size()), _alloc(alloc)
     {
-        try { _data = _alloc.allocate(_size); }
-        catch (std::bad_alloc & ba) { std::cout << ba.what() << std::endl; } // log ?
-        for (size_type i = 0; i < _size; i++) { _alloc.construct(&_data[i], val); } // assign
+        if (n)
+        {
+            try {
+                _data = _alloc.allocate(_size);
+                for (size_type i = 0; i < _size; i++)
+                    _alloc.construct(&_data[i], val); // assign
+            }
+            catch (std::bad_alloc & ba) { std::cout << ba.what() << std::endl; } // log ?
+        }
+        else { _data = NULL; }
     }
 
     // by iterator range
@@ -125,7 +132,7 @@ class vector {
     {
         size_type len = last - first;
         // allocate...
-        _data = _alloc.allocate(len);
+        if (len) { _data = _alloc.allocate(len); }
         // then assign capacity
         _capacity = len;
         // fill...
