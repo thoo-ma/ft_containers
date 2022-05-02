@@ -17,11 +17,13 @@ TIMING_DIR		=	timing
 CONTAINERS_DIR 	= 	$(INC_DIR)/containers
 ALGORITHMS_DIR 	= 	$(INC_DIR)/algorithms
 ITERATORS_DIR 	= 	$(INC_DIR)/iterators
+UTILITY_DIR		=	$(INC_DIR)/utility
 
 INCLUDE			=	-I include \
 					-I $(CONTAINERS_DIR) \
 					-I $(ALGORITHMS_DIR) \
-					-I $(ITERATORS_DIR)
+					-I $(ITERATORS_DIR) \
+					-I $(UTILITY_DIR)
 
 ################### HEADERS ####################################################
 
@@ -34,7 +36,9 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 					$(ITERATORS_DIR)/ft_random_access_iterator.hpp \
 					$(ITERATORS_DIR)/ft_iterator_base_types.hpp
 
-HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS)
+UTILITY			=	$(UTILITY_DIR)/ft_pair.hpp
+
+HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS) $(UTILITY)
 
 ################### UTILS  #####################################################
 
