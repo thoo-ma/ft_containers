@@ -523,10 +523,16 @@ insert_tests()
         {
             // to empty
             ft::vector<int> a;
-            ft::vector<int> b(1, 21);
+            ft::vector<int> b;
+            ft::vector<int> c(1, 21);
 
+            // at begin
             a.insert(a.begin(), 21);
-            assert(a == b);
+            assert(a == c);
+
+            // at end
+            b.insert(b.end(), 21);
+            assert(b == c);
         }
         std::cout << "insert single element (1) " << GREEN << "OK" << RESET << std::endl;
     }

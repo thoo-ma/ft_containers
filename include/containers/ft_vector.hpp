@@ -128,11 +128,12 @@ class vector {
         iterator first,
         iterator last,
         const allocator_type & alloc = allocator_type()
-    ) : _alloc(alloc)
+    ) : _alloc(alloc)//, _max_size(alloc.max_size()) // why? cf. -Wreorder
     {
         size_type len = last - first;
         // allocate...
         if (len) { _data = _alloc.allocate(len); }
+        else { _data = NULL; }
         // then assign capacity
         _capacity = len;
         // fill...
