@@ -975,40 +975,40 @@ vector_assignation_test()
         assert(a == b);
     }
     std::cout << "operator= " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-less_than_test()
-{
-    {
-        // with different sizes
-        assert(ft::vector<int>() < ft::vector<int>(1));
-        assert(ft::vector<int>(0) < ft::vector<int>(1));
-        assert(ft::vector<int>(1) < ft::vector<int>(2));
-
-        // with different values
-        assert(ft::vector<int>(1, 21) < ft::vector<int>(1, 42));
     }
-    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
-}
 
-void
-greater_than_test()
-{
+    void
+    less_than_test()
     {
-        // with different sizes
-        assert(ft::vector<int>(1) > ft::vector<int>());
-        assert(ft::vector<int>(1) > ft::vector<int>(0));
-        assert(ft::vector<int>(2) > ft::vector<int>(1));
+        {
+            // with different sizes
+            assert(ft::vector<int>() < ft::vector<int>(1));
+            assert(ft::vector<int>(0) < ft::vector<int>(1));
+            assert(ft::vector<int>(1) < ft::vector<int>(2));
 
-        // with different values
-        assert(ft::vector<int>(1, 42) > ft::vector<int>(1, 21));
+            // with different values
+            assert(ft::vector<int>(1, 21) < ft::vector<int>(1, 42));
+        }
+        std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
     }
-    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
-}
 
-void
-less_than_equal_test()
+    void
+    greater_than_test()
+    {
+        {
+            // with different sizes
+            assert(ft::vector<int>(1) > ft::vector<int>());
+            assert(ft::vector<int>(1) > ft::vector<int>(0));
+            assert(ft::vector<int>(2) > ft::vector<int>(1));
+
+            // with different values
+            assert(ft::vector<int>(1, 42) > ft::vector<int>(1, 21));
+        }
+        std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+    }
+
+    void
+    less_than_equal_test()
 {
     {
         // with different sizes

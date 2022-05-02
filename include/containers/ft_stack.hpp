@@ -65,6 +65,16 @@ class stack {
     pop()
     { return _c.pop_back(); }
 
+    // friend keyword enable the call of private member methods (here operators)
+    template <class T_, class Container_>
+    friend bool
+    operator==(const stack<T_, Container_> & lhs,
+               const stack<T_, Container_> & rhs);
+
+    template <class T_, class Container_>
+    friend bool
+    operator<(const stack<T_, Container_> & lhs,
+              const stack<T_, Container_> & rhs);
 };
 
 /******************************************************************************/
@@ -76,32 +86,32 @@ class stack {
 template <class T, class Container>
 bool
 operator==(const stack<T, Container> & lhs, const stack<T, Container> & rhs)
-{ return (lhs._c == rhs._c); }
+{ return lhs._c == rhs._c; }
 
 template <class T, class Container>
 bool
 operator!=(const stack<T, Container> & lhs, const stack<T, Container> & rhs)
-{ return (lhs._c != rhs._c); }
+{ return !(lhs == rhs); }
 
 template <class T, class Container>
 bool
 operator<(const stack<T, Container> & lhs, const stack<T, Container> & rhs)
-{ return (lhs._c < rhs._c); }
+{ return lhs._c < rhs._c; }
 
 template <class T, class Container>
 bool
 operator>(const stack<T, Container> & lhs, const stack<T, Container> & rhs)
-{ return (lhs._c > rhs._c); }
+{ return rhs < lhs; }
 
 template <class T, class Container>
 bool
 operator<=(const stack<T, Container> & lhs, const stack<T, Container> & rhs)
-{ return (lhs._c <= rhs._c); }
+{ return !(lhs > rhs); }
 
 template <class T, class Container>
 bool
 operator>=(const stack<T, Container> & lhs, const stack<T, Container> & rhs)
-{ return (lhs._c >= rhs._c); }
+{ return !(lhs < rhs); }
 
 } // namespace
 

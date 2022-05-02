@@ -1,12 +1,12 @@
 todo
 1. test timing vector iterators
 2. add reverse iterator to vector + tests
-3. add ft_stack.hpp + tests
-4. add ft_map.hpp + tests + pair/make_pair
-5. test lexicographical_compare
-6. test type_traits
-7. templated tests (vector, stack, map)
-8. test _everyting_ with -Wconversion and valgrind
+3. add ft_map.hpp + tests + pair/make_pair
+4. test lexicographical_compare
+5. test type_traits
+6. templated tests (vector, stack, map)
+7. test _everyting_ with -Wconversion and valgrind
+8. test size_max for vector !!!
 ________
 
 maybe

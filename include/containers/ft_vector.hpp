@@ -344,40 +344,41 @@ class vector {
 //    }
 
     // erase by range (x27)
-//    iterator
-//    erase(iterator first, iterator last)
-//    {
-//       // 1. Utils variables (avoid futur computation)
-//       difference_type start = first - begin();
-//       difference_type finish = last - begin();
-//
-//       // 2. Copy elements than can be copied
-//       difference_type i = finish;
-//       while (i < static_cast<difference_type>(_size) && start < finish)
-//           _data[start++] = _data[i++];
-//
-//       // 3. Destroy elements not copied to [first, last) until end
-//       while (start < static_cast<difference_type>(_size))
-//           _alloc.destroy(&_data[start++]);
-//
-//       // 4. update size
-//       _size = (first - begin()) + (end() - last);
-//
-//       // 5. return
-//       return first;
-//    }
+    iterator
+    erase(iterator first, iterator last)
+    {
+       // 1. Utils variables (avoid futur computation)
+       difference_type start = first - begin();
+       difference_type finish = last - begin();
+
+       // 2. Copy elements than can be copied
+       difference_type i = finish;
+       while (i < static_cast<difference_type>(_size) && start < finish)
+           _data[start++] = _data[i++];
+
+       // 3. Destroy elements not copied to [first, last) until end
+       while (start < static_cast<difference_type>(_size))
+           _alloc.destroy(&_data[start++]);
+
+       // 4. update size
+       _size = (first - begin()) + (end() - last);
+
+       // 5. return
+       return first;
+    }
 
     // erase by range (incredible performances !!)
     // cf. https://github.com/ojoubout/ft_containers/blob/main/Vector/Vector.hpp
-    iterator
-    erase (iterator first, iterator last)
-    {
-        size_type pos = first - begin();
-        size_type len = last - first;
-        std::memmove(_data + pos, _data + pos + len, (_size - pos - len) * sizeof(value_type));
-        _size -= len;
-        return first;
-    }
+    // can raise -Wclass-memaccess warning at compile time
+   // iterator
+   // erase (iterator first, iterator last)
+   // {
+   //     size_type pos = first - begin();
+   //     size_type len = last - first;
+   //     std::memmove(_data + pos, _data + pos + len, (_size - pos - len) * sizeof(value_type));
+   //     _size -= len;
+   //     return first;
+   // }
 
     void
     push_back(const value_type & value)
