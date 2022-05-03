@@ -25,9 +25,9 @@ struct pair
     : first(T1()), second(T2()) { }
 
     // constructor by copy (2)
-    template <class T1_, class T2_>
-    pair(const pair<T1_, T2_> & pair)
-    : first(pair.first), second(pair.second) { std::cout << "copy" << std::endl; }
+    template <typename U1, typename U2>
+    pair(const pair<U1,U2> & pair)
+    : first(pair.first), second(pair.second) { }
 
     // constructor by initialization (3)
     pair(const first_type & a, const second_type & b)
@@ -36,7 +36,6 @@ struct pair
     pair &
     operator=(const pair & pair)
     {
-        std::cout << "equal" << std::endl;
         first = pair.first;
         second = pair.second;
         return *this;
