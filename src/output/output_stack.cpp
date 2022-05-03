@@ -64,10 +64,12 @@ void stack_push_test()
 {
     ft::stack<T> stack;
 
-    for (typename ft::stack<T>::size_type i = 0; i < 21; i++) {
-        assert(stack.size() == i);
-        stack.push(T());
-    }
+    stack.push(10);
+
+   // for (typename ft::stack<T>::size_type i = 0; i < 21; i++) {
+   //     assert(stack.size() == i);
+   //     stack.push(T());
+   // }
 
     std::cout << "push " << GREEN << "OK" << RESET << std::endl;
 }
@@ -248,18 +250,18 @@ void stack_operators_test()
 
 int main()
 {
-    stack_constructor_test<int>();
+//    stack_constructor_test<int>();
 //    stack_constructor_test<double>();
 //    stack_constructor_test<std::vector<int>>();
 
-    stack_empty_test<int>();
+//    stack_empty_test<int>();
 //    stack_empty_test<double>();
     stack_push_test<int>();
-    stack_size_test<int>();
-    stack_top_test<int>();
-    stack_pop_test<int>();
-
-    stack_operators_test<int>();
+//    stack_size_test<int>();
+//    stack_top_test<int>();
+//    stack_pop_test<int>();
+//
+//    stack_operators_test<int>();
 
     return 0;
 }

@@ -28,7 +28,8 @@ INCLUDE			=	-I include \
 ################### HEADERS ####################################################
 
 CONTAINERS 		= 	$(CONTAINERS_DIR)/ft_vector.hpp \
-					$(CONTAINERS_DIR)/ft_stack.hpp
+					$(CONTAINERS_DIR)/ft_stack.hpp \
+					$(CONTAINERS_DIR)/ft_map.hpp
 
 ALGORITHMS 		= 	$(ALGORITHMS_DIR)/ft_lexicographical_compare.hpp
 
@@ -88,17 +89,21 @@ bin/output:		;	mkdir -p bin/output
 
 output_pair:		bin/output/output_pair.out
 
+output_map:			bin/output/output_map.out
+
 output_stack:		bin/output/output_stack.out
 
 output_vector:		bin/output/output_vector.out
 
-output:				output_stack output_vector
+output:				output_stack output_vector output_map output_pair
+
+timing_map:			bin/timing/timing_map.out
 
 timing_stack:		bin/timing/timing_stack.out
 
 timing_vector:		bin/timing/timing_vector.out
 
-timing:				timing_stack timing_vector
+timing:				timing_stack timing_vector timing_map
 
 traits:				bin/traits/is_integral.out
 
