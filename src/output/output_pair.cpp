@@ -133,6 +133,17 @@ void test_pair_assignation()
         b = a;
         assert(a == b);
     }
+    std::cout << "operator= " << GREEN << "OK" << RESET << std::endl;
+}
+
+/****** make_pair() ***********************************************************/
+
+void test_make_pair()
+{
+    compare_pairs(std::pair<int,int>(42,42), ft::make_pair<int,int>(42,42));
+    compare_pairs(std::pair<int,char>(42,'z'), ft::make_pair<int,char>(42,'z'));
+
+    std::cout << "make_pair() " << GREEN << "OK" << RESET << std::endl;
 }
 
 /****** main ******************************************************************/
@@ -142,8 +153,7 @@ int main()
     test_pair_constructed_by_default();
     test_pair_constructed_by_copy();
     test_pair_constructed_by_init();
-
     test_pair_assignation();
-
+    test_make_pair();
     return 0;
 }
