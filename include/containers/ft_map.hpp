@@ -50,7 +50,8 @@ template <typename Key,
 
     private:
 
-    allocator_type _alloc;
+    allocator_type	_alloc;
+    key_compare	    _comp;
 
     /**************************************************************************/
     /*                                                                        */
@@ -64,7 +65,8 @@ template <typename Key,
 
     // empty (1)
     explicit map (const key_compare & comp = key_compare(),
-              const allocator_type & alloc = allocator_type());
+              const allocator_type & alloc = allocator_type())
+    : _alloc(alloc), _comp(comp) { }
 
     // range (2)
     template <class InputIterator>
@@ -77,7 +79,7 @@ template <typename Key,
 
     /****** Destructor ********************************************************/
 
-    ~map();
+    ~map() { }
 
     /****** Element access ****************************************************/
 

@@ -10,6 +10,7 @@ todo
 8. test size_max for vector !!!
 9. is_constructible and co. (cf. type_traits) for pair conversions
 --> need by -Wconversion
+10. test const_iterator
 ________
 
 maybe
@@ -22,6 +23,5 @@ maybe
 ________
 
 map
-- AVL
+- AVL (named after its inventor Adelson, Velski & Landis)
 - RBT (Red Black Tree : the one used by stl)
---> BST "classique" vs BST "self-balancing" (RBT)
