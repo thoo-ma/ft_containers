@@ -8,7 +8,7 @@
 #include "ft_map.hpp"
 #include "../utils/colors.hpp"
 
-void stack_allocator_test()
+void map_allocator_test()
 {
     // compare with std::allocator
     assert((ft::map<int,int>().get_allocator() == std::allocator<std::pair<int,int>>()));
@@ -24,15 +24,18 @@ void stack_allocator_test()
     assert((std::is_same<ft::map<int,int>::allocator_type::value_type,
             std::map<int,int>::allocator_type::value_type>::value));
 
-   // see. https://stackoverflow.com/a/40598287 about doubling brackets
+   // see. https://mapoverflow.com/a/40598287 about doubling brackets
 
-    int x = 42;
-    char c = x;
     std::cout << "get_allocator() " << GREEN << "OK" << RESET << std::endl;
+}
+
+void map_constructor_test()
+{
 }
 
 int main()
 {
-    stack_allocator_test();
+    map_allocator_test();
+    map_constructor_test();
     return 0;
 }

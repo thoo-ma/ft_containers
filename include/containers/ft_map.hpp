@@ -5,6 +5,7 @@
 #include <functional> // std::less
 
 #include "ft_pair.hpp"
+#include "rb_tree.hpp"
 #include "ft_bidirectional_iterator.hpp"
 #include "ft_iterator_base_types.hpp"
 
@@ -50,8 +51,9 @@ template <typename Key,
 
     private:
 
-    allocator_type	_alloc;
-    key_compare	    _comp;
+    allocator_type	    _alloc;
+    key_compare	        _comp;
+    rb_tree<value_type>	_tree;
 
     /**************************************************************************/
     /*                                                                        */
@@ -95,6 +97,7 @@ template <typename Key,
 
     // insert single element (1)
     pair<iterator, bool> insert (const value_type & val);
+    // { return _tree.insert(val); }
 
     // insert with hint (2)
     iterator insert (iterator position, const value_type & val);

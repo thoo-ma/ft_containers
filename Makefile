@@ -37,7 +37,8 @@ ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
 					$(ITERATORS_DIR)/ft_random_access_iterator.hpp \
 					$(ITERATORS_DIR)/ft_iterator_base_types.hpp
 
-UTILITY			=	$(UTILITY_DIR)/ft_pair.hpp
+UTILITY			=	$(UTILITY_DIR)/ft_pair.hpp \
+					$(UTILITY_DIR)/rb_tree.hpp
 
 HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS) $(UTILITY)
 
@@ -86,6 +87,8 @@ obj/output:		;	mkdir -p obj/output
 bin/output:		;	mkdir -p bin/output
 
 ################### MAIN TARGETS ###############################################
+
+output_tree:		bin/output/output_rb_tree.out
 
 output_pair:		bin/output/output_pair.out
 
