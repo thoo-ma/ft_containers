@@ -700,6 +700,7 @@ resize_tests()
             assert(v.size() == 10);
             assert(v.capacity() == 10);
 
+            // FAIL
             v.resize(5);
             assert(v.size() == 10);
             assert(v.capacity() == 10);
@@ -746,6 +747,7 @@ resize_tests()
             assert(v.size() == 10);
             assert(v.capacity() == 10);
 
+            // FAIL
             v.resize(5, 42);
 
             assert(v.size() == 10);
@@ -832,6 +834,7 @@ assign_tests()
             // assign no elements to non-empty vector
             ft::vector<int> a(10, 42);
 
+            // FAIL
             a.assign(0, 21);
 
             assert(a.size() == 0);
@@ -869,6 +872,7 @@ assign_tests()
             ft::vector<int> a(10, 42);
             ft::vector<int> b;
 
+            // FAIL
             a.assign(b.begin(), b.end());
 
             assert(a.size() == 0);
