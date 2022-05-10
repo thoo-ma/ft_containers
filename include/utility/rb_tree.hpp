@@ -14,6 +14,7 @@ class rb_node
 
     typedef T	                key_type;
     typedef enum { Black, Red } color_type;
+    typedef rb_node<T> *        pointer;
 
     // private ?
     key_type    key;
@@ -25,6 +26,11 @@ class rb_node
     rb_node(key_type const & val)
     : key(val), color(Black), left(NULL), right(NULL), parent(NULL)
     { }
+
+//    rb_node(const key_type & key, const color_type & color,
+//            pointer left, pointer right, pointer parent)
+//    : key(key), color(color), left(left), right(right), parent(parent)
+//    { }
 
 //    rb_node<key_type> &
 //    operator=(const rb_node<key_type> & a)
@@ -40,11 +46,19 @@ class rb_node
 };
 
 template <typename T>
+bool
+operator==(const rb_node<T> & lhs, const rb_node<T> rhs)
+{ return lhs.key == rhs.key; }
+
+template <typename T>
 std::ostream &
 operator<<(std::ostream & o, rb_node<T> const & node)
 { o << node.key; return o;}
 
-template <typename T, typename Allocator = std::allocator<rb_node<T>>>
+template <typename T,
+          //typename Compare = std::less<T>,
+          typename Allocator = std::allocator<rb_node<T>>
+>
 class rb_tree {
 
     /*
@@ -60,9 +74,9 @@ class rb_tree {
      *	OPERATIONS
      *	__________
      *
-     *	- search
-     *	- insert
-     *	- delete
+     *	- search (lookup)
+     *	- insert (6 cases)
+     *	- delete (6 cases)
      *
      *	GLOSSARY
      *	________
@@ -82,17 +96,21 @@ class rb_tree {
 
     typedef T	            key_type;
     typedef Allocator       allocator_type;
-    typedef rb_node<T>	    value_type;
+    typedef rb_node<T>	    node_type; // value_type ?
     typedef rb_node<T> *	pointer;
+    typedef rb_node<T> &	reference;
+
+    typedef enum { Left, Right } direction;
+    typedef enum { Black, Red } color_type;
 
     /****** Internal data *****************************************************/
 
     private:
 
-    value_type *     _root;
+    pointer         _root;
     allocator_type	_alloc;
 
-    void _print(value_type * node) const
+    void _print(pointer node) const
     {
         if (node == NULL) return;
         if (node->left)
@@ -102,25 +120,113 @@ class rb_tree {
         std::cout << node->key << std::endl;
     }
 
+    void	_debug_insert(pointer node) const
+    {
+        std::cout << "inserted node key: " << node->key << std::endl;
+        std::cout << "inserted node color: " << node->color << std::endl;
+        std::cout << "inserted node parent: " << node->parent << std::endl;
+        if (node->parent)
+        {
+            node == node->parent->left
+            ? std::cout << "inserted node directon: left" << std::endl
+            : std::cout << "inserted node directon: right" << std::endl;
+        }
+        else { std::cout << "inserted node directon: root" << std::endl; }
+    }
+
     /****** Member functions **************************************************/
 
     public:
 
+    pointer & root() { return _root; }
+
     rb_tree() : _root(NULL) { }
-    //rb_tree(const rb_tree & tree) { }
 
-    ~rb_tree() {}
+    rb_tree(const rb_tree & tree) { (void)tree; }
 
-    void print() const
-    { return _print(_root); }
+    // inline ? macro ?
+    direction get_dir(reference node) const
+    { return node == node->parent->left ? Left : Right; }
 
-    void insert(const key_type & val)
+    ~rb_tree()
     {
-        pointer tmp = _alloc.allocate(1);
-        _alloc.construct(tmp, val);
-        if (_root == NULL)
-            _root = tmp;
+        pointer	    node;
+        pointer     parent;
+        direction	dir;
+
+        node = _root;
+        dir = Left;
+        while (node)
+        {
+            parent = node->parent;
+            while (node && node->left)
+            {
+                dir = Left;
+                parent = node;
+                node = node->left;
+            }
+            if (node && node->right)
+            {
+                dir = Right;
+                parent = node;
+                node = node->right;
+            }
+            if (node && node->left == NULL && node->right == NULL)
+            {
+                _alloc.destroy(node);
+                _alloc.deallocate(node, 1);
+                node = parent;
+                if (node) { dir == Left ? node->left = NULL : node->right = NULL; }
+            }
+        }
     }
+
+    void print() const { return _print(_root); }
+
+    key_type insert(pointer & node, pointer & parent, const key_type & key)
+    {
+        // insert
+        if (node == NULL)
+        {
+            pointer tmp = _alloc.allocate(1);
+            // insert at root
+            if (node == _root)
+            {
+                _alloc.construct(tmp, key);
+                _root = tmp;
+            }
+            // insert at leaf
+            else
+            {
+                _alloc.construct(tmp, key);
+                // udate parent.left or parent.right
+                tmp->parent = parent;
+                // fix this cast (only one enum), rb_node as subclass (or maybe coloring into constructor)
+                tmp->color = static_cast<typename rb_node<T>::color_type>(Red);
+                node = tmp;
+                // case 1
+           //     if ((*parent)->color == Black) { return key; } // insertion complete
+           //     if ((*parent)->parent == NULL) { (*parent)->color = Red; return; } // case 4. insertion complete
+            }
+            _debug_insert(node);
+            return key;
+        }
+        // recursive until leaf
+        return key < node->key
+        ? insert(node->left, node, key)
+        : insert(node->right, node, key);
+    }
+
+    // Since rb_tree support duplicate keys, what do we return ? 1st one or all equivalent keys ?
+    pointer find(pointer node, const key_type & key) const
+    {
+        if (node == _root)
+            return NULL;
+        if (node->key == key)
+            return node;
+
+    }
+
 };
 
 } // namespace

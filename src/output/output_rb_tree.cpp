@@ -4,9 +4,24 @@ void rb_tree_print_test()
 {
     ft::rb_tree<int> tree;
 
-    tree.insert(42);
+  //  ft::rb_node<int> ** root = tree.root();
 
-    tree.print();
+  //  std::cout << "root addr: " << root << std::endl;
+  //  std::cout << "root node addr: " << *root << std::endl;
+
+    tree.insert(tree.root(), tree.root()->parent, 21);
+
+  //  std::cout << "root addr: " << root << std::endl;
+  //  std::cout << "root node addr: " << *root << std::endl;
+
+    tree.insert(tree.root(), tree.root()->parent, 42);
+
+  //  std::cout << "root addr: " << root << std::endl;
+  //  std::cout << "root node addr: " << *root << std::endl;
+  //  std::cout << "root node left addr: " << (*root)->left << std::endl;
+  //  std::cout << "root node right addr: " << (*root)->right << std::endl;
+
+   // tree.print();
 
     //ft::rb_tree<std::pair<int,double>> t;
 

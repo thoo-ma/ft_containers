@@ -71,8 +71,9 @@ template <typename Key,
     : _alloc(alloc), _comp(comp) { }
 
     // range (2)
-    template <class InputIterator>
-    map (InputIterator first, InputIterator last,
+    //template <class InputIterator>
+    //map (InputIterator first, InputIterator last,
+    map (iterator first, iterator last,
        const key_compare & comp = key_compare(),
        const allocator_type & alloc = allocator_type());
 
@@ -96,15 +97,22 @@ template <typename Key,
     /****** Modifiers *********************************************************/
 
     // insert single element (1)
-    pair<iterator, bool> insert (const value_type & val);
-    // { return _tree.insert(val); }
+    pair<iterator, bool> insert (const value_type & val)
+    {
+        return find(val.key) != end()
+        ? pair<iterator, bool>(end(), false)
+        : pair<iterator, bool>(iterator(), true);
+        //: pair<iterator, bool>(iterator(_tree.insert(&_tree._root, val)), true);
+    }
 
     // insert with hint (2)
     iterator insert (iterator position, const value_type & val);
 
     // insert range (3)
-    template <class InputIterator>
-    void insert (InputIterator first, InputIterator last);
+    //template <class InputIterator>
+    //void insert (InputIterator first, InputIterator last);
+    void insert (iterator first, iterator last);
+    // while (first != last) insert((*first)++);
 
     // erase by iterator position (1)
     void erase (iterator position);
@@ -139,7 +147,7 @@ template <typename Key,
 
     /****** Operations ********************************************************/
 
-    iterator find (const key_type & key);
+    //iterator find (const key_type & key) { return iterator(_tree.find(_tree.root(), key)); }
     const_iterator find (const key_type & key) const;
 
     size_type count (const key_type & key);
