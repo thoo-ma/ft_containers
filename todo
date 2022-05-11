@@ -12,6 +12,7 @@ todo
 --> need by -Wconversion
 10. test const_iterator
 11. fix output_vector tests (cf. FAIL sections)
+12. iterators operators: member or non-member functions ?
 ________
 
 maybe
@@ -26,3 +27,10 @@ ________
 map
 - AVL (named after its inventor Adelson, Velski & Landis)
 - RBT (Red Black Tree : the one used by stl)
+________
+
+iterators
+- vector --> random access iterator
+- map    --> bidirectional iterator
+- base_iterator (iterator traits typedefs + operateurs comparaison)
+________
