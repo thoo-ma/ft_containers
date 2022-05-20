@@ -9,12 +9,14 @@
 #include "ft_bidirectional_iterator.hpp"
 #include "ft_iterator_base_types.hpp"
 
+// TODO pointer as value_type * instead of T *
+
 namespace ft {
 
 template <typename Key,
           typename T,
           typename Compare = std::less<Key>,
-          typename Allocator = std::allocator<std::pair<const Key, T>>
+          typename Allocator = std::allocator<std::pair<const Key, T>> // ft::pair
 > class map
 {
     /**************************************************************************/
@@ -86,12 +88,16 @@ template <typename Key,
 
     /****** Element access ****************************************************/
 
-    mapped_type & operator[] (const key_type & key);
+  //  mapped_type & operator[] (const key_type & key)
+  //  {
+  //      value_type * val = _tree.find(_tree.root_node(), key);
+  //      return val ? val->second : insert(val)->second;
+  //  }
 
     /****** Capacity **********************************************************/
 
-    bool empty() const;
-    size_type size() const;
+    bool empty() const { return _tree.root_node() == NULL; }
+    size_type size() const { return _tree.size(); }
     size_type max_size() const;
 
     /****** Modifiers *********************************************************/
@@ -147,7 +153,7 @@ template <typename Key,
 
     /****** Operations ********************************************************/
 
-    //iterator find (const key_type & key) { return iterator(_tree.find(_tree.root(), key)); }
+  //  iterator find (const key_type & key) { return iterator(_tree.find(_tree.root(), key)); }
     const_iterator find (const key_type & key) const;
 
     size_type count (const key_type & key);

@@ -13,6 +13,7 @@ todo
 10. test const_iterator
 11. fix output_vector tests (cf. FAIL sections)
 12. iterators operators: member or non-member functions ?
+13. rb_tree: use _comp to compare keys (otherwise remove it)
 ________
 
 maybe

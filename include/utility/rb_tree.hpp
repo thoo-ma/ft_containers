@@ -13,7 +13,11 @@ template <typename T,
 >
 class rb_tree
 {
-    /****** Member types ******************************************************/
+    /**************************************************************************/
+    /*                                                                        */
+    /*      Member types                                                      */
+    /*                                                                        */
+    /**************************************************************************/
 
     public:
 
@@ -22,6 +26,7 @@ class rb_tree
     typedef struct node	                node_type; // value_type ?
     typedef struct node *	            pointer;
     typedef struct node &               reference;
+    typedef size_t	                    size_type;
     typedef T	                        key_type;
     typedef Compare	                    compare;
     typedef std::allocator<struct node>	allocator_type;
@@ -40,15 +45,24 @@ class rb_tree
 
     };
 
-    /****** Private variables *************************************************/
+    /**************************************************************************/
+    /*                                                                        */
+    /*      Private variables                                                 */
+    /*                                                                        */
+    /**************************************************************************/
 
     private:
 
     pointer         _root;
+    size_type	    _size;
     compare	        _comp;
     allocator_type	_alloc;
 
-    /****** Private functions *************************************************/
+    /**************************************************************************/
+    /*                                                                        */
+    /*      Private functions                                                 */
+    /*                                                                        */
+    /**************************************************************************/
 
     // utility for recursive fashion destructor
     void _destroy(const pointer node)
@@ -68,7 +82,7 @@ class rb_tree
         : node->parent->left;
     }
 
-    void left_rotate(pointer node)
+    void _left_rotate(pointer node)
     {
         if (node->right)
         {
@@ -87,7 +101,7 @@ class rb_tree
         }
     }
 
-    void right_rotate(pointer node)
+    void _right_rotate(pointer node)
     {
         if (node->left)
         {
@@ -106,7 +120,7 @@ class rb_tree
         }
     }
 
-    void left_balance(pointer node, pointer parent, pointer uncle)
+    void _left_balance(pointer node, pointer parent, pointer uncle)
     {
         // case 1: uncle is Red
         if (uncle && uncle->color == Red)
@@ -119,15 +133,15 @@ class rb_tree
         {
             // case 3: node is right-child of parent
             if (node == parent->right)
-                left_rotate(parent);
+                _left_rotate(parent);
             // case 2: node is left-child of parent
-            right_rotate(parent->parent);
+            _right_rotate(parent->parent);
             node->parent->color = Black;
             node->parent->right->color = Red;
         }
     }
 
-    void right_balance(pointer node, pointer parent, pointer uncle)
+    void _right_balance(pointer node, pointer parent, pointer uncle)
     {
         // case 1: uncle is Red
         if (uncle && uncle->color == Red)
@@ -140,24 +154,28 @@ class rb_tree
         {
             // case 3: node is right-child of parent
             if (node == parent->right)
-                right_rotate(parent);
+                _right_rotate(parent);
             // case 2: node is left-child of parent
-            left_rotate(parent->parent);
+            _left_rotate(parent->parent);
             node->parent->color = Black;
             node->parent->left->color = Red;
         }
     }
 
-    /****** Member functions **************************************************/
+    /**************************************************************************/
+    /*                                                                        */
+    /*      Member functions                                                  */
+    /*                                                                        */
+    /**************************************************************************/
 
     public:
 
-    // utility (might delete later)
-    pointer * root_ptr() { return &_root; }
-    pointer & root_ref() { return  _root; }
-    pointer  root_node() { return  _root; }
+    /****** Utility (might delete later) **************************************/
 
-    // utility (might delete later)
+    pointer * root_ptr() const { return &_root; }
+    pointer & root_ref() { return  _root; } // !const bc used into map[]
+    pointer  root_node() const { return  _root; }
+
     void print(const pointer node)
     {
         if (node == NULL)
@@ -180,9 +198,21 @@ class rb_tree
         }
     }
 
-    rb_tree() : _root(NULL), _comp(compare()), _alloc(allocator_type()) { }
+    /****** Constructors ******************************************************/
 
-    //rb_tree(const rb_tree & tree) { (void)tree; }
+    rb_tree()
+    : _root(NULL), _size(0), _comp(compare()), _alloc(allocator_type()) { }
+
+//    rb_tree(const rb_tree & tree)
+//    {
+//        static pointer a = this->_root;
+//        static pointer b = tree->_root;
+//
+//        if (b == NULL)
+//            return;
+//    }
+
+    /****** Destructor ********************************************************/
 
     // for-loop fashion
     ~rb_tree()
@@ -218,7 +248,63 @@ class rb_tree
     // recursive fashion
     //~rb_tree() { _destroy(_root); }
 
-    void delete_node(pointer node)
+    /****** Capacity **********************************************************/
+
+    //size_type height() const { return _height; } // TODO ?
+    size_type size() const { return _size; }
+
+    /****** Element access ****************************************************/
+
+    // recursive fashion
+    // This Red Black Tree support duplicate keys.
+    // This function return the first equivalent key when there are.
+    pointer find(const pointer node, const key_type & key) const
+    {
+        if (node == NULL || node->key == key)
+            return node;
+        return key < node->key
+        ? find(node->left, key)
+        : find(node->right, key);
+    }
+
+    /****** Modifiers *********************************************************/
+
+    // with a recursive fashion search
+    void insert(pointer & node, pointer parent, key_type & key)
+    {
+        // insert at leaf -- or root
+        if (node == NULL)
+        {
+            // allocate & construct `node` from `key`
+            node = _alloc.allocate(1);
+            _alloc.construct(node, node_type(key));
+            _size++;
+            // insert `node` below `parent`
+            node->parent = parent;
+            if (parent)
+            {
+                key < parent->key
+                ? parent->left = node
+                : parent->right = node;
+            }
+            else return;
+            // rebalance
+            while (parent->parent && parent->color == Red)
+            {
+                node == parent->left
+                ?  _left_balance(node, parent, _get_brother(parent))
+                : _right_balance(node, parent, _get_brother(parent));
+            }
+            _root->color = Black;
+            return;
+        }
+        // recursive until leaf
+        return key < node->key
+        ? insert(node->left, node, key)
+        : insert(node->right, node, key);
+    }
+
+    void erase(pointer node)
     {
         // case 1: node has no right child
         if (node->right == NULL)
@@ -234,6 +320,7 @@ class rb_tree
             // not sure
             _alloc.destroy(node);
             _alloc.deallocate(node);
+            _size--;
             return;
         }
 
@@ -253,6 +340,7 @@ class rb_tree
             // not sure
             _alloc.destroy(node);
             _alloc.deallocate(node);
+            _size--;
         }
 
         // case 3: node's right child has a left child
@@ -273,53 +361,8 @@ class rb_tree
             // not sure
             _alloc.destroy(node);
             _alloc.deallocate(node);
+            _size--;
         }
-    }
-
-    // with a recursive fashion search
-    void insert(pointer & node, pointer parent, key_type & key)
-    {
-        // insert at leaf -- or root
-        if (node == NULL)
-        {
-            // allocate & construct `node` from `key`
-            node = _alloc.allocate(1);
-            _alloc.construct(node, node_type(key));
-            // insert `node` below `parent`
-            node->parent = parent;
-            if (parent)
-            {
-                key < parent->key
-                ? parent->left = node
-                : parent->right = node;
-            }
-            else return;
-            // rebalance
-            while (parent->parent && parent->color == Red)
-            {
-                node == parent->left
-                ?  left_balance(node, parent, _get_brother(parent))
-                : right_balance(node, parent, _get_brother(parent));
-            }
-            _root->color = Black;
-            return;
-        }
-        // recursive until leaf
-        return key < node->key
-        ? insert(node->left, node, key)
-        : insert(node->right, node, key);
-    }
-
-    // recursive fashion
-    // This Red Black Tree support duplicate keys.
-    // This function return the first equivalent key when there are.
-    pointer find(const pointer node, const key_type & key) const
-    {
-        if (node == NULL || node->key == key)
-            return node;
-        return key < node->key
-        ? find(node->left, key)
-        : find(node->right, key);
     }
 
 };
