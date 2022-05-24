@@ -24,9 +24,24 @@ struct pair
     pair()
     : first(T1()), second(T2()) { }
 
-    // constructor by copy (2)
+    // constructor by copy (2) -- with different types
     template <typename U1, typename U2>
     pair(const pair<U1,U2> & pair)
+    : first(pair.first), second(pair.second) { }
+
+    // constructor by copy (2) -- with same type
+    //
+    // This is needed for the following case:
+    // - we construct a pair from another with the same type.
+    // - constructed pair has at least const member type
+    //
+    // In such a case, since the compiler assume (U1 != T1 || U2 != T2),
+    // the constructor above will not be called.
+    //
+    // Then, it will be `operator=` that will be called for such construct.
+    // But if we construct a pair with const values (as we must have for map),
+    // then we cannot assign, we must list-initialize: this is what will be done here.
+    pair(const pair<T1,T2> & pair)
     : first(pair.first), second(pair.second) { }
 
     // constructor by initialization (3)

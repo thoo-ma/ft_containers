@@ -14,11 +14,12 @@ todo
 11. fix output_vector tests (cf. FAIL sections)
 12. iterators operators: member or non-member functions ?
 13. rb_tree: use _comp to compare keys (otherwise remove it)
+14. handle error when _any_ allocate() fails (gotta catch bad_alloc)
 ________
 
 maybe
 - explicit qualifer upon constructors
-- ft::equal
+- ft::equal (upon all ft datatypes: map, vector, tree, pair, etc.)
 - ikos --> utile pour les uninitialized values (valgrind output_stack)
 - configure script
 - `make all` re-mkdir output folders but not timing ones...

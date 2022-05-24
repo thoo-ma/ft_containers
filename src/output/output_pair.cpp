@@ -77,6 +77,18 @@ void test_pair_constructed_by_copy()
     compare_pairs(std::pair<Foo,Foo>(std::pair<int,int>()),
                    ft::pair<Foo,Foo>(ft::pair<int,int>()));
 
+    // from const to non-const
+    compare_pairs(std::pair<int,int>(std::pair<const int, const int>()),
+                    ft::pair<int,int>(ft::pair<const int,const int>()));
+
+    // from non-const to const
+    compare_pairs(std::pair<const int, const int>(std::pair<int, int>()),
+                    ft::pair<const int,const int>(ft::pair<int, int>()));
+
+    // both
+    compare_pairs(std::pair<const int, int>(std::pair<int, const int>()),
+                    ft::pair<const int, int>(ft::pair<int, const int>()));
+
     // here compiler try to convert `float` to `int` in order to build Foo(int)
     // compiler warn with -Wconversion
     //compare_pairs(std::pair<Foo,Foo>(std::pair<float,float>()),

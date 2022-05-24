@@ -43,6 +43,18 @@ class rb_tree
         node(const key_type & key = key_type())
         : key(key), color(Red), left(NULL), right(NULL), parent(NULL) { }
 
+        node(const node_type & node)
+        : key(node.key), color(node.color), left(NULL), right(NULL), parent(NULL) { }
+
+      //  node(const node_type & node) { *this = node; }
+
+        struct node & operator=(const struct node & a)
+        {
+            this->key = a.key;
+            this->color = a.color;
+            return *this;
+        }
+
     };
 
     /**************************************************************************/
@@ -162,6 +174,78 @@ class rb_tree
         }
     }
 
+    // recursive fashion
+    node_type * _copy(node_type * src, node_type * parent)
+    {
+        node_type * dst;
+
+        if (src == NULL)
+            return NULL;
+
+        dst = _alloc.allocate(1);
+        _alloc.construct(dst, *src);
+
+        if (parent)
+            dst->parent = parent;
+
+        dst->left = _copy(src->left, dst);
+        dst->right = _copy(src->right, dst);
+
+        return dst;
+    }
+
+    // iterative fashion
+    node_type * _copy(node_type * src)
+    {
+        node_type * dst;
+        node_type * dst_root;
+
+        if (src == NULL)
+            return NULL;
+//        _allocate_and_copy(dst, src);
+        dst_root = _alloc.allocate(1);
+        _alloc.construct(dst_root, *src);
+        dst = dst_root;
+        while (1)
+        {
+            while (src->left)
+            {
+                dst->left = _alloc.allocate(1);
+                _alloc.construct(dst->left, *src);
+                dst->left->parent = dst;
+                src = src->left;
+                dst = dst->left;
+            }
+            dst->left = NULL;
+            while (1)
+            {
+                if (src->right)
+                {
+                    dst->right = _alloc.allocate(1);
+                    _alloc.construct(dst->right, *src);
+                    dst->right->parent = dst;
+                    src = src->right;
+                    dst = dst->right;
+                    break;
+                }
+                else
+                    dst->right = NULL;
+                while (1)
+                {
+                    node_type * tmp = src;
+
+                    src = src->parent;
+                    if (src == NULL)
+                        return dst_root;
+                    dst = dst->parent;
+                    if (tmp == src->left)
+                        break;
+                }
+            }
+        }
+    }
+
+
     /**************************************************************************/
     /*                                                                        */
     /*      Member functions                                                  */
@@ -198,23 +282,26 @@ class rb_tree
         }
     }
 
+    rb_tree & operator=(const rb_tree & tree)
+    {
+        _root = _copy(tree._root, NULL);
+        //_root = _copy(tree._root);
+        return *this;
+    }
+
     /****** Constructors ******************************************************/
 
     rb_tree()
     : _root(NULL), _size(0), _comp(compare()), _alloc(allocator_type()) { }
 
-//    rb_tree(const rb_tree & tree)
-//    {
-//        static pointer a = this->_root;
-//        static pointer b = tree->_root;
-//
-//        if (b == NULL)
-//            return;
-//    }
+    rb_tree(const rb_tree & tree)
+    : _root(NULL), _size(tree._size), _comp(tree._comp), _alloc(tree._alloc)
+    { *this = tree; }
+    //{ _root = _copy(tree._root, NULL); }
 
     /****** Destructor ********************************************************/
 
-    // for-loop fashion
+    // iterative fashion
     ~rb_tree()
     {
         pointer	    node;

@@ -17,6 +17,7 @@ template <typename Key,
           typename T,
           typename Compare = std::less<Key>,
           typename Allocator = std::allocator<std::pair<const Key, T>> // ft::pair
+          //typename Allocator = std::allocator<ft::pair<const Key, T>>
 > class map
 {
     /**************************************************************************/
@@ -31,7 +32,7 @@ template <typename Key,
     typedef T	                mapped_type;
     typedef pair<const Key, T>	value_type;
     typedef Compare	            key_compare;
-//    typedef value_compare;
+    //typedef key_compare  value_compare;
     typedef Allocator           allocator_type;
     typedef size_t              size_type;
     typedef ptrdiff_t           difference_type;
@@ -80,7 +81,7 @@ template <typename Key,
        const allocator_type & alloc = allocator_type());
 
     // copy (3)
-    map (const map & x);
+    map (const map & a) : _alloc(a._alloc), _comp(a._comp), _tree(a._tree) { }
 
     /****** Destructor ********************************************************/
 
@@ -131,11 +132,11 @@ template <typename Key,
 
     void swap (map & m);
 
-    void clear ();
+    //void clear (); { erase(begin(), end()); }
 
     /****** Observers *********************************************************/
 
-    key_compare key_comp () const;
+    key_compare key_comp () const { return _comp; }
 
     //value_compare value_comp () const;
 
@@ -175,6 +176,7 @@ template <typename Key,
     allocator_type get_allocator () const { return _alloc; }
 
     map & operator= (const map & m);
+
 };
 
 /******************************************************************************/
