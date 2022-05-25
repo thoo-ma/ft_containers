@@ -41,10 +41,40 @@ template <typename Key,
     typedef T *                 pointer;
     typedef const T *           const_pointer;
 
-    typedef bidirectional_iterator<T> iterator;
-    typedef const bidirectional_iterator<T> const_iterator;
-    //typedef reverse_iterator;
-    //typedef const_reverse_iterator;
+    template <typename U>
+    class map_iterator : public iterator<bidirectional_iterator_tag, U>
+    {
+        typedef iterator_traits<map_iterator>	    traits;
+        typedef typename traits::iterator_category  iterator_category;
+        typedef typename traits::value_type         value_type;
+        typedef typename traits::difference_type    difference_type;
+        typedef typename traits::pointer	        pointer;
+        typedef typename traits::reference	        reference;
+
+        private: pointer _data;
+
+        public:
+
+        map_iterator()	                        : _data(NULL)      { }
+        map_iterator(pointer data)	            : _data(data)      { }
+        map_iterator(const map_iterator & it)	: _data(it._data)  { }
+
+        reference operator=(const map_iterator & it);
+        reference operator*() const;
+        //reference operator->() const;
+        bool operator==(const map_iterator & it) const;
+        bool operator!=(const map_iterator & it) const;
+        map_iterator & operator++();
+        map_iterator operator++(int);
+        map_iterator & operator--();
+        map_iterator operator--(int);
+
+    };
+
+    typedef map_iterator<value_type>	    iterator;
+    typedef map_iterator<const value_type>	const_iterator;
+    //typedef reverse_iterator<iterator> reverse_iterator;
+    //typedef reverse_iterator<const_iterator> const_reverse_iterator;
 
     /**************************************************************************/
     /*                                                                        */

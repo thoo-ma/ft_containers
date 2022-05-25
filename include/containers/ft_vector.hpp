@@ -5,7 +5,7 @@
 #include <cstring> // std::memmove (cf. erase)
 
 //#include "ft_type_traits.hpp"
-#include "ft_random_access_iterator.hpp"
+//#include "ft_random_access_iterator.hpp"
 #include "ft_iterator_base_types.hpp"
 #include "ft_lexicographical_compare.hpp"
 
@@ -65,10 +65,159 @@ class vector {
     typedef T *         pointer;
     typedef const T *   const_pointer;
 
-    typedef random_access_iterator<T> iterator;
-    typedef const random_access_iterator<T> const_iterator;
-    //typedef reverse_iterator;
-    //typedef const_reverse_iterator;
+    /**************************************************************************/
+    /*                                                                        */
+    /*      Vector iterator                                                   */
+    /*                                                                        */
+    /**************************************************************************/
+
+    template <typename U>
+    class vector_iterator : public iterator<random_access_iterator_tag, U>
+    {
+        /****** Member types **************************************************/
+
+        typedef iterator_traits<vector_iterator>	traits;
+        typedef typename traits::iterator_category  iterator_category;
+        typedef typename traits::value_type         value_type;
+        typedef typename traits::difference_type    difference_type;
+        typedef typename traits::pointer	        pointer;
+        typedef typename traits::reference	        reference;
+
+        // delete
+        public:
+
+        void debug() {
+          //  std::cout << typeid(U).name() << std::endl;
+          //  std::cout << typeid(std::add_const<U>).name() << std::endl;
+          //  std::cout << typeid(std::remove_const<U>).name() << std::endl;
+            std::cout << std::is_const<U>::value << std::endl;
+        }
+
+        /****** Private data **************************************************/
+
+        private: pointer _data;
+
+        /****** Constructors **************************************************/
+
+        public:
+
+        vector_iterator()
+        : _data(NULL) { }
+
+        vector_iterator(pointer data)
+        : _data(data) { }
+
+        // it(it)
+        // const_it(const_it)
+        vector_iterator<U>(const vector_iterator<U> & it)
+        : _data(it._data) { }
+
+        // const_it(it)
+       // vector_iterator<const U>(const vector_iterator<U> & it)
+       // : _data(it._data) { }
+
+        /****** Operators *****************************************************/
+
+        //reference
+        vector_iterator &
+       // reference
+        operator=(const vector_iterator & it)
+        { _data = it._data; return *this; }
+
+        reference
+        operator*() const
+        { return *_data; }
+
+        //reference operator->() const;
+
+        bool
+        operator==(const vector_iterator & it) const
+        { return _data == it._data; }
+
+        bool
+        operator!=(const vector_iterator & it) const
+        { return !(_data == it._data); }
+
+        // prefix incrementation
+        vector_iterator &
+        operator++()
+        { ++_data; return *this; }
+
+        // postfix incrementation
+        vector_iterator
+        operator++(int)
+        { vector_iterator tmp(*this); operator++(); return tmp; }
+
+        // prefix decrementation
+        vector_iterator &
+        operator--()
+        { --_data; return *this; }
+
+        // postfix decrementation
+        vector_iterator
+        operator--(int)
+        { vector_iterator tmp(*this); operator--(); return tmp; }
+
+        vector_iterator &
+        operator+=(const difference_type n)
+        {
+            // TODO
+        // why not delete `const` attribute to `n` ?
+        // Hence `m` would be useless.
+        // (this also apply upon following operators)
+            difference_type m = n;
+            if (m >= 0) { while (m--) ++(*this); }
+            else        { while (m++) --(*this); }
+            return *this;
+        }
+
+        vector_iterator &
+        operator-=(const difference_type & n)
+        { return operator+=(-n); }
+
+        vector_iterator
+        operator+(const difference_type & n) const
+        { return vector_iterator<T>(this->_data + n); }
+
+        vector_iterator
+        operator-(const difference_type & n) const
+        { return operator+(-n); }
+
+        difference_type
+        operator-(const vector_iterator<T> & rhs) const
+        {
+            return this->_data > rhs._data
+            ? this->_data - rhs._data
+            : -(rhs._data - this->_data);
+        }
+
+        value_type & operator[](const difference_type n) const
+        { return this->_data[n]; }
+
+        bool operator<(const vector_iterator<T> & rhs) const
+        { return *this - rhs < 0; }
+
+        bool operator>(const vector_iterator<T> & rhs) const
+        { return rhs < *this; }
+
+        bool operator<=(const vector_iterator<T> & rhs) const
+        { return !(*this > rhs); }
+
+        bool operator>=(const vector_iterator<T> & rhs) const
+        { return !(*this < rhs); }
+
+    };
+
+    typedef vector_iterator<value_type>	        iterator;
+    typedef vector_iterator<const value_type>	const_iterator;
+
+    //typedef vector_iterator<std::is_const<value_type>>	        iterator;
+
+    //typedef vector_iterator<std::remove_const<value_type>>	        iterator;
+    //typedef vector_iterator<const std::remove_const<value_type>>	const_iterator;
+
+    //typedef reverse_iterator<iterator> reverse_iterator;
+    //typedef reverse_iterator<const_iterator> const_reverse_iterator;
 
     /**************************************************************************/
     /*                                                                        */
@@ -436,11 +585,11 @@ class vector {
 
 	iterator begin() { return iterator(_data); }
 
-	const_iterator begin() const { return iterator(_data); }
+	const_iterator begin() const { return const_iterator(_data); }
 
 	iterator end() { return iterator(&_data[_size]); }
 
-	const_iterator end() const { return iterator(&_data[_size]); }
+	const_iterator end() const { return const_iterator(&_data[_size]); }
 
 	// reverse_iterator rbegin() { };
 	// const_reverse_iterator rbegin() const { };

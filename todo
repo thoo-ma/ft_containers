@@ -35,4 +35,15 @@ iterators
 - vector --> random access iterator
 - map    --> bidirectional iterator
 - base_iterator (iterator traits typedefs + operateurs comparaison)
+
+it(it)
+it(const_it)
+const_it(const_it)
+________
+
+template <bool>
+struct ft_static_assert;
+
+template <>
+struct ft_static_assert<true>{};
 ________

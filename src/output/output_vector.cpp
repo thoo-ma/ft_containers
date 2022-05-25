@@ -1072,16 +1072,14 @@ operators_tests()
 
 /****** Iterators tests *******************************************************/
 
-// random_access_iterator only (for now)
-
 void
 iterator_constructors_test()
 {
     int i = 42;
     int * p = &i;
-    ft::random_access_iterator<int> a; // by default
-    ft::random_access_iterator<int> b(p); // by pointer
-    ft::random_access_iterator<int> c(b); // by copy
+    ft::vector<int>::iterator a;
+    ft::vector<int>::iterator b(p);
+    ft::vector<int>::iterator c(b);
     (void)a;
     (void)b;
     (void)c;
@@ -1093,8 +1091,8 @@ iterator_assignation_test()
 {
     int i = 42;
     int * p = &i;
-    ft::random_access_iterator<int> a(p);
-    ft::random_access_iterator<int> b;
+    ft::vector<int>::iterator a(p);
+    ft::vector<int>::iterator b;
     b = a; // here
     assert(*a == 42);
     assert(*b == 42);
@@ -1114,8 +1112,8 @@ begin_test()
     {
         // const_iterator
         ft::vector<int> v(10, 21);
-        ft::vector<int>::const_iterator it = v.begin();
-        assert(*it == 21);
+        //ft::vector<int>::const_iterator it = v.begin(); // TODO
+        //assert(*it == 21);
         // it++; // error
     }
     std::cout << "begin " << GREEN << "OK" << RESET << std::endl;
@@ -1133,9 +1131,9 @@ end_test()
     {
         // const_iterator
         ft::vector<int> v(10, 21);
-        ft::vector<int>::const_iterator it = v.end();
+        //ft::vector<int>::const_iterator it = v.end(); // TODO
         //it--; // error
-        (void)it;
+        //(void)it;
     }
     std::cout << "end " << GREEN << "OK" << RESET << std::endl;
 }
@@ -1188,7 +1186,7 @@ iterator_dereference_test()
         // from single pointer
         int i = 42;
         int *p = &i;
-        ft::random_access_iterator<int> a(p);
+        ft::vector<int>::iterator a(p);
         assert(*a == *p);
     }
     {
@@ -1211,8 +1209,8 @@ iterator_equal_test()
         // from single pointer
         int i = 42;
         int *p = &i;
-        ft::random_access_iterator<int> a(p);
-        ft::random_access_iterator<int> b(a);
+        ft::vector<int>::iterator a(p);
+        ft::vector<int>::iterator b(a);
         assert(a == p);
         assert(a == b);
         assert(b == p);
@@ -1242,8 +1240,8 @@ iterator_not_equal_test()
         int *p = &i;
         int *q = &j;
 
-        ft::random_access_iterator<int> a(p);
-        ft::random_access_iterator<int> b(q);
+        ft::vector<int>::iterator a(p);
+        ft::vector<int>::iterator b(q);
 
         assert(a != b);
   }
@@ -1488,15 +1486,52 @@ int main()
     //vector_test<int>();
     //vector_test<double>();
 
-    allocator_test(); // TODO
-    constructors_test(); // TODO
+//    allocator_test(); // TODO
+//    constructors_test(); // TODO
+//
+//    capacity_tests();
+//    accessors_tests();
+//    modifiers_tests(); // TODO
+//    operators_tests();
 
-    capacity_tests();
-    accessors_tests();
-    modifiers_tests(); // TODO
-    operators_tests();
+    //iterators_tests();
 
-    iterators_tests();
-
+    {
+        //ft::vector<int>::iterator a;
+        //ft::vector<int>::iterator b(a);
+//        ft::vector<int>::const_iterator c(a);
+//        ft::vector<int>::const_iterator d;
+        //ft::vector<const int>::iterator z;
+//
+        //a.debug();
+        //b.debug();
+        //z.debug();
+//
+//        ft::vector<int> foo;
+//        ft::vector<const int> bar;
+    }
+    {
+          std::vector<int>::iterator a;
+          std::vector<int>::const_iterator b;
+          (void)a;
+          (void)b;
+    }
+    {
+          ft::vector<int>::iterator a;
+          ft::vector<int>::const_iterator b;
+          ft::vector<int>::const_iterator c(b);
+          ft::vector<int>::const_iterator d(a);
+          a.debug();
+          b.debug();
+          c.debug();
+          //d.debug();
+    }
+         // std::vector<int>::const_iterator bar(foo);
+          //std::vector<int>::iterator baz(bar);
+         // std::vector<const int>::iterator it;
+         // std::vector<const int>::const_iterator itc;
+    
+         // std::cout << typeid(it).name() << std::endl;
+         // std::cout << typeid(itc).name() << std::endl;
     return 0;
 }
