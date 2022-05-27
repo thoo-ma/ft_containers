@@ -17,8 +17,6 @@ namespace ft {
 
     /****** remove_const ******************************************************/
 
-    // unused for now
-
     // default case: less specialized
     template <class T>
     struct remove_const { typedef T type; };
@@ -26,6 +24,16 @@ namespace ft {
     // const case: more specialized
     template <class T> // class U ?
     struct remove_const <T const> { typedef T type; };
+
+    /****** add_const *********************************************************/
+
+    // default case: less specialized
+    template <class T>
+    struct add_const { typedef T const type; };
+
+    // const case: more specialized
+    template <class T> // class U ?
+    struct add_const <T const> { typedef T type; };
 
     /****** integral_constant *************************************************/
 

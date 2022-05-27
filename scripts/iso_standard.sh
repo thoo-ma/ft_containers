@@ -28,6 +28,7 @@ iso_standard()
     -I $include_dir/containers \
     -I $include_dir/algorithms \
     -I $include_dir/iterators \
+    -I $include_dir/utility \
     main.cpp 1>/dev/null 2>$logfile
 
     # check success/failure

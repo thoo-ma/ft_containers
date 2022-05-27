@@ -15,6 +15,8 @@ todo
 12. iterators operators: member or non-member functions ?
 13. rb_tree: use _comp to compare keys (otherwise remove it)
 14. handle error when _any_ allocate() fails (gotta catch bad_alloc)
+15. output_vector: use ft _and_ std to check asserts (i.g. for iterator_test)
+16. debug iso_stardard script
 ________
 
 maybe
@@ -24,6 +26,16 @@ maybe
 - configure script
 - `make all` re-mkdir output folders but not timing ones...
 - rename src/ into test/
+- keep our iterator_traits but forget abour our iterator struct
+--> this way, we can use stl algorithms act upon our containers
+- east const instead of west const
+________
+
+readme
+
+- explain why constructors are not explicit (but could be and how it is useful)
+- explain why east const instead of west const
+--> the only consistent way to write const (got to read from right-to-left)
 ________
 
 map
@@ -35,10 +47,6 @@ iterators
 - vector --> random access iterator
 - map    --> bidirectional iterator
 - base_iterator (iterator traits typedefs + operateurs comparaison)
-
-it(it)
-it(const_it)
-const_it(const_it)
 ________
 
 template <bool>
