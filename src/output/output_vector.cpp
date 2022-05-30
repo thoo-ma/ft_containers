@@ -13,7 +13,7 @@
 
 /*
  *  TODO
- *  - std::vector<int>::iterator = v.begin();
+ *
  *  - ft::vector<int> v(5, 42);
  *    --> std::cout << std::distance(v.begin(), v.end()) << std::endl;
  *  - test with custom class like `class Foo { public: int a[60]; };`
@@ -275,59 +275,107 @@ capacity_tests()
 void
 at_test()
 {
+    bool success = true;
     // success
     {
         {
             // at non-empty vector
-            ft::vector<int> v(10, 42);
+            {
+                // mutable vector
+                ft::vector<int> v(10, 42);
 
-            bool success = true;
+                try { v.at(1); assert(v.at(1) == 42); }
+                catch (std::out_of_range & oor) { success = false; }
 
-            try { v.at(1); assert(v.at(1) == 42); }
-            catch (std::out_of_range & oor) { success = false; }
+                assert(success);
+            }
+            {
+                // const vector
+                const ft::vector<int> v(10, 42);
 
-            assert(success);
+                try { v.at(1); assert(v.at(1) == 42); }
+                catch (std::out_of_range & oor) { success = false; }
+
+                assert(success);
+            }
         }
         {
             // at end() - 1
-            ft::vector<int> v(10, 42);
-
-            bool success = true;
-
-            try
             {
-                ft::vector<int>::size_type i = static_cast<size_t>(v.end() - v.begin() - 1);
-                v.at(i);
-                assert(v.at(i) == 42);
-            }
-            catch (std::out_of_range & oor) { success = false; }
+                // mutable vector
+                ft::vector<int> v(10, 42);
 
-            assert(success);
+                try
+                {
+                    ft::vector<int>::size_type i = static_cast<size_t>(v.end() - v.begin() - 1);
+                    v.at(i);
+                    assert(v.at(i) == 42);
+                }
+                catch (std::out_of_range & oor) { success = false; }
+
+                assert(success);
+            }
+            {
+                // const vector
+                const ft::vector<int> v(10, 42);
+
+                try
+                {
+                    ft::vector<int>::size_type i = static_cast<size_t>(v.end() - v.begin() - 1);
+                    v.at(i);
+                    assert(v.at(i) == 42);
+                }
+                catch (std::out_of_range & oor) { success = false; }
+
+                assert(success);
+            }
         }
     }
     // failure (exception throw)
     {
         {
             // access to empty vector
-            ft::vector<int> v;
+            {
+                // mutable vector
+                {
+                    ft::vector<int> v;
 
-            bool success = true;
+                    try { v.at(1); }
+                    catch (std::out_of_range & oor) { success = false; }
 
-            try { v.at(1); }
-            catch (std::out_of_range & oor) { success = false; }
+                    assert(!success);
+                }
+                {
+                    // const vector
+                    const ft::vector<int> v;
 
-            assert(!success);
+                    try { v.at(1); }
+                    catch (std::out_of_range & oor) { success = false; }
+
+                    assert(!success);
+                }
+            }
         }
         {
             // access to end()
-            ft::vector<int> v(10, 42);
+            {
+                // mutable vector
+                ft::vector<int> v(10, 42);
 
-            bool success = true;
+                try { v.at(v.end() - v.begin()); }
+                catch (std::out_of_range & oor) { success = false; }
 
-            try { v.at(v.end() - v.begin()); }
-            catch (std::out_of_range & oor) { success = false; }
+                assert(!success);
+            }
+            {
+                // const vector
+                const ft::vector<int> v(10, 42);
 
-            assert(!success);
+                try { v.at(v.end() - v.begin()); }
+                catch (std::out_of_range & oor) { success = false; }
+
+                assert(!success);
+            }
         }
     }
     std::cout << "at " << GREEN << "OK" << RESET << std::endl;
@@ -336,24 +384,34 @@ at_test()
 void
 front_test()
 {
-    {
-        // undefined behavior when vector is empty
-        // assert(ft::vector<int>().front() == 0);
-    }
+    // undefined behavior when vector is empty
+    // { assert(ft::vector<int>().front() == 0); }
+
+    // mutable vector
     { assert(ft::vector<int>(10).front() == int()); }
     { assert(ft::vector<int>(10, 42).front() == 42); }
+
+    // const vector
+    { const ft::vector<int> v(10); assert(v.front() == int()); }
+    { const ft::vector<int> v(10, 42); assert(v.front() == 42); }
+
     std::cout << "front " << GREEN << "OK" << RESET << std::endl;
 }
 
 void
 back_test()
 {
-    {
-        // undefined behavior when vector is empty
-        // assert(ft::vector<int>().back() == 0);
-    }
+    // undefined behavior when vector is empty
+    // { assert(ft::vector<int>().back() == 0); }
+
+    // mutable vector
     { assert(ft::vector<int>(10).back() == int()); }
     { assert(ft::vector<int>(10, 42).back() == 42); }
+
+    // const vector
+    { const ft::vector<int> v(10); assert(v.back() == int()); }
+    { const ft::vector<int> v(10, 42); assert(v.back() == 42); }
+
     std::cout << "back " << GREEN << "OK" << RESET << std::endl;
 }
 
@@ -376,6 +434,15 @@ operator_bracket_test()
     {
         // doesn't thow anything
         ft::vector<int>(10)[10];
+    }
+    {
+        const ft::vector<int> v(10);
+        int i = int();
+        for (ft::vector<int>::size_type j = 0; j < 10; j++) { assert(v[j] == i); }
+    }
+    {
+        const ft::vector<int> v(10, 42);
+        for (ft::vector<int>::size_type i = 0; i < 10; i++) { assert(v[i] == 42); }
     }
     std::cout << "operator[] " << GREEN << "OK" << RESET << std::endl;
 }
@@ -985,40 +1052,40 @@ vector_assignation_test()
         assert(a == b);
     }
     std::cout << "operator= " << GREEN << "OK" << RESET << std::endl;
-    }
+}
 
-    void
-    less_than_test()
+void
+less_than_test()
+{
     {
-        {
-            // with different sizes
-            assert(ft::vector<int>() < ft::vector<int>(1));
-            assert(ft::vector<int>(0) < ft::vector<int>(1));
-            assert(ft::vector<int>(1) < ft::vector<int>(2));
+        // with different sizes
+        assert(ft::vector<int>() < ft::vector<int>(1));
+        assert(ft::vector<int>(0) < ft::vector<int>(1));
+        assert(ft::vector<int>(1) < ft::vector<int>(2));
 
-            // with different values
-            assert(ft::vector<int>(1, 21) < ft::vector<int>(1, 42));
-        }
-        std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+        // with different values
+        assert(ft::vector<int>(1, 21) < ft::vector<int>(1, 42));
     }
+    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+}
 
-    void
-    greater_than_test()
+void
+greater_than_test()
+{
     {
-        {
-            // with different sizes
-            assert(ft::vector<int>(1) > ft::vector<int>());
-            assert(ft::vector<int>(1) > ft::vector<int>(0));
-            assert(ft::vector<int>(2) > ft::vector<int>(1));
+        // with different sizes
+        assert(ft::vector<int>(1) > ft::vector<int>());
+        assert(ft::vector<int>(1) > ft::vector<int>(0));
+        assert(ft::vector<int>(2) > ft::vector<int>(1));
 
-            // with different values
-            assert(ft::vector<int>(1, 42) > ft::vector<int>(1, 21));
-        }
-        std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+        // with different values
+        assert(ft::vector<int>(1, 42) > ft::vector<int>(1, 21));
     }
+    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+}
 
-    void
-    less_than_equal_test()
+void
+less_than_equal_test()
 {
     {
         // with different sizes
@@ -1077,35 +1144,80 @@ iterator_constructors_test()
 {
     {
         // by default
-        ft::vector<int>::iterator	    a;
-        ft::vector<int>::const_iterator b;
+        ft::vector<int>::iterator		                a;
+        ft::vector<int>::const_iterator	                b;
+        ft::vector<int>::reverse_iterator	            c;
+        ft::vector<int>::const_reverse_iterator	        d;
+        const ft::vector<int>::iterator		            e;
+        const ft::vector<int>::const_iterator	        f;
+        const ft::vector<int>::reverse_iterator	        g;
+        const ft::vector<int>::const_reverse_iterator	h;
     }
     {
         // by pointer
         int i = 42;
         int * p = &i;
-        ft::vector<int>::iterator	    a(p);
-        ft::vector<int>::const_iterator	b(p);
+        ft::vector<int>::iterator	            a(p);
+        ft::vector<int>::const_iterator	        b(p);
+
+        // the following should not compile -- we get this behavior by
+        // adding `explicit` qualifier to iterator_base constructor by pointer
+
+        // ft::vector<int>::reverse_iterator	    c(p);
+        // ft::vector<int>::const_reverse_iterator	d(p);
     }
     {
         // by copy
-        std::vector<int>::iterator a;
-        std::vector<int>::const_iterator b;
+        ft::vector<int>::iterator               a;
+        ft::vector<int>::const_iterator         b;
+        ft::vector<int>::reverse_iterator	    c;
+        ft::vector<int>::const_reverse_iterator	d;
 
         // it(it)
-        std::vector<int>::iterator c(a);
-
-        // const_it(const_it)
-        std::vector<int>::const_iterator d(b);
-
-        // const_it(it)
-        std::vector<int>::const_iterator e(a);
+        ft::vector<int>::iterator e(a);
 
         // it(const_it) --> should not compile !
-        //std::vector<int>::iterator f(b); (void)f;
+        // ft::vector<int>::iterator x(b); (void)x;
 
-        (void)c;
-        (void)d;
+        // const_it(it)
+        ft::vector<int>::const_iterator f(a);
+
+        // const_it(const_it)
+        ft::vector<int>::const_iterator g(b);
+
+        // rev_it(it)
+        ft::vector<int>::reverse_iterator h(a);
+
+        // rev_it(const_it) --> should not compile !
+        // ft::vector<int>::reverse_iterator y(b); (void)y;
+
+        // rev_it(rev_it)
+        ft::vector<int>::reverse_iterator i(c);
+
+        // rev_it(const_rev_it) --> should not compile !
+        // ft::vector<int>::reverse_iterator z(d); (void)z;
+
+        // const_rev_it(it)
+        ft::vector<int>::const_reverse_iterator j(a);
+
+        // const_rev_it(const_it)
+        ft::vector<int>::const_reverse_iterator k(b);
+
+        // const_rev_it(rev_it)
+        ft::vector<int>::const_reverse_iterator l(c);
+
+        // const_rev_it(const_rev_it)
+        ft::vector<int>::const_reverse_iterator m(d);
+
+        (void)e;
+        (void)f;
+        (void)g;
+        (void)h;
+        (void)i;
+        (void)j;
+        (void)k;
+        (void)l;
+        (void)m;
     }
     std::cout << "constructors " << GREEN << "OK" << RESET << std::endl;
 }
@@ -1117,34 +1229,94 @@ iterator_assignation_test()
         // it = it
         int i = 42;
         int * p = &i;
-        ft::vector<int>::iterator a(p);
-        ft::vector<int>::iterator b;
+        ft::vector<int>::iterator a;
+        ft::vector<int>::iterator b(p);
         assert(a != b);
-        b = a;
+        a = b;
         assert(a == b);
     }
     {
         // const_it = const_it
         int i = 42;
         int * p = &i;
-        ft::vector<int>::const_iterator a(p);
-        ft::vector<int>::const_iterator b;
+        ft::vector<int>::const_iterator a;
+        ft::vector<int>::const_iterator b(p);
         assert(a != b);
-        b = a;
+        a = b;
         assert(a == b);
     }
     {
         // const_it = it
         int i = 42;
         int * p = &i;
-        ft::vector<int>::iterator a(p);
-        ft::vector<int>::const_iterator b;
+        ft::vector<int>::const_iterator a;
+        ft::vector<int>::iterator	    b(p);
         assert(a != b);
-        b = a;
+        a = b;
         assert(a == b);
     }
     {
         // it = const_it -- should not compile
+        // ft::vector<int>::iterator	    a;
+        // ft::vector<int>::const_iterator	b;
+        // a = b;
+    }
+    {
+        // rev_it = it -- should not compile
+        // ft::vector<int>::reverse_iterator	a;
+        // ft::vector<int>::iterator	        b;
+        // a = b;
+    }
+    {
+        // rev_it = const_it -- should not compile
+        // ft::vector<int>::reverse_iterator	a;
+        // ft::vector<int>::const_iterator	    b;
+        // a = b;
+    }
+    {
+        // rev_it = rev_it
+        ft::vector<int> v(2,42);
+        ft::vector<int>::reverse_iterator a;
+        ft::vector<int>::reverse_iterator b = v.rbegin();
+        assert(a != b);
+        a = b;
+        assert(a == b);
+    }
+    {
+        // rev_it = const_rev_it -- should not compile
+        // std::vector<int>::reverse_iterator	    a;
+        // std::vector<int>::const_reverse_iterator	b;
+        // a = b;
+    }
+    {
+        // const_rev_it = it -- should not compile
+        // ft::vector<int>::const_reverse_iterator	a;
+        // ft::vector<int>::iterator	            b;
+        // a = b;
+    }
+    {
+        // const_rev_it = const_it -- should not compile
+        // ft::vector<int>::const_reverse_iterator	a;
+        // ft::vector<int>::const_iterator	        b;
+        // a = b;
+    }
+    {
+        // const_rev_it = rev_it
+        ft::vector<int> v(2,42);
+        ft::vector<int>::const_reverse_iterator	a = v.rbegin();
+        ft::vector<int>::reverse_iterator	        b;
+        assert(a != b);
+        a = b;
+        assert(a == b);
+    }
+    {
+        // const_rev_it = const_rev_it
+        ft::vector<int> v(2,42);
+        ft::vector<int>::const_reverse_iterator	a = v.rbegin();
+        ft::vector<int>::const_reverse_iterator	b;
+        assert(a != b);
+        a = b;
+        assert(a == b);
     }
     std::cout << "assignation " << GREEN << "OK" << RESET << std::endl;
 }
@@ -1153,18 +1325,31 @@ void
 begin_test()
 {
     {
-        // iterator
+        // iterator from mutable vector
         ft::vector<int> v(10, 21);
         ft::vector<int>::iterator it = v.begin();
         assert(*it == 21);
         it++;
     }
     {
-        // const_iterator
+        // const_iterator from mutable vector
         ft::vector<int> v(10, 21);
-        //ft::vector<int>::const_iterator it = v.begin(); // TODO
-        //assert(*it == 21);
-        // it++; // error
+        ft::vector<int>::const_iterator it = v.begin();
+        assert(*it == 21);
+        it++;
+    }
+    {
+        // iterator from const vector -- sould not compile
+     //   const ft::vector<int> v(10, 21);
+     //   ft::vector<int>::iterator it = v.begin();
+     //   (void)it;
+    }
+    {
+        // const_iterator from const vector
+        const ft::vector<int> v(10, 21);
+        ft::vector<int>::const_iterator it = v.begin();
+        assert(*it == 21);
+        it++;
     }
     std::cout << "begin " << GREEN << "OK" << RESET << std::endl;
 }
@@ -1173,19 +1358,98 @@ void
 end_test()
 {
     {
-        // iterator
+        // iterator from mutable vector
         ft::vector<int> v(10, 21);
         ft::vector<int>::iterator it = v.end();
         it--;
     }
     {
-        // const_iterator
+        // const_iterator from mutable vector
         ft::vector<int> v(10, 21);
-        //ft::vector<int>::const_iterator it = v.end(); // TODO
-        //it--; // error
-        //(void)it;
+        ft::vector<int>::const_iterator it = v.end();
+        it--;
+    }
+    {
+        // iterator from const vector -- should not compile
+     //   const ft::vector<int> v(10, 21);
+     //   ft::vector<int>::iterator it = v.end();
+     //   it--;
+    }
+    {
+        // const_iterator from const vector
+        const ft::vector<int> v(10, 21);
+        ft::vector<int>::const_iterator it = v.end();
+        it--;
     }
     std::cout << "end " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+rbegin_test()
+{
+    {
+        // reverse_iterator from mutable vector
+        ft::vector<int> v(10, 21);
+        ft::vector<int>::reverse_iterator it = v.rbegin();
+        assert(it.base() == v.end());
+        it++;
+        assert(*it == 21);
+    }
+    {
+        // const_reverse_iterator from mutable vector
+        ft::vector<int> v(10, 21);
+        ft::vector<int>::const_reverse_iterator it = v.rbegin();
+        assert(it.base() == v.end());
+        it++;
+        assert(*it == 21);
+    }
+    {
+        // reverse_iterator from const vector -- should not compile
+     //   const ft::vector<int> v(10, 21);
+     //   ft::vector<int>::reverse_iterator it = v.rbegin();
+     //   assert(it.base() == v.end());
+     //   it++;
+     //   assert(*it == 21);
+    }
+    {
+        // const_reverse_iterator from const vector
+        const ft::vector<int> v(10, 21);
+        ft::vector<int>::const_reverse_iterator it = v.rbegin();
+        assert(it.base() == v.end());
+        it++;
+        assert(*it == 21);
+    }
+    std::cout << "rbegin " << GREEN << "OK" << RESET << std::endl;
+}
+
+void
+rend_test()
+{
+    {
+        // reverse_iterator from mutable vector
+        ft::vector<int> v(10, 21);
+        ft::vector<int>::reverse_iterator it = v.rend();
+        it--;
+    }
+    {
+        // const_reverse_iterator from mutable vector
+        ft::vector<int> v(10, 21);
+        ft::vector<int>::const_reverse_iterator it = v.rend();
+        it--;
+    }
+    {
+        // reverse_iterator from const vector -- should not compile
+     //   const ft::vector<int> v(10, 21);
+     //   ft::vector<int>::reverse_iterator it = v.rend();
+     //   it--;
+    }
+    {
+        // const_reverse_iterator from const vector
+        const ft::vector<int> v(10, 21);
+        ft::vector<int>::const_reverse_iterator it = v.rend();
+        it--;
+    }
+    std::cout << "rend " << GREEN << "OK" << RESET << std::endl;
 }
 
 void
@@ -1201,7 +1465,7 @@ increment_test()
                 assert(*it == 21);
         }
         {
-            // it
+            // const_it
             ft::vector<int>::const_iterator it = v.begin();
             for (int i = 0; i < 10; ++i, ++it)
                 assert(*it == 21);
@@ -1828,22 +2092,27 @@ iterator_brackets_operator_test()
 void
 iterators_tests()
 {
-    // TODO add tests for const_iterator everywhere
+    // TODO
+    // - reverse_iterator_base_test();
+    // - add reverse_iterator and const_reverse_iterator to all tests below
 
     std::cout << "== Iterators ==" << std::endl;
 
-    iterator_constructors_test();
-
+    //iterator_constructors_test();
     iterator_assignation_test();
+    /*
 
     begin_test(); // move to vector test suite ?
     end_test();   // move to vector test suite ?
+
+    rbegin_test(); // move to vector test suite ?
+    rend_test();   // move to vector test suite ?
 
     increment_test(); // both prefix and posifix
     decrement_test(); // both prefix and posifix
 
     iterator_dereference_test();
-    iterator_dereference_pointer_test(); // TODO
+    iterator_dereference_pointer_test();
 
     iterator_equal_test();
     iterator_not_equal_test();
@@ -1861,6 +2130,7 @@ iterators_tests()
     iterator_sub_then_assign_test();
 
     iterator_brackets_operator_test();
+    */
 }
 
 /****** Vector tests **********************************************************/
@@ -1891,15 +2161,15 @@ int main()
     //vector_test<int>();
     //vector_test<double>();
 
-//    allocator_test(); // TODO
-//    constructors_test(); // TODO
-//
-//    capacity_tests();
-//    accessors_tests();
-//    modifiers_tests(); // TODO
-//    operators_tests();
+    allocator_test(); // TODO
+    constructors_test(); // TODO
 
-    iterators_tests(); // TODO add reverse_iterator
+    capacity_tests();
+    accessors_tests();
+    modifiers_tests(); // TODO
+    operators_tests();
+
+    iterators_tests();
 
     return 0;
 }

@@ -1,6 +1,5 @@
 todo
-0. add ft_map.hpp + tests
-1. add reverse_iterator (vector/map) + tests
+1. add ft_map.hpp + tests
 2. test timing stack
 3. test timing vector iterators
 4. test lexicographical_compare
@@ -10,13 +9,12 @@ todo
 8. test size_max for vector !!!
 9. is_constructible and co. (cf. type_traits) for pair conversions
 --> need by -Wconversion
-10. test const_iterator
-11. fix output_vector tests (cf. FAIL sections)
-12. iterators operators: member or non-member functions ?
-13. rb_tree: use _comp to compare keys (otherwise remove it)
-14. handle error when _any_ allocate() fails (gotta catch bad_alloc)
-15. output_vector: use ft _and_ std to check asserts (i.g. for iterator_test)
-16. debug iso_stardard script
+10. fix output_vector tests (cf. FAIL sections)
+11. iterators operators: member or non-member functions ?
+12. rb_tree: use _comp to compare keys (otherwise remove it)
+13. handle error when _any_ allocate() fails (gotta catch bad_alloc)
+14. output_vector: use ft _and_ std to check asserts (i.g. for iterator_test)
+15. debug iso_stardard script
 ________
 
 maybe
@@ -29,18 +27,21 @@ maybe
 - keep our iterator_traits but forget abour our iterator struct
 --> this way, we can use stl algorithms act upon our containers
 - east const instead of west const
+- make sure that const_iterator = begin() calls the begin() method that returns
+const_iterator
+--> and not begin() returning iterator then construct const_iterator from it
+- add default destructors to be coplien compliant
 ________
 
 readme
-
-- explain why constructors are not explicit (but could be and how it is useful)
+- explain why constructors are explicit
 - explain why east const instead of west const
 --> the only consistent way to write const (got to read from right-to-left)
-________
-
-map
-- AVL (named after its inventor Adelson, Velski & Landis)
-- RBT (Red Black Tree : the one used by stl)
+- explain the difference between const and non-const begin() and end()
+- explain why we choose this implementation for const_iterator
+--> explain why the templated solution is better in term of debugging
+(i.e. clangd doesnt warn with my solution when 'it = const_it', whereas
+it would do with the template solution.)
 ________
 
 iterators

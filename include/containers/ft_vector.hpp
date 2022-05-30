@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_vector.hpp                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: trobin <trobin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/05/27 15:37:56 by trobin            #+#    #+#             */
-/*   Updated: 2022/05/27 18:57:40 by trobin           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef FT_VECTOR_H
 #define FT_VECTOR_H 1
 
@@ -20,6 +8,7 @@
 //#include "ft_random_access_iterator.hpp"
 #include "ft_iterator_base_types.hpp"
 #include "ft_lexicographical_compare.hpp"
+#include "ft_reverse_iterator.hpp"
 
 #include <memory> // std::allocator
 #include <stdexcept> // std::out_of_range --> rewrite it for namespace ft ?
@@ -121,7 +110,7 @@ class vector {
 
         vector_iterator() : _data(NULL) { }
 
-        vector_iterator(pointer data) : _data(data) { }
+        explicit vector_iterator(pointer data) : _data(data) { }
 
         vector_iterator(const vector_iterator<T> & it) : _data(&(*it)) { }
 
@@ -135,7 +124,6 @@ class vector {
         reference operator*() const
         { return *_data; }
 
-        // TODO
         pointer operator->() const
         { return _data; }
 
@@ -227,6 +215,10 @@ class vector {
 
     typedef vector_iterator<value_type>	        iterator;
     typedef vector_iterator<value_type const>	const_iterator;
+
+    // this ft:: prefix is mandatory since tyedef operands share the same name
+    typedef ft::reverse_iterator<iterator>          reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
     /**************************************************************************/
     /*                                                                        */
@@ -321,23 +313,45 @@ class vector {
     // add data() ?
 
     reference at(size_type n)
-    { if (n < _size) return _data[n]; else throw std::out_of_range(""); }
+    {
+        std::cout << "mutable at()"<< std::endl;
+        if (n < _size) return _data[n]; else throw std::out_of_range("");
+    }
     //{ return n < _size ? _data[n] : throw std::out_of_range(""); }
 
     const_reference at(size_type n) const
-    { if (n < _size) return _data[n]; else throw std::out_of_range(""); }
+    {
+        std::cout << "const at()"<< std::endl;
+        if (n < _size) return _data[n]; else throw std::out_of_range("");
+    }
 
     // undefined behavior if vector is empty
-    reference front() { return _data[0]; }
+    reference front()
+    {
+        std::cout << "mutable front()" << std::endl;
+        return _data[0];
+    }
 
     // undefined behavior if vector is empty
-    const_reference front() const { return _data[0]; }
+    const_reference front() const
+    {
+        std::cout << "const front()" << std::endl;
+        return _data[0];
+    }
 
     // undefined behavior if vector is empty
-    reference back() { return _data[_size - 1]; }
+    reference back()
+    {
+        std::cout << "mutable back()" << std::endl;
+        return _data[_size - 1];
+    }
 
     // undefined behavior if vector is empty
-    const_reference back() const { return _data[_size - 1]; }
+    const_reference back() const
+    {
+        std::cout << "const back()" << std::endl;
+        return _data[_size - 1];
+    }
 
     // C++11
     // pointer data() { return _data; }
@@ -549,7 +563,7 @@ class vector {
 
     void
     resize(size_type n, value_type value = value_type())
-    { if (n > _size) insert(&_data[_size], n, value); }
+    { if (n > _size) insert(iterator(&_data[_size]), n, value); }
 
     void
     swap(vector & v)
@@ -590,21 +604,53 @@ class vector {
 
     /****** Iterators *********************************************************/
 
-    // TODO
+	iterator begin()
+    {
+        std::cout << "iterator begin()" << std::endl;
+        return iterator(_data);
+    }
 
-	iterator begin() { return iterator(_data); }
+	const_iterator begin() const
+    {
+        std::cout << "const_iterator begin()" << std::endl;
+        return const_iterator(_data);
+    }
 
-	const_iterator begin() const { return const_iterator(_data); }
+	iterator end()
+    {
+        std::cout << "iterator end()" << std::endl;
+        return iterator(&_data[_size]);
+    }
 
-	iterator end() { return iterator(&_data[_size]); }
+	const_iterator end() const
+    {
+        std::cout << "const_iterator end()" << std::endl;
+        return const_iterator(&_data[_size]);
+    }
 
-	const_iterator end() const { return const_iterator(&_data[_size]); }
+	reverse_iterator rbegin()
+    {
+        std::cout << "reverse_iterator rbegin()" << std::endl;
+        return reverse_iterator(end());
+    }
 
-	// reverse_iterator rbegin() { };
-	// const_reverse_iterator rbegin() const { };
+	const_reverse_iterator rbegin() const
+    {
+        std::cout << "const_reverse_iterator rbegin()" << std::endl;
+        return const_reverse_iterator(end());
+    }
 
-	// reverse_iterator rend() { };
-	// const_reverse_iterator rend() const { };
+	reverse_iterator rend()
+    {
+        std::cout << "reverse_iterator rend()" << std::endl;
+        return reverse_iterator(begin());
+    }
+
+	const_reverse_iterator rend() const
+    {
+        std::cout << "const_reverse_iterator rend()" << std::endl;
+        return const_reverse_iterator(begin());
+    }
 
     /****** Operators *********************************************************/
 
@@ -631,17 +677,23 @@ class vector {
 
     // doesn't check boundaries
     reference
-    operator[](size_type n) { return _data[n]; }
+    operator[](size_type n)
+    {
+        std::cout << "mutable []" << std::endl;
+        return _data[n];
+    }
 
     // doesn't check boundaries
     const_reference
-    operator[](size_type n) const { return _data[n]; }
+    operator[](size_type n) const
+    {
+        std::cout << "const []" << std::endl;
+        return _data[n];
+    }
 
     /****** Miscellaneous *****************************************************/
 
-    allocator_type
-    get_allocator() const
-    { return _alloc; }
+    allocator_type get_allocator() const { return _alloc; }
 
 };
 
