@@ -762,7 +762,7 @@ resize_tests()
         }
         {
             // n < size
-            std::vector<int> v(10, 42);
+            ft::vector<int> v(10, 42);
 
             assert(v.size() == 10);
             assert(v.capacity() == 10);
@@ -2098,7 +2098,6 @@ iterators_tests()
 
     //iterator_constructors_test();
     iterator_assignation_test();
-    /*
 
     begin_test(); // move to vector test suite ?
     end_test();   // move to vector test suite ?
@@ -2128,7 +2127,6 @@ iterators_tests()
     iterator_sub_then_assign_test();
 
     iterator_brackets_operator_test();
-    */
 }
 
 /****** Vector tests **********************************************************/
