@@ -9,12 +9,11 @@ todo
 8. test size_max for vector !!!
 9. is_constructible and co. (cf. type_traits) for pair conversions
 --> need by -Wconversion
-10. fix output_vector tests (cf. FAIL sections)
-11. iterators operators: member or non-member functions ?
-12. rb_tree: use _comp to compare keys (otherwise remove it)
-13. handle error when _any_ allocate() fails (gotta catch bad_alloc)
-14. output_vector: use ft _and_ std to check asserts (i.g. for iterator_test)
-15. debug iso_stardard script
+10. iterators operators: member or non-member functions ?
+11. rb_tree: use _comp to compare keys (otherwise remove it)
+12. handle error when _any_ allocate() fails (gotta catch bad_alloc)
+13. output_vector: use ft _and_ std to check asserts (i.g. for iterator_test)
+14. debug iso_stardard script
 ________
 
 maybe

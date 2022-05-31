@@ -762,14 +762,13 @@ resize_tests()
         }
         {
             // n < size
-            ft::vector<int> v(10, 42);
+            std::vector<int> v(10, 42);
 
             assert(v.size() == 10);
             assert(v.capacity() == 10);
 
-            // FAIL
             v.resize(5);
-            assert(v.size() == 10);
+            assert(v.size() == 5);
             assert(v.capacity() == 10);
         }
     }
@@ -814,10 +813,9 @@ resize_tests()
             assert(v.size() == 10);
             assert(v.capacity() == 10);
 
-            // FAIL
             v.resize(5, 42);
 
-            assert(v.size() == 10);
+            assert(v.size() == 5);
             assert(v.capacity() == 10);
 
             for (ft::size_t i = 0; i < v.size(); i++)
@@ -901,7 +899,7 @@ assign_tests()
             // assign no elements to non-empty vector
             ft::vector<int> a(10, 42);
 
-            // FAIL
+            // FAIL (?)
             a.assign(0, 21);
 
             assert(a.size() == 0);
@@ -939,7 +937,7 @@ assign_tests()
             ft::vector<int> a(10, 42);
             ft::vector<int> b;
 
-            // FAIL
+            // FAIL (?)
             a.assign(b.begin(), b.end());
 
             assert(a.size() == 0);

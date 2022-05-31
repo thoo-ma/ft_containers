@@ -563,7 +563,10 @@ class vector {
 
     void
     resize(size_type n, value_type value = value_type())
-    { if (n > _size) insert(iterator(&_data[_size]), n, value); }
+    {
+        if (n < _size) return (void)(erase(iterator(&_data[n]), end()));
+        if (n > _size) return insert(iterator(&_data[_size]), n, value);
+    }
 
     void
     swap(vector & v)
