@@ -23,8 +23,6 @@
  * - bien gerer les allocations et les exceptions
  * - bien prendre en compte size_max pour jeter les exceptions appropriees
  * - private: _allocate_and_copy() pour eviter les redites
- * - tester les fonctions avec des versions `const` (-Wconversion)
- *   --> at, front, back,
  *  - `val` vs `value`
  *
  * MAYBE
@@ -314,42 +312,42 @@ class vector {
 
     reference at(size_type n)
     {
-        std::cout << "mutable at()"<< std::endl;
+        //std::cout << "mutable at()"<< std::endl;
         if (n < _size) return _data[n]; else throw std::out_of_range("");
     }
     //{ return n < _size ? _data[n] : throw std::out_of_range(""); }
 
     const_reference at(size_type n) const
     {
-        std::cout << "const at()"<< std::endl;
+        //std::cout << "const at()"<< std::endl;
         if (n < _size) return _data[n]; else throw std::out_of_range("");
     }
 
     // undefined behavior if vector is empty
     reference front()
     {
-        std::cout << "mutable front()" << std::endl;
+        //std::cout << "mutable front()" << std::endl;
         return _data[0];
     }
 
     // undefined behavior if vector is empty
     const_reference front() const
     {
-        std::cout << "const front()" << std::endl;
+        //std::cout << "const front()" << std::endl;
         return _data[0];
     }
 
     // undefined behavior if vector is empty
     reference back()
     {
-        std::cout << "mutable back()" << std::endl;
+        //std::cout << "mutable back()" << std::endl;
         return _data[_size - 1];
     }
 
     // undefined behavior if vector is empty
     const_reference back() const
     {
-        std::cout << "const back()" << std::endl;
+        //std::cout << "const back()" << std::endl;
         return _data[_size - 1];
     }
 
@@ -609,49 +607,49 @@ class vector {
 
 	iterator begin()
     {
-        std::cout << "iterator begin()" << std::endl;
+        //std::cout << "iterator begin()" << std::endl;
         return iterator(_data);
     }
 
 	const_iterator begin() const
     {
-        std::cout << "const_iterator begin()" << std::endl;
+        //std::cout << "const_iterator begin()" << std::endl;
         return const_iterator(_data);
     }
 
 	iterator end()
     {
-        std::cout << "iterator end()" << std::endl;
+        //std::cout << "iterator end()" << std::endl;
         return iterator(&_data[_size]);
     }
 
 	const_iterator end() const
     {
-        std::cout << "const_iterator end()" << std::endl;
+        //std::cout << "const_iterator end()" << std::endl;
         return const_iterator(&_data[_size]);
     }
 
 	reverse_iterator rbegin()
     {
-        std::cout << "reverse_iterator rbegin()" << std::endl;
+        //std::cout << "reverse_iterator rbegin()" << std::endl;
         return reverse_iterator(end());
     }
 
 	const_reverse_iterator rbegin() const
     {
-        std::cout << "const_reverse_iterator rbegin()" << std::endl;
+        //std::cout << "const_reverse_iterator rbegin()" << std::endl;
         return const_reverse_iterator(end());
     }
 
 	reverse_iterator rend()
     {
-        std::cout << "reverse_iterator rend()" << std::endl;
+        //std::cout << "reverse_iterator rend()" << std::endl;
         return reverse_iterator(begin());
     }
 
 	const_reverse_iterator rend() const
     {
-        std::cout << "const_reverse_iterator rend()" << std::endl;
+        //std::cout << "const_reverse_iterator rend()" << std::endl;
         return const_reverse_iterator(begin());
     }
 
@@ -682,7 +680,7 @@ class vector {
     reference
     operator[](size_type n)
     {
-        std::cout << "mutable []" << std::endl;
+        //std::cout << "mutable []" << std::endl;
         return _data[n];
     }
 
@@ -690,7 +688,7 @@ class vector {
     const_reference
     operator[](size_type n) const
     {
-        std::cout << "const []" << std::endl;
+        //std::cout << "const []" << std::endl;
         return _data[n];
     }
 

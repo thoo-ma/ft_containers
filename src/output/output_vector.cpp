@@ -15,219 +15,260 @@
  *  TODO
  *
  *  - ft::vector<int> v(5, 42);
- *    --> std::cout << std::distance(v.begin(), v.end()) << std::endl;
- *  - test with custom class like `class Foo { public: int a[60]; };`
+ *  --> std::cout << std::distance(v.begin(), v.end()) << std::endl;
+ *
+ *  - make custom datatype `class A` support all tests
+ *	--> then, template all tests not templated yet
+ *
+ *  - log only if: std:is_same<Vector,ft::vector<Vector::value_type>>
  *
  */
 
-/****** Constructors test *****************************************************/
+/****** Custom datatype *******************************************************/
 
-void
-constructor_by_default_test()
+/*
+ *
+ * Depending on how your vector is implemented, custom datatypes
+ * might require some operators/functions in order to perform all tests.
+ *
+ * For example, if you want to `assert(vector<T> == vector<T>)`
+ * your custom datatype `T` must support `operator==`.
+ *
+ * To mimic the `std::vector<T>` behavior, your `ft::vector<T>` should be:
+ * - copy constructible for any type `T` (especially empty class !...)
+ * - ...
+ *
+ */
+
+class A
 {
-    ft::vector<int> a;
-    std::vector<int> b;
+    public:
+    A() { }
+    A(A const & a) { (void)a; }
+};
 
-    assert(a.size() == b.size());
-    assert(a.capacity() == b.capacity());
-    //assert(a.max_size() == b.max_size()); // TODO
+bool operator==(const A & lhs, const A & rhs)
+{ (void)lhs; (void)rhs; return true; }
 
-    std::cout << "constructor by default " << GREEN << "OK" << RESET << std::endl;
+bool operator!=(const A & lhs, const A & rhs)
+{ (void)lhs; (void)rhs; return false; }
+
+/****** Log *******************************************************************/
+
+inline void log(std::string s)
+{
+    std::cout << s << GREEN << " OK" << RESET << std::endl;
 }
 
-void
-constructor_by_fill_test()
+/****** Constructors test *****************************************************/
+
+template <typename Vector>
+void constructor_by_default_test()
+{
+    Vector a;
+
+    assert(a.empty());
+    assert(a.size() == 0);
+    assert(a.capacity() == 0);
+    //assert(a.max_size() == 0); // TODO
+
+    log("constructor by default");
+}
+
+template <typename Vector, typename T>
+void constructor_by_fill_test()
 {
     {
         // without value
+        Vector a(10);
 
-        ft::vector<int> a(10);
-        std::vector<int> b(10);
+        assert(a.size() == 10);
+        assert(a.capacity() == 10);
+        //assert(a.max_size() == 0); // TODO
 
-        assert(a.size() == b.size());
-        assert(a.capacity() == b.capacity());
-        //assert(a.max_size() == b.max_size()); // TODO
-
-        std::cout << "constructor by fill (without value) " << GREEN << "OK" << RESET << std::endl;
+        log("constructor by fill (without value)");
     }
     {
         // with value
+        Vector a(10, T());
 
-        std::vector<int> a(10, 42);
-        ft::vector<int> b(10, 42);
+        assert(a.size() == 10);
+        assert(a.capacity() == 10);
+        //assert(a.max_size() == 0); // TODO
 
-        assert(a.size() == b.size());
-        assert(a.capacity() == b.capacity());
-        //assert(a.max_size() == b.max_size()); // TODO
-
-        std::cout << "constructor by fill (with value) " << GREEN << "OK" << RESET << std::endl;
+        log("constructor by fill (with value)");
     }
 }
 
-void
-constructor_by_copy_test()
+template <typename Vector, typename T>
+void constructor_by_copy_test()
 {
     {
         // from empty
-        ft::vector<int> a;
-        ft::vector<int> b(a);
-        assert(a == b);
-    }
-    { // from non-empty
-        ft::vector<int> a(10, 42);
-        ft::vector<int> b(a);
+        Vector a;
+        Vector b(a);
 
         assert(a == b);
     }
-    std::cout << "constructor by copy " << GREEN << "OK" << RESET << std::endl;
+    {
+        // TODO
+        // from non-empty
+   //     Vector a(10, T());
+   //     Vector b(a);
+
+   //     assert(a == b);
+    }
+    log("constructor by copy");
 }
 
-void
-constructor_by_iterator_range_test()
+template <typename Vector, typename T>
+void constructor_by_iterator_range_test()
 {
     {
         // empty range
-        ft::vector<int> a;
-        ft::vector<int> b(a.begin(), a.end());
+        Vector a;
+        Vector b(a.begin(), a.end());
 
         assert(a == b);
     }
     {
         // non-empty range
-        ft::vector<int> a(10, 42);
-        ft::vector<int> b(a.begin(), a.end());
+        Vector a(10, T());
+        Vector b(a.begin(), a.end());
 
         assert(a == b);
     }
-    std::cout << "constructor by iterator range " << GREEN << "OK" << RESET << std::endl;
+    log("constructor by iterator range");
 }
 
-void
-constructor_upon_heap_test()
+template <typename Vector>
+void constructor_upon_heap_test()
 {
-    { ft::vector<int> * v = new ft::vector<int>; delete v; }
-    { ft::vector<int> * v = new ft::vector<int>[10]; delete [] v; }
+    { Vector * v = new Vector; delete v; }
+    { Vector * v = new Vector[10]; delete [] v; }
+    log("constructor upon heap");
 }
 
-void
-constructors_test()
+template <typename T>
+void constructors_test()
 {
-    constructor_by_default_test();
-    constructor_by_fill_test();
-    constructor_by_copy_test();
-    constructor_by_iterator_range_test();
-    constructor_upon_heap_test();
+    constructor_by_default_test<std::vector<T>>();
+    constructor_by_default_test< ft::vector<T>>();
+
+    constructor_by_fill_test<std::vector<T>, T>();
+    constructor_by_fill_test< ft::vector<T>, T>();
+
+    constructor_by_copy_test<std::vector<T>, T>();
+    constructor_by_copy_test< ft::vector<T>, T>();
+
+    constructor_by_iterator_range_test<std::vector<T>, T>();
+    constructor_by_iterator_range_test< ft::vector<T>, T>();
+
+    constructor_upon_heap_test<std::vector<T>>();
+    constructor_upon_heap_test< ft::vector<T>>();
 }
 
 /****** Allocator test ********************************************************/
 
-void
-get_allocator_test()
+template <typename Vector>
+void get_allocator_test()
 {
-    assert(ft::vector<int>().get_allocator() == std::allocator<int>());
-    assert(ft::vector<int>().get_allocator() == std::allocator<float>());
-    assert(ft::vector<int>().get_allocator() == std::vector<int>().get_allocator());
+    Vector v;
+    class Foo {};
 
-    assert((std::is_same<ft::vector<int>::allocator_type::value_type, int>::value));
-    assert((std::is_same<ft::vector<int>::allocator_type::value_type,
-            std::vector<int>::allocator_type::value_type>::value));
+    assert(v.get_allocator() == std::allocator<typename Vector::value_type>());
+    assert(v.get_allocator() == std::allocator<Foo>());
 
-   // see. https://stackoverflow.com/a/40598287 about doubling brackets
+    // TODO -- move this into traits test suite
+    assert((std::is_same<
+                typename Vector::allocator_type::value_type,
+                typename Vector::value_type
+                >::value));
 
-    std::cout << "get_allocator() " << GREEN << "OK" << RESET << std::endl;
+   // cf. https://stackoverflow.com/a/40598287 about doubling parenthesis
+
+    log("get_allocator()");
 }
 
-void
-allocator_test()
+template <typename T>
+void allocator_test()
 {
-    // TODO
-//    std::allocator<int>     a1;
-//    std::allocator<bool>    a2;
-//
-//    try {
-//        int * i = a1.allocate(a1.max_size()/2);
-//        *i = 42;
-//        a1.deallocate(i, a1.max_size()/2);
-//    } catch (...) { std::cout << "error" << std::endl; }
-//
-//    std::cout << "max_size allocator<int>:  " << a1.max_size() << std::endl;
-//    std::cout << "max_size allocator<bool>: " << a2.max_size() << std::endl;
-
-    get_allocator_test();
+    get_allocator_test<std::vector<T>>();
+    get_allocator_test< ft::vector<T>>();
 }
 
 /****** Capacity test *********************************************************/
 
-void
-empty_test()
+template <typename Vector, typename T>
+void empty_test()
 {
-    assert(ft::vector<int>().empty());
-    assert(!ft::vector<int>(10, 42).empty());
+    assert(Vector().empty());
+    assert(!Vector(10, T()).empty());
     std::cout << "empty " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-size_test()
+template <typename Vector, typename T>
+void size_test()
 {
     {
         // constructed by default
-        assert(ft::vector<int>().size() == 0);
+        assert(Vector().size() == 0);
     }
     {
         // constructed by fill (without value)
-        assert(ft::vector<int>(10).size() == 10);
+        assert(Vector(10).size() == 10);
     }
     {
         // constructed by fill (with value)
-        assert(ft::vector<int>(10, 42).size() == 10);
+        assert(Vector(10, T()).size() == 10);
     }
     {
         // constructed by copy
-        ft::vector<int> a;
-        ft::vector<int> b(10);
-        assert(ft::vector<int>(a).size() == a.size());
-        assert(ft::vector<int>(b).size() == b.size());
+        Vector a;
+        Vector b(10);
+        assert(Vector(a).size() == a.size());
+        assert(Vector(b).size() == b.size());
     }
     std::cout << "size " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-max_size_test()
+template <typename Vector>
+void max_size_test()
 {
     // TODO
     std::cout << "max_size " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-capacity_test()
+template <typename Vector, typename T>
+void capacity_test()
 {
     {
         // constructed by default
-        assert(ft::vector<int>().capacity() == 0);
+        assert(Vector().capacity() == 0);
     }
     {
         // constructed by fill (without value)
-        assert(ft::vector<int>(10).capacity() == 10);
+        assert(Vector(10).capacity() == 10);
     }
     {
         // constructed by fill (with value)
-        assert(ft::vector<int>(10, 42).capacity() == 10);
+        assert(Vector(10, T()).capacity() == 10);
     }
     {
         // constructed by copy
-        ft::vector<int> a;
-        ft::vector<int> b(10);
-        assert(ft::vector<int>(a).capacity() == a.capacity());
-        assert(ft::vector<int>(b).capacity() == b.capacity());
+        Vector a;
+        Vector b(10);
+        assert(Vector(a).capacity() == a.capacity());
+        assert(Vector(b).capacity() == b.capacity());
     }
     std::cout << "capacity " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-reserve_test()
+template <typename Vector>
+void reserve_test()
 {
     {
-        ft::vector<int> a;
+        Vector a;
 
         assert(a.capacity() == 0);
 
@@ -260,14 +301,23 @@ reserve_test()
     std::cout << "reserve " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-capacity_tests()
+template <typename T>
+void capacity_test()
 {
-    empty_test();
-    size_test();
-    max_size_test();
-    capacity_test();
-    reserve_test(); // TODO
+    empty_test<std::vector<T>, T>();
+    empty_test< ft::vector<T>, T>();
+
+    size_test<std::vector<T>, T>();
+    size_test< ft::vector<T>, T>();
+
+    max_size_test<std::vector<T>>();
+    max_size_test< ft::vector<T>>();
+
+    capacity_test<std::vector<T>, T>();
+    capacity_test< ft::vector<T>, T>();
+
+    reserve_test<std::vector<T>>(); // TODO
+    reserve_test< ft::vector<T>>(); // TODO
 }
 
 /****** Accessors test ********************************************************/
@@ -2132,40 +2182,27 @@ iterators_tests()
 /****** Vector tests **********************************************************/
 
 template <typename T>
-void vector_constructor_by_default_test()
-{
-    ft::vector<T> a;
-
-    assert(a.size() == 0);
-    assert(a.capacity() == 0);
-    //assert(a.max_size() == std::vector<T>().max_size()); // TODO
-
-    std::cout << "constructor by default " << GREEN << "OK" << RESET << std::endl;
-}
-
-template <typename T>
 void vector_test()
 {
-    vector_constructor_by_default_test<T>();
+    constructors_test<T>();
+    allocator_test<T>();
+    capacity_test<T>();
 }
 
 /****** All tests *************************************************************/
 
+
 int main()
 {
-//      VECTOR
-    //vector_test<int>();
-    //vector_test<double>();
+//    vector_test<int>();
+//    vector_test<double>();
+//    vector_test<A>();
 
-    allocator_test(); // TODO
-    constructors_test(); // TODO
-
-    capacity_tests();
-    accessors_tests();
-    modifiers_tests(); // TODO
-    operators_tests();
-
-    iterators_tests();
+//    accessors_tests();
+//    modifiers_tests(); // TODO
+//    operators_tests();
+//
+//    iterators_tests();
 
     return 0;
 }

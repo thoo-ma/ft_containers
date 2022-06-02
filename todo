@@ -14,6 +14,7 @@ todo
 12. handle error when _any_ allocate() fails (gotta catch bad_alloc)
 13. output_vector: use ft _and_ std to check asserts (i.g. for iterator_test)
 14. debug iso_stardard script
+15. iterator_tests in a separate file (template them on containers)
 ________
 
 maybe
