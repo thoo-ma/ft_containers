@@ -22,6 +22,10 @@
  *
  *  - log only if: std:is_same<Vector,ft::vector<Vector::value_type>>
  *
+ *  1. template tests upon basic arithmetic datatypes (int, char, double, etc.)
+ *  2. template tests upon custom datatypes
+ *  3. iterators_tests into separate file (shared with vector_test and map_test)
+ *
  */
 
 /****** Custom datatype *******************************************************/
@@ -75,7 +79,7 @@ void constructor_by_default_test()
     log("constructor by default");
 }
 
-template <typename Vector, typename T>
+template <typename Vector>
 void constructor_by_fill_test()
 {
     {
@@ -90,7 +94,7 @@ void constructor_by_fill_test()
     }
     {
         // with value
-        Vector a(10, T());
+        Vector a(10, typename Vector::value_type());
 
         assert(a.size() == 10);
         assert(a.capacity() == 10);
@@ -100,7 +104,7 @@ void constructor_by_fill_test()
     }
 }
 
-template <typename Vector, typename T>
+template <typename Vector>
 void constructor_by_copy_test()
 {
     {
@@ -111,17 +115,16 @@ void constructor_by_copy_test()
         assert(a == b);
     }
     {
-        // TODO
         // from non-empty
-   //     Vector a(10, T());
-   //     Vector b(a);
+        Vector a(10, typename Vector::value_type());
+        Vector b(a);
 
-   //     assert(a == b);
+        assert(a == b);
     }
     log("constructor by copy");
 }
 
-template <typename Vector, typename T>
+template <typename Vector>
 void constructor_by_iterator_range_test()
 {
     {
@@ -133,7 +136,7 @@ void constructor_by_iterator_range_test()
     }
     {
         // non-empty range
-        Vector a(10, T());
+        Vector a(10, typename Vector::value_type());
         Vector b(a.begin(), a.end());
 
         assert(a == b);
@@ -150,19 +153,19 @@ void constructor_upon_heap_test()
 }
 
 template <typename T>
-void constructors_test()
+void constructors_tests()
 {
     constructor_by_default_test<std::vector<T>>();
     constructor_by_default_test< ft::vector<T>>();
 
-    constructor_by_fill_test<std::vector<T>, T>();
-    constructor_by_fill_test< ft::vector<T>, T>();
+    constructor_by_fill_test<std::vector<T>>();
+    constructor_by_fill_test< ft::vector<T>>();
 
-    constructor_by_copy_test<std::vector<T>, T>();
-    constructor_by_copy_test< ft::vector<T>, T>();
+    constructor_by_copy_test<std::vector<T>>();
+    constructor_by_copy_test< ft::vector<T>>();
 
-    constructor_by_iterator_range_test<std::vector<T>, T>();
-    constructor_by_iterator_range_test< ft::vector<T>, T>();
+    constructor_by_iterator_range_test<std::vector<T>>();
+    constructor_by_iterator_range_test< ft::vector<T>>();
 
     constructor_upon_heap_test<std::vector<T>>();
     constructor_upon_heap_test< ft::vector<T>>();
@@ -191,7 +194,7 @@ void get_allocator_test()
 }
 
 template <typename T>
-void allocator_test()
+void allocator_tests()
 {
     get_allocator_test<std::vector<T>>();
     get_allocator_test< ft::vector<T>>();
@@ -199,15 +202,15 @@ void allocator_test()
 
 /****** Capacity test *********************************************************/
 
-template <typename Vector, typename T>
+template <typename Vector>
 void empty_test()
 {
     assert(Vector().empty());
-    assert(!Vector(10, T()).empty());
+    assert(!Vector(10, typename Vector::value_type()).empty());
     std::cout << "empty " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename Vector, typename T>
+template <typename Vector>
 void size_test()
 {
     {
@@ -220,7 +223,7 @@ void size_test()
     }
     {
         // constructed by fill (with value)
-        assert(Vector(10, T()).size() == 10);
+        assert(Vector(10, typename Vector::value_type()).size() == 10);
     }
     {
         // constructed by copy
@@ -239,7 +242,7 @@ void max_size_test()
     std::cout << "max_size " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename Vector, typename T>
+template <typename Vector>
 void capacity_test()
 {
     {
@@ -252,7 +255,7 @@ void capacity_test()
     }
     {
         // constructed by fill (with value)
-        assert(Vector(10, T()).capacity() == 10);
+        assert(Vector(10, typename Vector::value_type()).capacity() == 10);
     }
     {
         // constructed by copy
@@ -302,19 +305,19 @@ void reserve_test()
 }
 
 template <typename T>
-void capacity_test()
+void capacity_tests()
 {
-    empty_test<std::vector<T>, T>();
-    empty_test< ft::vector<T>, T>();
+    empty_test<std::vector<T>>();
+    empty_test< ft::vector<T>>();
 
-    size_test<std::vector<T>, T>();
-    size_test< ft::vector<T>, T>();
+    size_test<std::vector<T>>();
+    size_test< ft::vector<T>>();
 
     max_size_test<std::vector<T>>();
     max_size_test< ft::vector<T>>();
 
-    capacity_test<std::vector<T>, T>();
-    capacity_test< ft::vector<T>, T>();
+    capacity_test<std::vector<T>>();
+    capacity_test< ft::vector<T>>();
 
     reserve_test<std::vector<T>>(); // TODO
     reserve_test< ft::vector<T>>(); // TODO
@@ -322,8 +325,8 @@ void capacity_test()
 
 /****** Accessors test ********************************************************/
 
-void
-at_test()
+template <typename Vector>
+void at_test()
 {
     bool success = true;
     // success
@@ -332,20 +335,16 @@ at_test()
             // at non-empty vector
             {
                 // mutable vector
-                ft::vector<int> v(10, 42);
-
-                try { v.at(1); assert(v.at(1) == 42); }
+                Vector v(10, 42);
+                try { (void)v.at(1); assert(v.at(1) == 42); }
                 catch (std::out_of_range & oor) { success = false; }
-
                 assert(success);
             }
             {
                 // const vector
-                const ft::vector<int> v(10, 42);
-
-                try { v.at(1); assert(v.at(1) == 42); }
+                const Vector v(10, 42);
+                try { (void)v.at(1); assert(v.at(1) == 42); }
                 catch (std::out_of_range & oor) { success = false; }
-
                 assert(success);
             }
         }
@@ -353,30 +352,28 @@ at_test()
             // at end() - 1
             {
                 // mutable vector
-                ft::vector<int> v(10, 42);
-
+                Vector v(10, 42);
                 try
                 {
-                    ft::vector<int>::size_type i = static_cast<size_t>(v.end() - v.begin() - 1);
-                    v.at(i);
+                    typename Vector::size_type i;
+                    i = static_cast<size_t>(v.end() - v.begin() - 1);
+                    (void)v.at(i);
                     assert(v.at(i) == 42);
                 }
                 catch (std::out_of_range & oor) { success = false; }
-
                 assert(success);
             }
             {
                 // const vector
-                const ft::vector<int> v(10, 42);
-
+                const Vector v(10, 42);
                 try
                 {
-                    ft::vector<int>::size_type i = static_cast<size_t>(v.end() - v.begin() - 1);
-                    v.at(i);
+                    typename Vector::size_type i;
+                    i = static_cast<size_t>(v.end() - v.begin() - 1);
+                    (void)v.at(i);
                     assert(v.at(i) == 42);
                 }
                 catch (std::out_of_range & oor) { success = false; }
-
                 assert(success);
             }
         }
@@ -388,20 +385,16 @@ at_test()
             {
                 // mutable vector
                 {
-                    ft::vector<int> v;
-
-                    try { v.at(1); }
+                    Vector v;
+                    try { (void)v.at(1); }
                     catch (std::out_of_range & oor) { success = false; }
-
                     assert(!success);
                 }
                 {
                     // const vector
-                    const ft::vector<int> v;
-
-                    try { v.at(1); }
+                    const Vector v;
+                    try { (void)v.at(1); }
                     catch (std::out_of_range & oor) { success = false; }
-
                     assert(!success);
                 }
             }
@@ -411,19 +404,15 @@ at_test()
             {
                 // mutable vector
                 ft::vector<int> v(10, 42);
-
                 try { v.at(v.end() - v.begin()); }
                 catch (std::out_of_range & oor) { success = false; }
-
                 assert(!success);
             }
             {
                 // const vector
                 const ft::vector<int> v(10, 42);
-
                 try { v.at(v.end() - v.begin()); }
                 catch (std::out_of_range & oor) { success = false; }
-
                 assert(!success);
             }
         }
@@ -431,90 +420,102 @@ at_test()
     std::cout << "at " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-front_test()
+template <typename Vector>
+void front_test()
 {
     // undefined behavior when vector is empty
-    // { assert(ft::vector<int>().front() == 0); }
+    // { assert(Vector().front() == 0); }
 
     // mutable vector
-    { assert(ft::vector<int>(10).front() == int()); }
-    { assert(ft::vector<int>(10, 42).front() == 42); }
+    { assert(Vector(10).front() == typename Vector::value_type()); }
+    { assert(Vector(10, 42).front() == 42); }
 
     // const vector
-    { const ft::vector<int> v(10); assert(v.front() == int()); }
-    { const ft::vector<int> v(10, 42); assert(v.front() == 42); }
+    { const Vector v(10); assert(v.front() == typename Vector::value_type()); }
+    { const Vector v(10, 42); assert(v.front() == 42); }
 
     std::cout << "front " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-back_test()
+template <typename Vector>
+void back_test()
 {
     // undefined behavior when vector is empty
-    // { assert(ft::vector<int>().back() == 0); }
+    // { assert(Vector().back() == 0); }
 
     // mutable vector
-    { assert(ft::vector<int>(10).back() == int()); }
-    { assert(ft::vector<int>(10, 42).back() == 42); }
+    { assert(Vector(10).back() == typename Vector::value_type()); }
+    { assert(Vector(10, 42).back() == 42); }
 
     // const vector
-    { const ft::vector<int> v(10); assert(v.back() == int()); }
-    { const ft::vector<int> v(10, 42); assert(v.back() == 42); }
+    { const Vector v(10); assert(v.back() == typename Vector::value_type()); }
+    { const Vector v(10, 42); assert(v.back() == 42); }
 
     std::cout << "back " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-operator_bracket_test()
+template <typename Vector>
+void operator_bracket_test()
 {
     {
         // undefined behavior when vector is empty
-        // assert(ft::vector<int>().back() == 0);
+        // assert(Vector().back() == 0);
     }
     {
-        ft::vector<int> v(10);
-        int i = int();
-        for (ft::vector<int>::size_type j = 0; j < 10; j++) { assert(v[j] == i); }
+        Vector v(10);
+        typename Vector::value_type i = typename Vector::value_type();
+        for (typename Vector::size_type j = 0; j < 10; j++)
+            assert(v[j] == i);
     }
     {
-        ft::vector<int> v(10, 42);
-        for (ft::vector<int>::size_type i = 0; i < 10; i++) { assert(v[i] == 42); }
+        Vector v(10, 42);
+        for (typename Vector::size_type i = 0; i < 10; i++)
+            assert(v[i] == 42);
     }
     {
         // doesn't thow anything
-        ft::vector<int>(10)[10];
+        Vector(10)[10];
     }
     {
-        const ft::vector<int> v(10);
-        int i = int();
-        for (ft::vector<int>::size_type j = 0; j < 10; j++) { assert(v[j] == i); }
+        const Vector v(10);
+        typename Vector::value_type i = typename Vector::value_type();
+        for (typename Vector::size_type j = 0; j < 10; j++)
+            assert(v[j] == i);
     }
     {
-        const ft::vector<int> v(10, 42);
-        for (ft::vector<int>::size_type i = 0; i < 10; i++) { assert(v[i] == 42); }
+        const Vector v(10, 42);
+        for (typename Vector::size_type i = 0; i < 10; i++)
+            assert(v[i] == 42);
     }
     std::cout << "operator[] " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-accessors_tests()
+template <typename T>
+void accessors_tests()
 {
     std::cout << "== Accessors ==" << std::endl;
-    at_test();
-    front_test();
-    back_test();
-    operator_bracket_test();
+
+    at_test<std::vector<T>>();
+    at_test< ft::vector<T>>();
+
+    front_test<std::vector<T>>();
+    front_test< ft::vector<T>>();
+
+    back_test<std::vector<T>>();
+    back_test< ft::vector<T>>();
+
+    operator_bracket_test<std::vector<T>>();
+    operator_bracket_test< ft::vector<T>>();
 }
 
 /****** Modifiers tests *******************************************************/
 
-void
-clear_tests()
+template <typename Vector>
+void clear_test()
 {
     {
         // empty vector
-        ft::vector<int> v;
+        Vector v;
 
         assert(v.size() == 0);
         assert(v.capacity() == 0);
@@ -526,7 +527,7 @@ clear_tests()
     }
     {
         // non-empty vector
-        ft::vector<int> v(42);
+        Vector v(42);
 
         assert(v.size() == 42);
         assert(v.capacity() == 42);
@@ -539,14 +540,14 @@ clear_tests()
     std::cout << "clear " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-erase_tests()
+template <typename Vector>
+void erase_test()
 {
     // TODO try with different values (fill with push back)
     // TODO maybe add some tricky cases like overflow size or capacity
     {
         // erase by position
-        ft::vector<int> a(21, 42);
+        Vector a(21, 42);
         std::vector<int> b(21, 42);
 
         // begin
@@ -580,7 +581,7 @@ erase_tests()
     }
     {
         // erase by range
-        ft::vector<int> a(21, 42);
+        Vector a(21, 42);
         std::vector<int> b(21, 42);
 
         // [begin, begin)
@@ -628,8 +629,8 @@ erase_tests()
     std::cout << "erase " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-insert_tests()
+template <typename Vector>
+void insert_test()
 {
     // TODO
     // - add tests with reallocations
@@ -639,9 +640,9 @@ insert_tests()
     {
         {
             // to empty
-            ft::vector<int> a;
-            ft::vector<int> b;
-            ft::vector<int> c(1, 21);
+            Vector a;
+            Vector b;
+            Vector c(1, 21);
 
             // at begin
             a.insert(a.begin(), 21);
@@ -657,15 +658,15 @@ insert_tests()
     {
         {
             // to empty
-            ft::vector<int> a;
-            ft::vector<int> b(4, 21);
+            Vector a;
+            Vector b(4, 21);
 
             a.insert(a.begin(), 4, 21);
             assert(a == b);
         }
         {
             // in middle
-            ft::vector<int> a(5, 21);
+            Vector a(5, 21);
 
             a.insert(a.begin() + 2, 2, 42);
 
@@ -680,7 +681,7 @@ insert_tests()
         }
         {
             // n = 0
-            ft::vector<int> a;
+            Vector a;
             a.insert(a.begin(), 0, 21);
             assert(a == a);
         }
@@ -690,17 +691,17 @@ insert_tests()
     {
         {
             // to empty
-            ft::vector<int> a;
-            ft::vector<int> b(4, 21);
+            Vector a;
+            Vector b(4, 21);
 
             a.insert(a.begin(), b.begin(), b.end());
             assert(a == b);
         }
         {
             // insert empty interval
-            ft::vector<int> a;
-            ft::vector<int> b(4, 21);
-            ft::vector<int> c(b);
+            Vector a;
+            Vector b(4, 21);
+            Vector c(b);
 
             // at begin
             b.insert(b.begin(), a.begin(), a.end());
@@ -716,8 +717,8 @@ insert_tests()
         }
         {
             // in middle
-            ft::vector<int> a(2, 21);
-            ft::vector<int> b(2, 42);
+            Vector a(2, 21);
+            Vector b(2, 42);
 
             a.insert(a.begin() + 1, b.begin(), b.end());
 
@@ -731,13 +732,14 @@ insert_tests()
     }
 }
 
-void
-push_back_tests()
+template <typename Vector>
+void push_back_test()
 {
+    // TODO
     // more tests ?
     {
         // with enough capacity
-        ft::vector<int> v;
+        Vector v;
 
         v.reserve(10);
 
@@ -749,7 +751,7 @@ push_back_tests()
     }
     {
         // without enough capacity
-        ft::vector<int> v;
+        Vector v;
 
         v.push_back(42);
         assert(v.size() == 1);
@@ -762,17 +764,18 @@ push_back_tests()
     std::cout << "push_back() " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-pop_back_tests()
+template <typename Vector>
+void pop_back_test()
 {
+    // TODO
     // more tests ?
     {
         // empty vector
-        ft::vector<int>().pop_back();
+        Vector().pop_back();
     }
     {
         // non-empty vector
-        ft::vector<int> v(10, 21);
+        Vector v(10, 21);
 
         assert(v.size() == 10);
         v.pop_back();
@@ -781,14 +784,14 @@ pop_back_tests()
     std::cout << "pop_back() " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-resize_tests()
+template <typename Vector>
+void resize_test()
 {
     // with second argument _implicit_
     {
         {
             // n > capacity
-            ft::vector<int> v;
+            Vector v;
 
             assert(v.capacity() == 0);
             assert(v.size() == 0);
@@ -798,7 +801,7 @@ resize_tests()
         }
         {
             // n < capacity && n > size
-            ft::vector<int> v;
+            Vector v;
 
             v.reserve(10);
 
@@ -812,7 +815,7 @@ resize_tests()
         }
         {
             // n < size
-            ft::vector<int> v(10, 42);
+            Vector v(10, 42);
 
             assert(v.size() == 10);
             assert(v.capacity() == 10);
@@ -826,7 +829,7 @@ resize_tests()
     {
         {
             // n > capacity
-            ft::vector<int> v;
+            Vector v;
 
             assert(v.capacity() == 0);
             assert(v.size() == 0);
@@ -835,13 +838,13 @@ resize_tests()
 
             assert(v.size() == 10);
 
-            for (ft::size_t i = 0; i < v.size(); i++)
+            for (typename Vector::size_type i = 0; i < v.size(); i++)
             { assert(v.at(i) == 42); }
 
         }
         {
             // n < capacity && n > size
-            ft::vector<int> v;
+            Vector v;
 
             v.reserve(10);
 
@@ -853,12 +856,12 @@ resize_tests()
             assert(v.size() == 5);
             assert(v.capacity() == 10);
 
-            for (ft::size_t i = 0; i < v.size(); i++)
+            for (typename Vector::size_type i = 0; i < v.size(); i++)
             { assert(v.at(i) == 42); }
         }
         {
             // n < size
-            ft::vector<int> v(10, 42);
+            Vector v(10, 42);
 
             assert(v.size() == 10);
             assert(v.capacity() == 10);
@@ -868,23 +871,23 @@ resize_tests()
             assert(v.size() == 5);
             assert(v.capacity() == 10);
 
-            for (ft::size_t i = 0; i < v.size(); i++)
+            for (typename Vector::size_type i = 0; i < v.size(); i++)
             { assert(v.at(i) == 42); }
         }
     }
     std::cout << "resize() " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-swap_tests()
+template <typename Vector>
+void swap_test()
 {
     {
         // test equality
-        ft::vector<int> a(10, 42);
-        ft::vector<int> b(20, 21);
+        Vector a(10, 42);
+        Vector b(20, 21);
 
-        ft::vector<int> c(a);
-        ft::vector<int> d(b);
+        Vector c(a);
+        Vector d(b);
 
         assert(c == a);
         assert(d == b);
@@ -896,11 +899,11 @@ swap_tests()
     }
     {
         // test iterators
-        ft::vector<int> a(10, 42);
-        ft::vector<int> b(20, 21);
+        Vector a(10, 42);
+        Vector b(20, 21);
 
-        ft::vector<int>::iterator ita = a.begin();
-        ft::vector<int>::iterator itb = b.begin();
+        typename Vector::iterator ita = a.begin();
+        typename Vector::iterator itb = b.begin();
 
         assert(*ita == 42);
         assert(*itb == 21);
@@ -916,38 +919,38 @@ swap_tests()
     std::cout << "swap() " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-assign_tests()
+template <typename Vector>
+void assign_test()
 {
     // by fill
     {
         {
             // assign to empty vector
-            ft::vector<int> a;
-            ft::vector<int> b(10, 42);
+            Vector a;
+            Vector b(10, 42);
 
             a.assign(10, 42);
             assert(a == b);
         }
         {
             // assign to non-empty vector
-            ft::vector<int> a(42, 21);
-            ft::vector<int> b(10, 42);
+            Vector a(42, 21);
+            Vector b(10, 42);
 
             a.assign(10, 42);
             assert(a == b);
         }
         {
             // assign no elements to empty vector
-            ft::vector<int> a;
-            ft::vector<int> b;
+            Vector a;
+            Vector b;
 
             a.assign(0, 42);
             assert(a == b);
         }
         {
             // assign no elements to non-empty vector
-            ft::vector<int> a(10, 42);
+            Vector a(10, 42);
 
             // FAIL (?)
             a.assign(0, 21);
@@ -960,32 +963,32 @@ assign_tests()
     {
         {
             // assign to empty vector
-            ft::vector<int> a;
-            ft::vector<int> b(10, 42);
+            Vector a;
+            Vector b(10, 42);
 
             a.assign(b.begin(), b.end());
             assert(a == b);
         }
         {
             // assign to non-empty vector
-            ft::vector<int> a(42, 21);
-            ft::vector<int> b(10, 42);
+            Vector a(42, 21);
+            Vector b(10, 42);
 
             a.assign(b.begin(), b.end());
             assert(a == b);
         }
         {
             // assign no elements to empty vector
-            ft::vector<int> a;
-            ft::vector<int> b;
+            Vector a;
+            Vector b;
 
             a.assign(b.begin(), b.end());
             assert(a == b);
         }
         {
             // assign no elements to non-empty vector
-            ft::vector<int> a(10, 42);
-            ft::vector<int> b;
+            Vector a(10, 42);
+            Vector b;
 
             // FAIL (?)
             a.assign(b.begin(), b.end());
@@ -997,43 +1000,59 @@ assign_tests()
     std::cout << "assign() " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-modifiers_tests()
+template <typename T>
+void modifiers_tests()
 {
     std::cout << "== Modifiers ==" << std::endl;
-    clear_tests();
-    erase_tests(); // TODO
-    insert_tests(); // TODO
-    push_back_tests();
-    pop_back_tests();
-    resize_tests();
-    swap_tests();
-    assign_tests();
+
+    clear_test<std::vector<T>>();
+    clear_test< ft::vector<T>>();
+
+    erase_test<std::vector<T>>(); // TODO
+    erase_test< ft::vector<T>>(); // TODO
+
+    insert_test<std::vector<T>>(); // TODO
+    insert_test< ft::vector<T>>(); // TODO
+
+    push_back_test<std::vector<T>>();
+    push_back_test< ft::vector<T>>();
+
+    pop_back_test<std::vector<T>>();
+    pop_back_test< ft::vector<T>>();
+
+    resize_test<std::vector<T>>();
+    resize_test< ft::vector<T>>();
+
+    swap_test<std::vector<T>>();
+    swap_test< ft::vector<T>>();
+
+    assign_test<std::vector<T>>();
+    assign_test< ft::vector<T>>();
 }
 
 /****** Operators tests *******************************************************/
 
-void
-equal_test()
+template <typename Vector>
+void equal_test()
 {
     // empty vector
-    { assert(ft::vector<int>() == ft::vector<int>()); }
+    { assert(Vector() == Vector()); }
     // non-empty with default values
-    { assert(ft::vector<int>(10) == ft::vector<int>(10)); }
+    { assert(Vector(10) == Vector(10)); }
     // non-empty with specified values
-    { assert(ft::vector<int>(10, 21) == ft::vector<int>(10, 21)); }
+    { assert(Vector(10, 21) == Vector(10, 21)); }
     // heap with empty vector
     {
-        ft::vector<int> * a = new ft::vector<int>();
-        ft::vector<int> * b = new ft::vector<int>();
+        Vector * a = new Vector();
+        Vector * b = new Vector();
         assert(*b == *a);
         delete a;
         delete b;
     }
     // heap with non-empty vector
     {
-        ft::vector<int> * a = new ft::vector<int>(10,21);
-        ft::vector<int> * b = new ft::vector<int>(10,21);
+        Vector * a = new Vector(10,21);
+        Vector * b = new Vector(10,21);
         assert(*b == *a);
         delete a;
         delete b;
@@ -1041,23 +1060,23 @@ equal_test()
     std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-not_equal_test()
+template <typename Vector>
+void not_equal_test()
 {
-    assert(ft::vector<int>() != ft::vector<int>(10));
-    assert(ft::vector<int>(10) != ft::vector<int>(10, 21));
-    assert(ft::vector<int>(10, 21) != ft::vector<int>(10, 42));
+    assert(Vector() != Vector(10));
+    assert(Vector(10) != Vector(10, 21));
+    assert(Vector(10, 21) != Vector(10, 42));
 
     std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-vector_assignation_test()
+template <typename Vector>
+void vector_assignation_test()
 {
     {
         // same size
-        ft::vector<int> a(5, 21);
-        ft::vector<int> b(5, 42);
+        Vector a(5, 21);
+        Vector b(5, 42);
 
         assert(a != b);
         a = b;
@@ -1065,8 +1084,8 @@ vector_assignation_test()
     }
     {
         // upper size
-        ft::vector<int> a(9, 21);
-        ft::vector<int> b(5, 42);
+        Vector a(9, 21);
+        Vector b(5, 42);
 
         assert(a != b);
         a = b;
@@ -1074,8 +1093,8 @@ vector_assignation_test()
     }
     {
         // lower size
-        ft::vector<int> a(5, 21);
-        ft::vector<int> b(9, 42);
+        Vector a(5, 21);
+        Vector b(9, 42);
 
         assert(a != b);
         a = b;
@@ -1083,8 +1102,8 @@ vector_assignation_test()
     }
     {
         // assign from empty
-        ft::vector<int> a(9, 21);
-        ft::vector<int> b;
+        Vector a(9, 21);
+        Vector b;
 
         assert(a != b);
         a = b;
@@ -1092,8 +1111,8 @@ vector_assignation_test()
     }
     {
         // assign to empty
-        ft::vector<int> a;
-        ft::vector<int> b(9, 42);
+        Vector a;
+        Vector b(9, 42);
 
         assert(a != b);
         a = b;
@@ -1102,87 +1121,101 @@ vector_assignation_test()
     std::cout << "operator= " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-less_than_test()
+template <typename Vector>
+void less_than_test()
 {
     {
         // with different sizes
-        assert(ft::vector<int>() < ft::vector<int>(1));
-        assert(ft::vector<int>(0) < ft::vector<int>(1));
-        assert(ft::vector<int>(1) < ft::vector<int>(2));
+        assert(Vector() < Vector(1));
+        assert(Vector(0) < Vector(1));
+        assert(Vector(1) < Vector(2));
 
         // with different values
-        assert(ft::vector<int>(1, 21) < ft::vector<int>(1, 42));
+        assert(Vector(1, 21) < Vector(1, 42));
     }
     std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-greater_than_test()
+template <typename Vector>
+void greater_than_test()
 {
     {
         // with different sizes
-        assert(ft::vector<int>(1) > ft::vector<int>());
-        assert(ft::vector<int>(1) > ft::vector<int>(0));
-        assert(ft::vector<int>(2) > ft::vector<int>(1));
+        assert(Vector(1) > Vector());
+        assert(Vector(1) > Vector(0));
+        assert(Vector(2) > Vector(1));
 
         // with different values
-        assert(ft::vector<int>(1, 42) > ft::vector<int>(1, 21));
+        assert(Vector(1, 42) > Vector(1, 21));
     }
     std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-less_than_equal_test()
+template <typename Vector>
+void less_than_equal_test()
 {
     {
         // with different sizes
-        assert(ft::vector<int>() <= ft::vector<int>());
-        assert(ft::vector<int>() <= ft::vector<int>(1));
-        assert(ft::vector<int>(0) <= ft::vector<int>(0));
-        assert(ft::vector<int>(0) <= ft::vector<int>(1));
-        assert(ft::vector<int>(1) <= ft::vector<int>(1));
-        assert(ft::vector<int>(1) <= ft::vector<int>(2));
+        assert(Vector() <= Vector());
+        assert(Vector() <= Vector(1));
+        assert(Vector(0) <= Vector(0));
+        assert(Vector(0) <= Vector(1));
+        assert(Vector(1) <= Vector(1));
+        assert(Vector(1) <= Vector(2));
 
         // with different values
-        assert(ft::vector<int>(1, 21) <= ft::vector<int>(1, 21));
-        assert(ft::vector<int>(1, 21) <= ft::vector<int>(1, 42));
-        assert(ft::vector<int>(1, 21) <= ft::vector<int>(2, 21));
+        assert(Vector(1, 21) <= Vector(1, 21));
+        assert(Vector(1, 21) <= Vector(1, 42));
+        assert(Vector(1, 21) <= Vector(2, 21));
     }
     std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-greater_than_equal_test()
+template <typename Vector>
+void greater_than_equal_test()
 {
     {
         // with different sizes
-        assert(ft::vector<int>() >= ft::vector<int>());
-        assert(ft::vector<int>(1) >= ft::vector<int>());
-        assert(ft::vector<int>(0) >= ft::vector<int>(0));
-        assert(ft::vector<int>(1) >= ft::vector<int>(0));
-        assert(ft::vector<int>(1) >= ft::vector<int>(1));
-        assert(ft::vector<int>(2) >= ft::vector<int>(1));
+        assert(Vector() >= Vector());
+        assert(Vector(1) >= Vector());
+        assert(Vector(0) >= Vector(0));
+        assert(Vector(1) >= Vector(0));
+        assert(Vector(1) >= Vector(1));
+        assert(Vector(2) >= Vector(1));
 
         // with different values
-        assert(ft::vector<int>(1, 21) >= ft::vector<int>(1, 21));
-        assert(ft::vector<int>(1, 42) >= ft::vector<int>(1, 21));
-        assert(ft::vector<int>(2, 21) >= ft::vector<int>(1, 21));
+        assert(Vector(1, 21) >= Vector(1, 21));
+        assert(Vector(1, 42) >= Vector(1, 21));
+        assert(Vector(2, 21) >= Vector(1, 21));
     }
     std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-operators_tests()
+template <typename T>
+void operators_tests()
 {
     std::cout << "== Operators ==" << std::endl;
-    equal_test();
-    not_equal_test();
-    vector_assignation_test();
-    less_than_test();
-    greater_than_test();
-    less_than_equal_test();
-    greater_than_equal_test();
+
+    equal_test<std::vector<T>>();
+    equal_test< ft::vector<T>>();
+
+    not_equal_test<std::vector<T>>();
+    not_equal_test< ft::vector<T>>();
+
+    vector_assignation_test<std::vector<T>>();
+    vector_assignation_test< ft::vector<T>>();
+
+    less_than_test<std::vector<T>>();
+    less_than_test< ft::vector<T>>();
+
+    greater_than_test<std::vector<T>>();
+    greater_than_test< ft::vector<T>>();
+
+    less_than_equal_test<std::vector<T>>();
+    less_than_equal_test< ft::vector<T>>();
+
+    greater_than_equal_test<std::vector<T>>();
+    greater_than_equal_test< ft::vector<T>>();
 }
 
 /****** Iterators tests *******************************************************/
@@ -2146,7 +2179,7 @@ iterators_tests()
 
     std::cout << "== Iterators ==" << std::endl;
 
-    //iterator_constructors_test();
+    //iterator_constructors_test(); // TODO
     iterator_assignation_test();
 
     begin_test(); // move to vector test suite ?
@@ -2184,25 +2217,24 @@ iterators_tests()
 template <typename T>
 void vector_test()
 {
-    constructors_test<T>();
-    allocator_test<T>();
-    capacity_test<T>();
+    constructors_tests<T>();
+    allocator_tests<T>();
+    capacity_tests<T>();
+    accessors_tests<T>();
+    modifiers_tests<T>(); // TODO
+    operators_tests<T>();
+
+    iterators_tests(); // TODO
 }
 
 /****** All tests *************************************************************/
 
-
 int main()
 {
-//    vector_test<int>();
-//    vector_test<double>();
-//    vector_test<A>();
+    vector_test<int>();
+    vector_test<double>();
 
-//    accessors_tests();
-//    modifiers_tests(); // TODO
-//    operators_tests();
-//
-//    iterators_tests();
+//    vector_test<A>(); // TODO
 
     return 0;
 }
