@@ -6,18 +6,38 @@ int main()
 {
     {
         ft::rb_tree<int> tree;
-        for (int i = 0; i < 6; i++) {
-            tree.insert(tree.root_ref(), NULL, i);
-            tree.print(tree.root_node()); std::cout << std::endl;
+        for (int i = 0; i < 18; i++) {
+            tree.insert(tree.root_node(), i);
+            tree.print(tree.root_node());
+            std::cout << std::endl;
         }
     }
     {
         ft::rb_tree<int> tree;
-        for (int i = 6; i > 0; i--) {
-            tree.insert(tree.root_ref(), NULL, i);
-            tree.print(tree.root_node()); std::cout << std::endl;
+        for (int i = 19; i > 0; i--) {
+            tree.insert(tree.root_node(), i);
+            tree.print(tree.root_node());
+            std::cout << std::endl;
         }
     }
+    {
+        ft::rb_tree<int> tree;
+        tree.insert(tree.root_node(), 2);
+        tree.print(tree.root_node()); std::cout << std::endl;
+        tree.insert(tree.root_node(), 1);
+        tree.print(tree.root_node()); std::cout << std::endl;
+        tree.insert(tree.root_node(), 5);
+        tree.print(tree.root_node()); std::cout << std::endl;
+        tree.insert(tree.root_node(), 8);
+        tree.print(tree.root_node()); std::cout << std::endl;
+        tree.insert(tree.root_node(), 7);
+        tree.print(tree.root_node()); std::cout << std::endl;
+        tree.insert(tree.root_node(), 3);
+        tree.print(tree.root_node()); std::cout << std::endl;
+        tree.insert(tree.root_node(), 4);
+        tree.print(tree.root_node()); std::cout << std::endl;
+    }
+    /*
     {
         ft::rb_tree<int>::node_type a;
         ft::rb_tree<int>::node_type b;
@@ -51,5 +71,6 @@ int main()
         ft::rb_tree<ft::pair<const int,char>> a;
         ft::rb_tree<ft::pair<const int,char>> b(a);
     }
+    */
     return 0;
 }

@@ -5,6 +5,10 @@
 #include <iostream> // std::ostream
 #include <memory> // std::allocator
 
+// TODO
+// - inline function or macro to replace ternaries
+// - handle allocator failure
+
 namespace ft {
 
 template <typename T,
@@ -77,7 +81,7 @@ class rb_tree
     /**************************************************************************/
 
     // utility for recursive fashion destructor
-    void _destroy(const pointer node)
+    void _destroy(pointer const node)
     {
         if (node == NULL)
             return;
@@ -87,95 +91,16 @@ class rb_tree
         _alloc.deallocate(node, 1);
     }
 
-    pointer _get_brother(pointer node)
+    // TODO
+    pointer _get_brother(pointer const node)
     {
         return node == node->parent->left
         ? node->parent->right
         : node->parent->left;
     }
 
-    void _left_rotate(pointer node)
-    {
-        if (node->right)
-        {
-            if (node->parent)
-            {
-                node->parent->left == node
-                ? node->parent->left = node->right
-                : node->parent->right = node->right;
-            }
-            node->right->parent = node->parent;
-            node->parent = node->right;
-            node->right = node->right->left;
-            node->parent->left = node;
-            if (node == _root)
-                _root = node->parent;
-        }
-    }
-
-    void _right_rotate(pointer node)
-    {
-        if (node->left)
-        {
-            if (node->parent)
-            {
-                node->parent->left == node
-                ? node->parent->left = node->left
-                : node->parent->right = node->left;
-            }
-            node->left->parent = node->parent;
-            node->parent = node->left;
-            node->left = node->left->right;
-            node->parent->right = node;
-            if (node == _root)
-                _root = node->parent;
-        }
-    }
-
-    void _left_balance(pointer node, pointer parent, pointer uncle)
-    {
-        // case 1: uncle is Red
-        if (uncle && uncle->color == Red)
-        {
-            uncle->color = Black;
-            parent->color = Black;
-            parent->parent->color = Red;
-        }
-        else
-        {
-            // case 3: node is right-child of parent
-            if (node == parent->right)
-                _left_rotate(parent);
-            // case 2: node is left-child of parent
-            _right_rotate(parent->parent);
-            node->parent->color = Black;
-            node->parent->right->color = Red;
-        }
-    }
-
-    void _right_balance(pointer node, pointer parent, pointer uncle)
-    {
-        // case 1: uncle is Red
-        if (uncle && uncle->color == Red)
-        {
-            uncle->color = Black;
-            parent->color = Black;
-            parent->parent->color = Red;
-        }
-        else
-        {
-            // case 3: node is right-child of parent
-            if (node == parent->right)
-                _right_rotate(parent);
-            // case 2: node is left-child of parent
-            _left_rotate(parent->parent);
-            node->parent->color = Black;
-            node->parent->left->color = Red;
-        }
-    }
-
     // recursive fashion
-    node_type * _copy(node_type * src, node_type * parent)
+    pointer _copy(node_type * src, node_type * parent)
     {
         node_type * dst;
 
@@ -195,7 +120,7 @@ class rb_tree
     }
 
     // iterative fashion
-    node_type * _copy(node_type * src)
+    pointer _copy(node_type * src)
     {
         node_type * dst;
         node_type * dst_root;
@@ -245,7 +170,6 @@ class rb_tree
         }
     }
 
-
     /**************************************************************************/
     /*                                                                        */
     /*      Member functions                                                  */
@@ -256,7 +180,7 @@ class rb_tree
 
     /****** Utility (might delete later) **************************************/
 
-    pointer * root_ptr() const { return &_root; }
+    pointer * root_ptr() { return &_root; }
     pointer & root_ref() { return  _root; } // !const bc used into map[]
     pointer  root_node() const { return  _root; }
 
@@ -267,7 +191,7 @@ class rb_tree
 
         node->color == Red
         ? std::cout << "\33[31m" << node->key << "\33[0m"
-        : std::cout << "\33[30m" << node->key << "\33[0m";
+        : std::cout << "\33[37m" << node->key << "\33[0m";
 
         if (node->left || node->right)
         {
@@ -356,39 +280,262 @@ class rb_tree
 
     /****** Modifiers *********************************************************/
 
-    // with a recursive fashion search
-    void insert(pointer & node, pointer parent, key_type & key)
+    // with a recursive fashion search -- BUG
+    void insert(pointer * const node, pointer * const parent, key_type & key)
     {
         // insert at leaf -- or root
-        if (node == NULL)
+        if (*node == NULL)
         {
             // allocate & construct `node` from `key`
-            node = _alloc.allocate(1);
-            _alloc.construct(node, node_type(key));
+            *node = _alloc.allocate(1);
+            _alloc.construct(*node, node_type(key));
             _size++;
             // insert `node` below `parent`
-            node->parent = parent;
-            if (parent)
+            if (parent == NULL)
             {
-                key < parent->key
-                ? parent->left = node
-                : parent->right = node;
+                (*node)->parent = NULL;
+                return;
+            }
+            (*node)->parent = *parent;
+            if (*parent)
+            {
+                key < (*parent)->key
+                ? (*parent)->left = *node
+                : (*parent)->right = *node;
             }
             else return;
             // rebalance
-            while (parent->parent && parent->color == Red)
+            while (*parent && (*parent)->parent && (*parent)->color == Red)
             {
-                node == parent->left
-                ?  _left_balance(node, parent, _get_brother(parent))
-                : _right_balance(node, parent, _get_brother(parent));
+                *node == (*parent)->left
+                ?  _left_balance(node, parent, _get_brother(*parent))
+                : _right_balance(node, parent, _get_brother(*parent));
             }
             _root->color = Black;
             return;
         }
         // recursive until leaf
-        return key < node->key
-        ? insert(node->left, node, key)
-        : insert(node->right, node, key);
+        return key < (*node)->key
+        ? insert(&(*node)->left, node, key)
+        : insert(&(*node)->right, node, key);
+    }
+
+    // with an iterative fashion search
+    void insert(pointer node, key_type key)
+    {
+        // parent of the new node
+        pointer parent = NULL;
+
+        // find leaf where to insert new node
+        while (1) // while (node)
+        {
+            if (node == NULL) // remove
+                break;
+            if (key == node->key)
+                return;
+            while (node && key < node->key)
+            {
+                parent = node;
+                node = node->left;
+            }
+            while (node && key > node->key)
+            {
+                parent = node;
+                node = node->right;
+            }
+        }
+
+        // alloc and construct new node
+        pointer new_node = _alloc.allocate(1);
+        _alloc.construct(new_node, node_type(key));
+
+        // update size
+        _size++;
+
+        // insert parent above new node
+        new_node->parent = parent;
+
+        // new node is root: insertion complete
+        if (parent == NULL)
+        {
+            _root = new_node;
+            return;
+        }
+
+        // insert new node below its parent
+        new_node->key < parent->key
+        ? parent->left = new_node
+        : parent->right = new_node;
+
+        // rebalance
+        while (parent && parent->parent && parent->color == Red)
+        {
+            // left-balance
+            if (parent == parent->parent->left)
+            {
+                /*
+                 * case 1: uncle is Red
+                 *
+                 *        B               R
+                 *       / \             / \
+                 *      R   R    ==>    B   B
+                 *     / \             / \
+                 *   (R   R)         (R   R)
+                 *
+                 */
+                if (parent->parent->right && parent->parent->right->color == Red)
+                {
+                    parent->parent->left->color = Black;
+                    parent->parent->right->color = Black;
+                    parent->parent->color = Red;
+                    parent = parent->parent->parent;
+                }
+                else
+                {
+                    /*
+                     * case 3: node direction != parent direction
+                     *
+                     *       A                A
+                     *      /                /
+                     *     B       ==>      C
+                     *    / \              / \
+                     *   x   C            B   z
+                     *      / \          / \
+                     *     y   z        x   y
+                     *
+                     */
+                    if (new_node == parent->right)
+                    {
+                        parent->parent->left = new_node;
+                        new_node->parent = parent->parent;
+
+                        parent->right = new_node->left;
+                        if (parent->right)
+                            parent->right->parent = parent;
+
+                        new_node->left = parent;
+                        parent->parent = new_node;
+
+                        parent = new_node;
+                        new_node = parent->left;
+                    }
+                    /*
+                     *  case 2: now node direction == parent direction
+                     *
+                     *         A              C
+                     *        /              / \
+                     *       C      ==>     /   \
+                     *      / \            B     A
+                     *     B   z          / \   /
+                     *    / \            x   y z
+                     *   x   y
+                     *
+                     */
+                    parent->parent->left = parent->right;
+                    if (parent->right)
+                        parent->right->parent = parent->parent;
+                    parent->right = parent->parent;
+                    if (parent->parent->parent)
+                    {
+                        parent->parent == parent->parent->parent->left
+                        ? parent->parent->parent->left = parent
+                        : parent->parent->parent->right = parent;
+                    }
+                    else
+                        _root = parent;
+                    parent->parent = parent->parent->parent;
+                    parent->right->parent = parent;
+
+                    parent->color = Black;
+                    parent->right->color = Red;
+                    break;
+                }
+            }
+            // right-balance
+            else
+            {
+                /*
+                 * case 1: uncle is Red
+                 *
+                 *      B                R
+                 *     / \              / \
+                 *    R   R     ==>    B   B
+                 *       / \              / \
+                 *     (R   R)          (R   R)
+                 *
+                 */
+                if (parent->parent->left && parent->parent->left->color == Red)
+                {
+                    parent->parent->left->color = Black;
+                    parent->parent->right->color = Black;
+                    parent->parent->color = Red;
+                    parent = parent->parent->parent;
+                }
+                else
+                {
+                    /*
+                     * case 3: node direction != parent direction
+                     *
+                     *    A              A
+                     *     \              \
+                     *      B     ==>      C
+                     *     / \            / \
+                     *    C   x          y   B
+                     *   / \                / \
+                     *  y   z              z   x
+                     *
+                     */
+                    if (new_node == parent->left)
+                    {
+                        parent->parent->right = new_node;
+                        new_node->parent = parent->parent;
+
+                        parent->left = new_node->right;
+                        if (parent->left)
+                            parent->left->parent = parent;
+
+                        new_node->right = parent;
+                        parent->parent = new_node;
+
+                        parent = new_node;
+                        new_node = parent->right;
+                    }
+                    /*
+                     *  case 2: now node direction == parent direction
+                     *
+                     *    A                   C
+                     *     \                 / \
+                     *      C      ==>      /   \
+                     *     / \             A     B
+                     *    y   B             \   / \
+                     *       / \             y z   x
+                     *      z   x
+                     *
+                     */
+                    parent->parent->right = parent->left;
+                    if (parent->left)
+                        parent->left->parent = parent->parent;
+                    parent->left = parent->parent;
+                    if (parent->parent->parent)
+                    {
+                        parent->parent == parent->parent->parent->left
+                        ? parent->parent->parent->left = parent
+                        : parent->parent->parent->right = parent;
+                    }
+                    else
+                        _root = parent;
+                    parent->parent = parent->parent->parent;
+                    parent->left->parent = parent;
+
+                    parent->color = Black;
+                    parent->left->color = Red;
+                    break;
+                }
+            }
+        }
+
+        //
+        _root->color = Black;
     }
 
     void erase(pointer node)
