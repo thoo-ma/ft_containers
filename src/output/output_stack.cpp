@@ -1,96 +1,69 @@
 #include <stack>
-#include <deque>
 #include <vector>
 #include <cassert>
 #include <iostream>
-#include <stdexcept>
+#include <typeinfo> // typeid
 
 #include "ft_stack.hpp"
 #include "ft_vector.hpp"
-
 #include "../utils/colors.hpp"
 
-#include <typeinfo> // typeid
+// TODO
+// - add log()
+// - add test with custom datatype
 
 /****** Constructor test ******************************************************/
 
-template <typename T>
+template <typename Stack>
 void stack_constructor_test()
 {
-    // implicit underlying container constructed by default
-    assert(ft::stack<T>().size() == 0);
-    assert(std::stack<T>().size() == 0);
+    typedef typename Stack::value_type      Value;
+    typedef typename Stack::container_type  Container;
 
-    // explicit underlying container constructed by default
-    assert((ft::stack<T, ft::vector<T>>()).size() == 0);
-    assert((std::stack<T, std::deque<T>>()).size() == 0);
-    assert((std::stack<T, std::vector<T>>()).size() == 0);
+    // Constructed by default
+    assert(Stack().size() == 0);
+    assert(Stack().empty() == true);
 
-    // implicit underlying container constructed by fill
-    assert(ft::stack<T>(ft::vector<T>(10, T())).size() == 10);
-    assert(std::stack<T>(std::deque<T>(10, T())).size() == 10);
-
-    // explicit underlying container constructed by fill
-    assert((ft::stack<T, ft::vector<T>>(ft::vector<T>(10, T()))).size() == 10);
-    assert((std::stack<T, std::deque<T>>(std::deque<T>(10, T()))).size() == 10);
+    // Constructed by fill
+    assert(Stack(Container(10, Value())).size() == 10);
+    assert(Stack(Container(10, Value())).empty() == false);
 
     std::cout << "constructor " << GREEN << "OK" << RESET << std::endl;
 }
 
-/****** Empty test ************************************************************/
+/****** Functions test ********************************************************/
 
-template <typename T>
+template <typename Stack, typename Container, typename Value, typename Size>
 void stack_empty_test()
 {
     // underlying container constructed by default
-    assert(ft::stack<T>().empty());
-    assert(std::stack<T>().empty());
+    assert(Stack().empty() == true);
 
     // underlying container constructed with size 0
-    assert((ft::stack<T>(ft::vector<T>(0))).empty());
-    assert((std::stack<T>(std::deque<T>(0))).empty());
+    assert(Stack(Container(0)).empty() == true);
 
     // underlying container constructed with size > 0
-    assert(!(ft::stack<T>(ft::vector<T>(10))).empty());
-    assert(!(std::stack<T>(std::deque<T>(10))).empty());
+    assert(Stack(Container(10)).empty() == false);
 
     std::cout << "empty " << GREEN << "OK" << RESET << std::endl;
 }
 
-/****** Push test *************************************************************/
-
-template <typename T>
-void stack_push_test()
-{
-    ft::stack<T> stack;
-
-    stack.push(10);
-
-   // for (typename ft::stack<T>::size_type i = 0; i < 21; i++) {
-   //     assert(stack.size() == i);
-   //     stack.push(T());
-   // }
-
-    std::cout << "push " << GREEN << "OK" << RESET << std::endl;
-}
-
-/****** Size test *************************************************************/
-
-template <typename T>
+template <typename Stack, typename Container, typename Value, typename Size>
 void stack_size_test()
 {
-    assert(ft::stack<T>().size() == 0);
+    assert(Stack().size() == 0);
+    assert(Stack(Container(10)).size() == 10);
 
-    assert(ft::stack<T>(ft::vector<T>(10)).size() == 10);
+    Stack stack;
 
-    ft::stack<T> stack;
-
-    for (typename ft::stack<T>::size_type i = 0; i < 10; i++) {
+    for (Size i = 0; i < 10; i++)
+    {
         assert(stack.size() == i);
-        stack.push(static_cast<int>(i));
+        stack.push(Value(i));
     }
 
-    for (typename ft::stack<T>::size_type i = 0; i < 10; i++) {
+    for (Size i = 0; i < 10; i++)
+    {
         assert(stack.size() == 10 - i);
         stack.pop();
     }
@@ -98,170 +71,207 @@ void stack_size_test()
     std::cout << "size " << GREEN << "OK" << RESET << std::endl;
 }
 
-/****** Top test **************************************************************/
-
-template <typename T>
+template <typename Stack, typename Container, typename Value, typename Size>
 void stack_top_test()
 {
-    ft::stack<T> stack;
+    Stack stack;
 
-    for (typename ft::stack<T>::size_type i = 0; i < 10; i++) {
-        stack.push(static_cast<T>(i));
-        assert(stack.top() == static_cast<T>(i));
+    for (Size i = 0; i < 10; i++)
+    {
+        stack.push(Value(i));
+        assert(stack.top() == Value(i));
     }
 
-    for (typename ft::stack<T>::size_type i = 0; i < 10; i++) {
-        assert(stack.top() == static_cast<T>(10 - i- 1));
+    for (Size i = 0; i < 10; i++)
+    {
+        assert(stack.top() == Value(10 - i- 1));
         stack.pop();
     }
 
     std::cout << "top " << GREEN << "OK" << RESET << std::endl;
 }
 
-/****** Pop test **************************************************************/
-
-template <typename T>
+template <typename Stack, typename Container, typename Value, typename Size>
 void stack_pop_test()
 {
-    ft::stack<T> stack(ft::vector<T>(10, T()));
+    Stack stack(Container(10));
 
-    for (typename ft::stack<T>::size_type i = 0; i < 10; i++) {
+    for (Size i = 0; i < 10; i++)
+    {
         assert(stack.size() == 10 - i);
         stack.pop();
     }
 
+    assert(stack.empty() == true);
+
+    // If we pop again, std::stack won't remain empty whereas ft::stack will.
+    // stack.pop();
+    // assert(stack.empty() == true);
+
     std::cout << "pop " << GREEN << "OK" << RESET << std::endl;
 }
 
-/****** Operators *************************************************************/
+template <typename Stack, typename Container, typename Value, typename Size>
+void stack_push_test()
+{
+    Stack stack;
 
-template <typename T>
+    for (Size i = 0; i < 21; i++)
+    {
+        assert(stack.size() == i);
+        stack.push(Value(i));
+        assert(stack.top() == Value(i));
+    }
+
+    std::cout << "push " << GREEN << "OK" << RESET << std::endl;
+}
+
+template <typename Stack>
+void stack_functions_test()
+{
+    typedef typename Stack::size_type       Size;
+    typedef typename Stack::value_type      Value;
+    typedef typename Stack::container_type  Container;
+
+    stack_top_test<Stack, Container, Value, Size>();
+    stack_pop_test<Stack, Container, Value, Size>();
+    stack_size_test<Stack, Container, Value, Size>();
+    stack_push_test<Stack, Container, Value, Size>();
+    stack_empty_test<Stack, Container, Value, Size>();
+}
+
+/****** Operators test ********************************************************/
+
+template <typename Stack, typename Container>
 void stack_equal_test()
 {
-    // empty stack
-    assert(ft::stack<T>() == ft::stack<T>());
-    assert(ft::stack<T>() == ft::stack<T>(0));
-    assert(ft::stack<T>() == ft::stack<T>(ft::vector<T>()));
-
-    // non-empty with default values
-    {
-        ft::vector<T> v(10);
-        assert(ft::stack<T>(v) == ft::stack<T>(v));
-    }
-
-    // non-empty with specified values
-    {
-        ft::vector<T> v(10, 21);
-        assert(ft::stack<T>(v) == ft::stack<T>(v));
-    }
+    assert(Stack() == Stack());
+    assert(Stack() == Stack(Container()));
+    assert(Stack(Container(10)) == Stack(Container(10)));
+    assert(Stack(Container(10,21)) == Stack(Container(10,21)));
 
     std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename T>
+template <typename Stack, typename Container>
 void stack_not_equal_test()
 {
-    assert(ft::stack<T>(ft::vector<T>()) != ft::stack<T>(ft::vector<T>(1)));
-    assert(ft::stack<T>(ft::vector<T>(0)) != ft::stack<T>(ft::vector<T>(1)));
-    assert(ft::stack<T>(ft::vector<T>(1)) != ft::stack<T>(ft::vector<T>(10)));
-    assert(ft::stack<T>(ft::vector<T>(4,21)) != ft::stack<T>(ft::vector<T>(4,42)));
+    // with different sizes
+    assert(Stack(Container()) != Stack(Container(1)));
+    assert(Stack(Container(0)) != Stack(Container(1)));
+    assert(Stack(Container(1)) != Stack(Container(10)));
+
+    // with different values
+    assert(Stack(Container(4,21)) != Stack(Container(4,42)));
+
     std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename T>
+template <typename Stack, typename Container>
 void stack_less_than_test()
 {
-    {
-        // with different sizes
-        assert(ft::stack<T>(ft::vector<T>()) < ft::stack<T>(ft::vector<T>(1)));
-        assert(ft::stack<T>(ft::vector<T>(0)) < ft::stack<T>(ft::vector<T>(1)));
-        assert(ft::stack<T>(ft::vector<T>(1)) < ft::stack<T>(ft::vector<T>(2)));
+    // with different sizes
+    assert(Stack(Container()) < Stack(Container(1)));
+    assert(Stack(Container(0)) < Stack(Container(1)));
+    assert(Stack(Container(1)) < Stack(Container(2)));
 
-        // with different values
-        assert(ft::stack<T>(ft::vector<T>(1, 21)) < ft::stack<T>(ft::vector<T>(1, 42)));
-    }
+    // with different values
+    assert(Stack(Container(1, 21)) < Stack(Container(1, 42)));
+
     std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename T>
+template <typename Stack, typename Container>
 void stack_greater_than_test()
 {
     // with different sizes
-    assert(ft::stack<T>(ft::vector<T>(1)) > ft::stack<T>(ft::vector<T>()));
-    assert(ft::stack<T>(ft::vector<T>(1)) > ft::stack<T>(ft::vector<T>(0)));
-    assert(ft::stack<T>(ft::vector<T>(2)) > ft::stack<T>(ft::vector<T>(1)));
+    assert(Stack(Container(1)) > Stack(Container()));
+    assert(Stack(Container(1)) > Stack(Container(0)));
+    assert(Stack(Container(2)) > Stack(Container(1)));
 
     // with different values
-    assert(ft::stack<T>(ft::vector<T>(1, 42)) > ft::stack<T>(ft::vector<T>(1, 21)));
+    assert(Stack(Container(1, 42)) > Stack(Container(1, 21)));
 
     std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename T>
+template <typename Stack, typename Container>
 void stack_less_than_equal_test()
 {
     // with different sizes
-    assert(ft::stack<T>(ft::vector<T>()) <= ft::stack<T>(ft::vector<T>()));
-    assert(ft::stack<T>(ft::vector<T>()) <= ft::stack<T>(ft::vector<T>(1)));
-    assert(ft::stack<T>(ft::vector<T>(0)) <= ft::stack<T>(ft::vector<T>(0)));
-    assert(ft::stack<T>(ft::vector<T>(0)) <= ft::stack<T>(ft::vector<T>(1)));
-    assert(ft::stack<T>(ft::vector<T>(1)) <= ft::stack<T>(ft::vector<T>(1)));
-    assert(ft::stack<T>(ft::vector<T>(1)) <= ft::stack<T>(ft::vector<T>(2)));
+    assert(Stack(Container()) <= Stack(Container()));
+    assert(Stack(Container()) <= Stack(Container(1)));
+    assert(Stack(Container(0)) <= Stack(Container(0)));
+    assert(Stack(Container(0)) <= Stack(Container(1)));
+    assert(Stack(Container(1)) <= Stack(Container(1)));
+    assert(Stack(Container(1)) <= Stack(Container(2)));
 
     // with different values
-    assert(ft::stack<T>(ft::vector<T>(1, 21)) <= ft::stack<T>(ft::vector<T>(1, 21)));
-    assert(ft::stack<T>(ft::vector<T>(1, 21)) <= ft::stack<T>(ft::vector<T>(1, 42)));
-    assert(ft::stack<T>(ft::vector<T>(1, 21)) <= ft::stack<T>(ft::vector<T>(2, 21)));
+    assert(Stack(Container(1, 21)) <= Stack(Container(1, 21)));
+    assert(Stack(Container(1, 21)) <= Stack(Container(1, 42)));
+    assert(Stack(Container(1, 21)) <= Stack(Container(2, 21)));
 
     std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename T>
+template <typename Stack, typename Container>
 void stack_greater_than_equal_test()
 {
     // with different sizes
-    assert(ft::stack<T>(ft::vector<T>()) >= ft::stack<T>(ft::vector<T>()));
-    assert(ft::stack<T>(ft::vector<T>(1)) >= ft::stack<T>(ft::vector<T>()));
-    assert(ft::stack<T>(ft::vector<T>(0)) >= ft::stack<T>(ft::vector<T>(0)));
-    assert(ft::stack<T>(ft::vector<T>(1)) >= ft::stack<T>(ft::vector<T>(0)));
-    assert(ft::stack<T>(ft::vector<T>(1)) >= ft::stack<T>(ft::vector<T>(1)));
-    assert(ft::stack<T>(ft::vector<T>(2)) >= ft::stack<T>(ft::vector<T>(1)));
+    assert(Stack(Container()) >= Stack(Container()));
+    assert(Stack(Container(1)) >= Stack(Container()));
+    assert(Stack(Container(0)) >= Stack(Container(0)));
+    assert(Stack(Container(1)) >= Stack(Container(0)));
+    assert(Stack(Container(1)) >= Stack(Container(1)));
+    assert(Stack(Container(2)) >= Stack(Container(1)));
 
     // with different values
-    assert(ft::stack<T>(ft::vector<T>(1, 21)) >= ft::stack<T>(ft::vector<T>(1, 21)));
-    assert(ft::stack<T>(ft::vector<T>(1, 42)) >= ft::stack<T>(ft::vector<T>(1, 21)));
-    assert(ft::stack<T>(ft::vector<T>(2, 21)) >= ft::stack<T>(ft::vector<T>(1, 21)));
+    assert(Stack(Container(1, 21)) >= Stack(Container(1, 21)));
+    assert(Stack(Container(1, 42)) >= Stack(Container(1, 21)));
+    assert(Stack(Container(2, 21)) >= Stack(Container(1, 21)));
 
     std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
 }
 
-template <typename T>
+template <typename Stack>
 void stack_operators_test()
 {
-    stack_equal_test<T>();
-    stack_not_equal_test<T>();
-    stack_less_than_test<T>();
-    stack_greater_than_test<T>();
-    stack_less_than_equal_test<T>();
-    stack_greater_than_equal_test<T>();
+    typedef typename Stack::container_type Container;
+
+    stack_equal_test<Stack, Container>();
+    stack_not_equal_test<Stack, Container>();
+    stack_less_than_test<Stack, Container>();
+    stack_greater_than_test<Stack, Container>();
+    stack_less_than_equal_test<Stack, Container>();
+    stack_greater_than_equal_test<Stack, Container>();
+}
+
+/****** Stack test ************************************************************/
+
+template <typename T>
+void stack_test()
+{
+    // implicit underlying container
+    stack_constructor_test<std::stack<T>>();
+    stack_constructor_test< ft::stack<T>>();
+
+    // explicit underlying container
+    stack_constructor_test<std::stack<std::vector<T>>>();
+    stack_constructor_test< ft::stack<std::vector<T>>>();
+
+    stack_functions_test<std::stack<T>>();
+    stack_functions_test< ft::stack<T>>();
+
+    stack_operators_test<std::stack<T>>();
+    stack_operators_test< ft::stack<T>>();
 }
 
 /****** All tests *************************************************************/
 
 int main()
 {
-//    stack_constructor_test<int>();
-//    stack_constructor_test<double>();
-//    stack_constructor_test<std::vector<int>>();
-
-//    stack_empty_test<int>();
-//    stack_empty_test<double>();
-    stack_push_test<int>();
-//    stack_size_test<int>();
-//    stack_top_test<int>();
-//    stack_pop_test<int>();
-//
-//    stack_operators_test<int>();
-
+    stack_test<int>();
+    stack_test<double>();
+    //stack_test<A>();
     return 0;
 }
