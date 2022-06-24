@@ -1,6 +1,7 @@
 #include <cassert>
 #include <utility>
 #include <iostream>
+
 #include "ft_pair.hpp"
 #include "../utils/colors.hpp"
 
@@ -167,5 +168,6 @@ int main()
     test_pair_constructed_by_init();
     test_pair_assignation();
     test_make_pair();
+
     return 0;
 }

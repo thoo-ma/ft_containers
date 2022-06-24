@@ -3,8 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstring> // strcmp
-#include "ft_vector.hpp"
 
+#include "ft_vector.hpp"
 #include "../utils/colors.hpp"
 
 using namespace std::chrono;
@@ -13,6 +13,7 @@ using namespace std::chrono;
 // - add more teste into compute section
 // - #define 20.0 limit
 // - make sure we don't go over max_size !! (could explain very good perfs...)
+// - add `timing_log()`
 
 /****** at() ******************************************************************/
 
@@ -1208,7 +1209,7 @@ int main()
     // append csv header to outfile
     outfile << "container,function,ft,std,ratio,status" << std::endl;
 
-    // tests (each one append a line to outfile)
+    // tests: each one append a line to outfile
 
     // allocator
     timing_test_vector_get_allocator(outfile);
