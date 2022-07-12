@@ -1,16 +1,14 @@
 #include <stack>
 #include <vector>
 #include <cassert>
-#include <iostream>
-#include <typeinfo> // typeid
+#include <iostream> // move to log
 
 #include "ft_stack.hpp"
 #include "ft_vector.hpp"
-#include "../utils/colors.hpp"
+#include "../utils/colors.hpp" // move to log
 
-// TODO
-// - add log()
-// - add test with custom datatype
+/// @todo add log()
+/// @todo add test with custom datatype
 
 /****** Constructor test ******************************************************/
 

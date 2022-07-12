@@ -1,9 +1,13 @@
 #ifndef FT_TYPE_TRAITS_HPP
 #define FT_TYPE_TRAITS_HPP 1
 
+/**
+ * @file ft_type_traits.hpp
+ */
+
 namespace ft {
 
-    // arbitrary for now
+    /// @todo arbitrary for now
     typedef long unsigned int	size_t;
     typedef long	            ptrdiff_t;
 
@@ -17,21 +21,21 @@ namespace ft {
 
     /****** remove_const ******************************************************/
 
-    // default case: less specialized
+    /// @note default case: less specialized
     template <class T>
     struct remove_const { typedef T type; };
 
-    // const case: more specialized
+    /// @note const case: more specialized
     template <class T> // class U ?
     struct remove_const <T const> { typedef T type; };
 
     /****** add_const *********************************************************/
 
-    // default case: less specialized
+    /// @note default case: less specialized
     template <class T>
     struct add_const { typedef T const type; };
 
-    // const case: more specialized
+    /// @note const case: more specialized
     template <class T> // class U ?
     struct add_const <T const> { typedef T type; };
 
@@ -53,15 +57,15 @@ namespace ft {
 
     /****** is_integral *******************************************************/
 
-    // add 'char16_t' 'char32_t' 'wchar_t' ?
+    /// @todo add 'char16_t' 'char32_t' 'wchar_t' ?
 
-    // default case: less specialized
+    /// @note default case: less specialized
     template <class T> struct is_integral : public false_type {};
 
-    // T const case: remove const qualifier
+    /// @note T const case: remove const qualifier
     template <class T> struct is_integral<T const> : public is_integral<T> {};
 
-    // particular cases
+    // @note particular cases
     template <> struct is_integral<bool> : public true_type {};
     template <> struct is_integral<char> : public true_type {};
     template <> struct is_integral<int> : public true_type {};
@@ -74,7 +78,7 @@ namespace ft {
     template <> struct is_integral<unsigned long> : public true_type {};
     template <> struct is_integral<unsigned long long> : public true_type {};
 
-    // 'signed char' is a different type than 'char'
+    /// @note 'signed char' is a different type than 'char'
     template <> struct is_integral<signed char> : public is_integral<char> {};
 
 } // namespace ft

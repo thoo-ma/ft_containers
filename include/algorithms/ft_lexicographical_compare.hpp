@@ -3,7 +3,7 @@
 
 namespace ft {
 
-// default compare operator (==)
+/// @brief Default compare operator (==)
 template <typename InputIterator1, typename InputIterator2>
 bool
 lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
@@ -23,7 +23,7 @@ lexicographical_compare(InputIterator1 first1, InputIterator1 last1,
     return (first2 != last2);
 }
 
-// custom compare function (comp)
+/// @brief Custom compare function (comp)
 template <class InputIterator1, class InputIterator2, class Compare>
 bool
 lexicographical_compare(InputIterator1 first1, InputIterator1 last1,

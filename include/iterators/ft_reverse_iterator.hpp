@@ -28,29 +28,22 @@ class reverse_iterator {
 
     public:
 
-    reverse_iterator()
-    { std::cout << "default reverse_iterator()" << std::endl; }
+    reverse_iterator() { }
 
-    reverse_iterator(const iterator_type & it) : _base(&(*it))
-    { std::cout << "reverse_iterator(iterator_base())" << std::endl; }
+    reverse_iterator(const iterator_type & it) : _base(it) { }
 
     template <typename Iter>
-    reverse_iterator(const reverse_iterator<Iter> & rit) : _base(&(*rit))
-    { std::cout << "reverse_iterator(reverse_iterator())" << std::endl; }
+    reverse_iterator(const reverse_iterator<Iter> & rit) : _base(rit.base()) { }
 
     /****** Member functions **********************************************/
 
-    // why cannot return a reference ?
+    /// @todo why cannot return a reference ?
     iterator_type base() const { return _base; }
 
     /****** Operators *****************************************************/
 
     reverse_iterator & operator=(const reverse_iterator & it)
-    {
-        std::cout << "reverse_iterator operator=()" << std::endl;
-        _base = it.base();
-        return *this;
-    }
+    { _base = it.base(); return *this; }
 
     reference operator*() const
     { return _base.operator*(); }
@@ -66,48 +59,49 @@ class reverse_iterator {
     bool operator!=(const reverse_iterator<Iter> & it) const
     { return _base != it.base(); }
 
-    // prefix
+    /// @note prefix
     reverse_iterator & operator++()
     { _base.operator--(); return *this; }
 
-    // postfix
-    reverse_iterator operator++(int)
-    { reverse_iterator tmp(*this); operator++(); return tmp; }
-
-    // prefix
+    /// @note prefix
     reverse_iterator & operator--()
     { _base.operator++(); return *this; }
 
-    // postfix
+    /// @note postfix
+    reverse_iterator operator++(int)
+    { reverse_iterator tmp(*this); operator++(); return tmp; }
+
+    /// @note postfix
     reverse_iterator operator--(int)
     { reverse_iterator tmp(*this); operator--(); return tmp; }
 
+    /// @note why `n` is not a reference here ?
     reverse_iterator & operator+=(const difference_type n)
-    { _base += n; return *this; }
-
-    reverse_iterator & operator-=(const difference_type & n)
     { _base -= n; return *this; }
 
+    reverse_iterator & operator-=(const difference_type & n)
+    { _base += n; return *this; }
+
     reverse_iterator operator+(const difference_type & n) const
-    { return reverse_iterator(_base + n); }
+    { return reverse_iterator(_base - n); }
 
     reverse_iterator operator-(const difference_type & n) const
     { return operator+(-n); }
 
     template <typename Iter>
     difference_type operator-(const reverse_iterator<Iter> & rhs) const
-    { return _base - rhs.base(); }
+    { return rhs.base() - _base; }
 
     value_type & operator[](const difference_type n) const
-    { return _base[n]; }
+    { return _base[-n]; }
 
     template <typename Iter>
     bool operator<(const reverse_iterator<Iter> & rhs) const
-    { return _base < rhs.base(); }
+    { return _base > rhs.base(); }
 
     template <typename Iter>
     bool operator>(const reverse_iterator<Iter> & rhs) const
-    { return rhs.base() < _base; }
+    { return _base < rhs.base(); }
 
     template <typename Iter>
     bool operator<=(const reverse_iterator<Iter> & rhs) const

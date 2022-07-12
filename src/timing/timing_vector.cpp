@@ -1,19 +1,22 @@
 #include <vector>
 #include <chrono>
-#include <iostream>
-#include <fstream>
 #include <cstring> // strcmp
+#include <fstream>
+#include <iostream>
 
 #include "ft_vector.hpp"
-#include "../utils/colors.hpp"
+#include "../utils/colors.hpp" // absolute path
 
 using namespace std::chrono;
 
-// TODO
-// - add more teste into compute section
-// - #define 20.0 limit
-// - make sure we don't go over max_size !! (could explain very good perfs...)
-// - add `timing_log()`
+/**
+ * @todo add more teste into compute section
+ * @todo #define 20.0 limit
+ * @todo verify we don't go over max_size !! (could explain very good perfs...)
+ * @todo add `timing_log()`
+ * @todo template tests upon `vector<T>` instead of `vector<int>`
+ * --> gather them in sections (cf. output_vector) instead of alphabetical order
+ */
 
 /****** at() ******************************************************************/
 
@@ -642,6 +645,83 @@ void timing_test_vector_push_back(std::ofstream & outfile)
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
 
+/****** rbegin() **************************************************************/
+
+template <typename Vector>
+double get_timing_vector_rbegin()
+{
+    Vector v1;
+    Vector v2(10, 42);
+
+    // starting point
+    time_point<system_clock> start = system_clock::now();
+
+    // compute
+    for (int i = 0; i < 1000000; i++) {
+        (void)v1.rbegin();
+        (void)v2.rbegin();
+    }
+
+    // ending point
+    time_point<system_clock> end = system_clock::now();
+
+    // get delta
+    return duration<double>(end - start).count();
+}
+
+void timing_test_vector_rbegin(std::ofstream & outfile)
+{
+    double ft_chrono = get_timing_vector_rbegin<ft::vector<int>>();
+    double std_chrono = get_timing_vector_rbegin<std::vector<int>>();
+    double ratio = ft_chrono / std_chrono;
+
+    outfile << "vector,rbegin," << ft_chrono << "," << std_chrono << "," <<
+    ratio << ",";
+
+    ft_chrono > std_chrono && ratio > 20.0
+    ? outfile << RED << "KO" << RESET << std::endl
+    : outfile << GREEN << "OK" << RESET << std::endl;
+}
+
+/****** rend() ****************************************************************/
+
+template <typename Vector>
+double get_timing_vector_rend()
+{
+    // data we will operate on
+    Vector v1;
+    Vector v2(10, 42);
+
+    // starting point
+    time_point<system_clock> start = system_clock::now();
+
+    // compute
+    for (int i = 0; i < 1000000; i++) {
+        (void)v1.rend();
+        (void)v2.rend();
+    }
+
+    // ending point
+    time_point<system_clock> end = system_clock::now();
+
+    // get delta
+    return duration<double>(end - start).count();
+}
+
+void timing_test_vector_rend(std::ofstream & outfile)
+{
+    double ft_chrono = get_timing_vector_rend<ft::vector<int>>();
+    double std_chrono = get_timing_vector_rend<std::vector<int>>();
+    double ratio = ft_chrono / std_chrono;
+
+    outfile << "vector,rend," << ft_chrono << "," << std_chrono << "," <<
+    ratio << ",";
+
+    ft_chrono > std_chrono && ratio > 20.0
+    ? outfile << RED << "KO" << RESET << std::endl
+    : outfile << GREEN << "OK" << RESET << std::endl;
+}
+
 /****** reserve() *************************************************************/
 
 template <typename Vector>
@@ -1212,24 +1292,27 @@ int main()
     // tests: each one append a line to outfile
 
     // allocator
-    timing_test_vector_get_allocator(outfile);
+//    timing_test_vector_get_allocator(outfile);
 
     // constructors
-    timing_test_vector_constructor_by_default(outfile);
-    timing_test_vector_constructor_by_fill(outfile);
-    timing_test_vector_constructor_by_copy(outfile);
-    timing_test_vector_constructor_by_range(outfile);
+//    timing_test_vector_constructor_by_default(outfile);
+//    timing_test_vector_constructor_by_fill(outfile);
+//    timing_test_vector_constructor_by_copy(outfile);
+//    timing_test_vector_constructor_by_range(outfile);
 
     // capacity
-    timing_test_vector_empty(outfile);
-    timing_test_vector_size(outfile);
-    timing_test_vector_max_size(outfile);
-    timing_test_vector_capacity(outfile);
-    timing_test_vector_reserve(outfile);
+//    timing_test_vector_empty(outfile);
+//    timing_test_vector_size(outfile);
+//    timing_test_vector_max_size(outfile);
+//    timing_test_vector_capacity(outfile);
+//    timing_test_vector_reserve(outfile);
 
     // iterators
     timing_test_vector_begin(outfile);
     timing_test_vector_end(outfile);
+    timing_test_vector_rbegin(outfile);
+    timing_test_vector_rend(outfile);
+
 // TODO
 //    timing_test_vector_iterator_constructors(outfile);
 //    timing_test_vector_iterator_assignation(outfile);
@@ -1248,28 +1331,28 @@ int main()
 //    timing_test_vector_iterator_sub_then_assign(outfile);
 
     // accessors
-    timing_test_vector_at(outfile);
-    timing_test_vector_back(outfile);
-    timing_test_vector_front(outfile);
-    timing_test_vector_op_bracket(outfile);
+//    timing_test_vector_at(outfile);
+//    timing_test_vector_back(outfile);
+//    timing_test_vector_front(outfile);
+//    timing_test_vector_op_bracket(outfile);
 
     // modifiers
-    timing_test_vector_clear(outfile); // KO
-    timing_test_vector_erase(outfile);
-    timing_test_vector_insert(outfile); // KO
-    timing_test_vector_push_back(outfile); // KO
-    timing_test_vector_pop_back(outfile);
-    timing_test_vector_resize(outfile); // KO
-    timing_test_vector_swap(outfile);
+//    timing_test_vector_clear(outfile); // KO
+//    timing_test_vector_erase(outfile);
+//    timing_test_vector_insert(outfile); // KO
+//    timing_test_vector_push_back(outfile); // KO
+//    timing_test_vector_pop_back(outfile);
+//    timing_test_vector_resize(outfile); // KO
+//    timing_test_vector_swap(outfile);
 
     // operators
-    timing_test_vector_op_assign(outfile);
-    timing_test_vector_op_equal(outfile);
-    timing_test_vector_op_not_equal(outfile);
-    timing_test_vector_op_less_than(outfile);
-    timing_test_vector_op_less_than_equal(outfile);
-    timing_test_vector_op_greater_than(outfile);
-    timing_test_vector_op_greater_than_equal(outfile);
+//    timing_test_vector_op_assign(outfile);
+//    timing_test_vector_op_equal(outfile);
+//    timing_test_vector_op_not_equal(outfile);
+//    timing_test_vector_op_less_than(outfile);
+//    timing_test_vector_op_less_than_equal(outfile);
+//    timing_test_vector_op_greater_than(outfile);
+//    timing_test_vector_op_greater_than_equal(outfile);
 
     // close file
     outfile.close();

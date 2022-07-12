@@ -1,15 +1,14 @@
-#include <type_traits>
 #include <vector>
-#include <iostream>
 #include <cassert>
-#include <stdexcept>
-
-#include "ft_type_traits.hpp"
-#include "ft_vector.hpp"
-
+#include <iostream> // put into log
+#include <stdexcept> // ??
 #include <type_traits> // std::is_same
 
-#include "../utils/colors.hpp"
+#include "ft_pair.hpp" // delete
+#include "ft_vector.hpp"
+#include "ft_type_traits.hpp" // ??
+#include "output_iterator.hpp"
+#include "../utils/colors.hpp" // put into log
 
 /*
  *  TODO
@@ -47,15 +46,17 @@
 class A
 {
     public:
+    int data;
     A() { }
-    A(A const & a) { (void)a; }
+    A(int const & i) : data(i) { }
+    A(A const & a) { data = a.data; }
 };
 
-bool operator==(const A & lhs, const A & rhs)
-{ (void)lhs; (void)rhs; return true; }
+bool operator==(A const & lhs, A const & rhs)
+{ return lhs.data == rhs.data; }
 
-bool operator!=(const A & lhs, const A & rhs)
-{ (void)lhs; (void)rhs; return false; }
+bool operator!=(A const & lhs, A const & rhs)
+{ return lhs.data != rhs.data; }
 
 /****** Log *******************************************************************/
 
@@ -205,8 +206,19 @@ void allocator_tests()
 template <typename Vector>
 void empty_test()
 {
-    assert(Vector().empty());
-    assert(!Vector(10, typename Vector::value_type()).empty());
+    Vector v;
+    {
+        // by default
+        assert(v.empty());
+    }
+    {
+        // by copy
+        assert(Vector(v).empty());
+    }
+    {
+        // by iterator range
+        assert(Vector(v.begin(), v.end()).empty());
+    }
     std::cout << "empty " << GREEN << "OK" << RESET << std::endl;
 }
 
@@ -235,10 +247,10 @@ void size_test()
     std::cout << "size " << GREEN << "OK" << RESET << std::endl;
 }
 
+// TODO
 template <typename Vector>
 void max_size_test()
 {
-    // TODO
     std::cout << "max_size " << GREEN << "OK" << RESET << std::endl;
 }
 
@@ -1032,6 +1044,7 @@ void modifiers_tests()
 
 /****** Operators tests *******************************************************/
 
+/// @todo remove allocations
 template <typename Vector>
 void equal_test()
 {
@@ -1220,190 +1233,7 @@ void operators_tests()
 
 /****** Iterators tests *******************************************************/
 
-void
-iterator_constructors_test()
-{
-    {
-        // by default
-        ft::vector<int>::iterator		                a;
-        ft::vector<int>::const_iterator	                b;
-        ft::vector<int>::reverse_iterator	            c;
-        ft::vector<int>::const_reverse_iterator	        d;
-        const ft::vector<int>::iterator		            e;
-        const ft::vector<int>::const_iterator	        f;
-        const ft::vector<int>::reverse_iterator	        g;
-        const ft::vector<int>::const_reverse_iterator	h;
-    }
-    {
-        // by pointer
-        int i = 42;
-        int * p = &i;
-        ft::vector<int>::iterator	            a(p);
-        ft::vector<int>::const_iterator	        b(p);
-
-        // the following should not compile -- we get this behavior by
-        // adding `explicit` qualifier to iterator_base constructor by pointer
-
-        // ft::vector<int>::reverse_iterator	    c(p);
-        // ft::vector<int>::const_reverse_iterator	d(p);
-    }
-    {
-        // by copy
-        ft::vector<int>::iterator               a;
-        ft::vector<int>::const_iterator         b;
-        ft::vector<int>::reverse_iterator	    c;
-        ft::vector<int>::const_reverse_iterator	d;
-
-        // it(it)
-        ft::vector<int>::iterator e(a);
-
-        // it(const_it) --> should not compile !
-        // ft::vector<int>::iterator x(b); (void)x;
-
-        // const_it(it)
-        ft::vector<int>::const_iterator f(a);
-
-        // const_it(const_it)
-        ft::vector<int>::const_iterator g(b);
-
-        // rev_it(it)
-        ft::vector<int>::reverse_iterator h(a);
-
-        // rev_it(const_it) --> should not compile !
-        // ft::vector<int>::reverse_iterator y(b); (void)y;
-
-        // rev_it(rev_it)
-        ft::vector<int>::reverse_iterator i(c);
-
-        // rev_it(const_rev_it) --> should not compile !
-        // ft::vector<int>::reverse_iterator z(d); (void)z;
-
-        // const_rev_it(it)
-        ft::vector<int>::const_reverse_iterator j(a);
-
-        // const_rev_it(const_it)
-        ft::vector<int>::const_reverse_iterator k(b);
-
-        // const_rev_it(rev_it)
-        ft::vector<int>::const_reverse_iterator l(c);
-
-        // const_rev_it(const_rev_it)
-        ft::vector<int>::const_reverse_iterator m(d);
-
-        (void)e;
-        (void)f;
-        (void)g;
-        (void)h;
-        (void)i;
-        (void)j;
-        (void)k;
-        (void)l;
-        (void)m;
-    }
-    std::cout << "constructors " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_assignation_test()
-{
-    {
-        // it = it
-        int i = 42;
-        int * p = &i;
-        ft::vector<int>::iterator a;
-        ft::vector<int>::iterator b(p);
-        assert(a != b);
-        a = b;
-        assert(a == b);
-    }
-    {
-        // const_it = const_it
-        int i = 42;
-        int * p = &i;
-        ft::vector<int>::const_iterator a;
-        ft::vector<int>::const_iterator b(p);
-        assert(a != b);
-        a = b;
-        assert(a == b);
-    }
-    {
-        // const_it = it
-        int i = 42;
-        int * p = &i;
-        ft::vector<int>::const_iterator a;
-        ft::vector<int>::iterator	    b(p);
-        assert(a != b);
-        a = b;
-        assert(a == b);
-    }
-    {
-        // it = const_it -- should not compile
-        // ft::vector<int>::iterator	    a;
-        // ft::vector<int>::const_iterator	b;
-        // a = b;
-    }
-    {
-        // rev_it = it -- should not compile
-        // ft::vector<int>::reverse_iterator	a;
-        // ft::vector<int>::iterator	        b;
-        // a = b;
-    }
-    {
-        // rev_it = const_it -- should not compile
-        // ft::vector<int>::reverse_iterator	a;
-        // ft::vector<int>::const_iterator	    b;
-        // a = b;
-    }
-    {
-        // rev_it = rev_it
-        ft::vector<int> v(2,42);
-        ft::vector<int>::reverse_iterator a;
-        ft::vector<int>::reverse_iterator b = v.rbegin();
-        assert(a != b);
-        a = b;
-        assert(a == b);
-    }
-    {
-        // rev_it = const_rev_it -- should not compile
-        // std::vector<int>::reverse_iterator	    a;
-        // std::vector<int>::const_reverse_iterator	b;
-        // a = b;
-    }
-    {
-        // const_rev_it = it -- should not compile
-        // ft::vector<int>::const_reverse_iterator	a;
-        // ft::vector<int>::iterator	            b;
-        // a = b;
-    }
-    {
-        // const_rev_it = const_it -- should not compile
-        // ft::vector<int>::const_reverse_iterator	a;
-        // ft::vector<int>::const_iterator	        b;
-        // a = b;
-    }
-    {
-        // const_rev_it = rev_it
-        ft::vector<int> v(2,42);
-        ft::vector<int>::const_reverse_iterator	a = v.rbegin();
-        ft::vector<int>::reverse_iterator	        b;
-        assert(a != b);
-        a = b;
-        assert(a == b);
-    }
-    {
-        // const_rev_it = const_rev_it
-        ft::vector<int> v(2,42);
-        ft::vector<int>::const_reverse_iterator	a = v.rbegin();
-        ft::vector<int>::const_reverse_iterator	b;
-        assert(a != b);
-        a = b;
-        assert(a == b);
-    }
-    std::cout << "assignation " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-begin_test()
+void begin_test()
 {
     {
         // iterator from mutable vector
@@ -1435,8 +1265,7 @@ begin_test()
     std::cout << "begin " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-end_test()
+void end_test()
 {
     {
         // iterator from mutable vector
@@ -1465,8 +1294,7 @@ end_test()
     std::cout << "end " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-rbegin_test()
+void rbegin_test()
 {
     {
         // reverse_iterator from mutable vector
@@ -1503,8 +1331,7 @@ rbegin_test()
     std::cout << "rbegin " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-rend_test()
+void rend_test()
 {
     {
         // reverse_iterator from mutable vector
@@ -1533,683 +1360,17 @@ rend_test()
     std::cout << "rend " << GREEN << "OK" << RESET << std::endl;
 }
 
-void
-increment_test()
+// TODO
+void iterators_tests()
 {
-    ft::vector<int> v(10, 21);
-    {
-        // prefix
-        {
-            // it
-            ft::vector<int>::iterator it = v.begin();
-            for (int i = 0; i < 10; ++i, ++it)
-                assert(*it == 21);
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator it = v.begin();
-            for (int i = 0; i < 10; ++i, ++it)
-                assert(*it == 21);
-        }
-    }
-    {
-        {
-            // it
-            ft::vector<int>::iterator it = v.begin();
-            for (int i = 0; i < 10; ++i, it++)
-                assert(*it == 21);
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator it = v.begin();
-            for (int i = 0; i < 10; ++i, it++)
-                assert(*it == 21);
-        }
-    }
-    std::cout << "increment " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-decrement_test()
-{
-    ft::vector<int> v(10, 21);
-    {
-        // prefix
-        {
-            // it
-            ft::vector<int>::iterator it = v.end();
-            for (int i = 0; i < 10; ++i)
-                assert(*(--it) == 21);
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator it = v.end();
-            for (int i = 0; i < 10; ++i)
-                assert(*(--it) == 21);
-        }
-    }
-    {
-        // postfix
-        {
-            // it
-            ft::vector<int>::iterator it = v.end();
-            it--;
-            for (int i = 0; i < 10; ++i)
-                assert(*(it--) == 21);
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator it = v.end();
-            it--;
-            for (int i = 0; i < 10; ++i)
-                assert(*(it--) == 21);
-        }
-    }
-    std::cout << "decrement " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_dereference_test()
-{
-    {
-        // from single pointer
-        int i = 42;
-        int *p = &i;
-        {
-            // it
-            ft::vector<int>::iterator a(p);
-            assert(*a == *p);
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator a(p);
-            assert(*a == *p);
-        }
-    }
-    {
-        // from vector
-        ft::vector<int> v(10, 21);
-        {
-            // it
-            ft::vector<int>::iterator a = v.begin();
-            ft::vector<int>::iterator b(a);
-            assert(*a == *b);
-            assert(*a == *(v.begin()));
-            assert(*b == *(v.begin()));
-            assert(*v.begin() == *v.begin());
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator a = v.begin();
-            ft::vector<int>::const_iterator b(a);
-            assert(*a == *b);
-            assert(*a == *(v.begin()));
-            assert(*b == *(v.begin()));
-            assert(*v.begin() == *v.begin());
-        }
-    }
-    {
-        // segfault
-        //ft::vector<int>::iterator a;
-        //assert(*a);
-    }
-    std::cout << "operator* " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_dereference_pointer_test()
-{
-    {
-        // from single pointer
-        int i = 42;
-        int *p = &i;
-        {
-            // it
-            ft::vector<int>::iterator a(p);
-            assert(a.operator->() == p);
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator a(p);
-            assert(a.operator->() == p);
-        }
-    }
-    {
-        // from vector
-        ft::vector<int> v(10, 21);
-        {
-            // it
-            ft::vector<int>::iterator a = v.begin();
-            ft::vector<int>::iterator b(a);
-            assert(a.operator->() == &(*b));
-            assert(a.operator->() == &(*(v.begin())));
-            assert(b.operator->() == &(*(v.begin())));
-            assert(v.begin().operator->() == &(*v.begin()));
-        }
-        {
-            // const_it
-            ft::vector<int>::const_iterator a = v.begin();
-            ft::vector<int>::const_iterator b(a);
-            assert(a.operator->() == &(*b));
-            assert(a.operator->() == &(*(v.begin())));
-            assert(b.operator->() == &(*(v.begin())));
-            assert(v.begin().operator->() == &(*v.begin()));
-        }
-    }
-    std::cout << "operator-> " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_equal_test()
-{
-    {
-        // constructed by defalut
-        {
-            // it == it
-            ft::vector<int>::iterator a;
-            ft::vector<int>::iterator b;
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // it == const_it && const_it == it
-            ft::vector<int>::iterator	    a;
-            ft::vector<int>::const_iterator b;
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // const_it == const_it
-            ft::vector<int>::const_iterator	a;
-            ft::vector<int>::const_iterator b;
-            assert(a == b);
-            assert(b == a);
-        }
-    }
-    {
-        // constructed by pointer
-        int i = 42;
-        int *p = &i;
-        {
-            // it == it
-            ft::vector<int>::iterator a(p);
-            ft::vector<int>::iterator b(p);
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // it == const_it && const_it == it
-            ft::vector<int>::iterator	    a(p);
-            ft::vector<int>::const_iterator b(p);
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // const_it == const_it
-            ft::vector<int>::const_iterator	a(p);
-            ft::vector<int>::const_iterator b(p);
-            assert(a == b);
-            assert(b == a);
-        }
-    }
-    {
-        // constructed by vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::iterator a = v.begin();
-        ft::vector<int>::iterator b(a);
-        assert(a == b);
-        assert(b == a);
-        assert(a == v.begin());
-        assert(b == v.begin());
-        assert(v.begin() == v.begin());
-        assert(v.end() == v.end());
-    }
-    std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_not_equal_test()
-{
-    {
-        // constructed by pointer
-        int i = 42;
-        int j = 42;
-
-        int *p = &i;
-        int *q = &j;
-        {
-            // it == it
-            ft::vector<int>::iterator a(p);
-            ft::vector<int>::iterator b(q);
-            assert(a != b);
-            assert(b != a);
-        }
-        {
-            // it == const_it && const_it == it
-            ft::vector<int>::iterator	    a(p);
-            ft::vector<int>::const_iterator b(q);
-            assert(a != b);
-            assert(b != a);
-        }
-        {
-            // const_it == const_it
-            ft::vector<int>::const_iterator	a(p);
-            ft::vector<int>::const_iterator b(q);
-            assert(a != b);
-            assert(b != a);
-        
-        }
-    }
-    {
-        // constructed by vector
-        ft::vector<int> v1(10, 21);
-        ft::vector<int> v2(10, 21);
-
-        ft::vector<int>::iterator a = v1.begin();
-        ft::vector<int>::iterator b = v2.begin();
-
-        assert(a != b);
-        assert(a != v2.begin());
-        assert(b != v1.begin());
-        assert(v1.begin() != v2.begin());
-        assert(v1.end() != v2.end());
-    }
-    std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_addition_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it
-        ft::vector<int>::iterator it = v.begin();
-
-        assert(it + 0 == it);
-        assert(it + 2 == it + 1 + 1);
-        assert(it + 5 == v.end());
-    }
-    {
-        // const_it
-        ft::vector<int>::const_iterator it = v.begin();
-
-        assert(it + 0 == it);
-        assert(it + 2 == it + 1 + 1);
-        assert(it + 5 == v.end());
-    }
-    std::cout << "operator+ " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_substraction_test()
-{
-    {
-        // with number
-        {
-            // it - n
-            ft::vector<int> v(5, 42);
-            ft::vector<int>::iterator it = v.end();
-
-            assert(it - 0 == it);
-            assert(it - 2 == it - 1 - 1);
-            assert(it - 5 == v.begin());
-        }
-        {
-            // const_it - n
-            ft::vector<int> v(5, 42);
-            ft::vector<int>::const_iterator it = v.end();
-
-            assert(it - 0 == it);
-            assert(it - 2 == it - 1 - 1);
-            assert(it - 5 == v.begin());
-        }
-    }
-    {
-        // with iterator
-        {
-            // it - it
-            ft::vector<int> v(5, 42);
-            ft::vector<int>::iterator it = v.begin();
-            ft::vector<int>::iterator ite = v.end();
-
-            assert(it - it  == 0);
-            assert(ite - ite == 0);
-            assert(ite - it == 5);
-            assert(ite - it == static_cast<ptrdiff_t>(v.size()));
-        }
-        {
-            // it - const_it && const_it - it
-            ft::vector<int> v(5, 42);
-            ft::vector<int>::iterator it = v.begin();
-            ft::vector<int>::const_iterator ite = v.end();
-
-            assert(it - it  == 0);
-            assert(ite - ite == 0);
-            assert(ite - it == 5);
-            assert(ite - it == static_cast<ptrdiff_t>(v.size()));
-        }
-        {
-            // const_it - const_it
-            ft::vector<int> v(5, 42);
-            ft::vector<int>::iterator it = v.begin();
-            ft::vector<int>::const_iterator ite = v.end();
-
-            assert(it - it  == 0);
-            assert(ite - ite == 0);
-            assert(ite - it == 5);
-            assert(ite - it == static_cast<ptrdiff_t>(v.size()));
-        }
-    }
-    std::cout << "operator- " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_less_than_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it < it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
-    }
-    {
-        // it < const_it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
-    }
-    {
-        // const_it < it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
-    }
-    {
-        // const_it < const_it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
-    }
-    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_greather_than_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it > it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
-    }
-    {
-        // it > const_it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
-    }
-    {
-        // const_it > it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
-    }
-    {
-        // const_it > const_it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
-    }
-
-    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_less_than_or_equal_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it <= it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
-    }
-    {
-        // it <= const_it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
-    }
-    {
-        // const_it <= it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
-    }
-    {
-        // const_it <= const_it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
-    }
-    std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_greather_than_or_equal_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it >= it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
-    }
-    {
-        // it >= const_it
-        ft::vector<int>::iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
-    }
-    {
-        // const_it >= it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::iterator ite = v.end();
-
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
-    }
-    {
-        // const_it >= const_it
-        ft::vector<int>::const_iterator it = v.begin();
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
-    }
-    std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_add_then_assign_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it += n
-        ft::vector<int>::iterator it = v.begin();
-
-        assert((it += 1) == v.begin() + 1);
-        assert((it += 1) == v.begin() + 2);
-        assert((it += 2) == v.begin() + 4);
-    }
-    {
-        // const_it += n
-        ft::vector<int>::const_iterator it = v.begin();
-
-        assert((it += 1) == v.begin() + 1);
-        assert((it += 1) == v.begin() + 2);
-        assert((it += 2) == v.begin() + 4);
-    }
-    std::cout << "operator+= " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_sub_then_assign_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it += n
-        ft::vector<int>::iterator ite = v.end();
-
-        assert((ite -= 1) == v.end() - 1);
-        assert((ite -= 1) == v.end() - 2);
-        assert((ite -= 2) == v.end() - 4);
-    }
-    {
-        // const_it -= n
-        ft::vector<int>::const_iterator ite = v.end();
-
-        assert((ite -= 1) == v.end() - 1);
-        assert((ite -= 1) == v.end() - 2);
-        assert((ite -= 2) == v.end() - 4);
-    }
-    std::cout << "operator-= " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterator_brackets_operator_test()
-{
-    ft::vector<int> v(5, 42);
-    {
-        // it
-        ft::vector<int>::iterator it = v.begin();
-
-        assert(it[0] == 42);
-        assert(it[1] == 42);
-        assert(it[2] == 42);
-        assert(it[3] == 42);
-        assert(it[4] == 42);
-    }
-    {
-        // const_it
-        ft::vector<int>::const_iterator it = v.begin();
-
-        assert(it[0] == 42);
-        assert(it[1] == 42);
-        assert(it[2] == 42);
-        assert(it[3] == 42);
-        assert(it[4] == 42);
-    }
-
-    // TODO
- //   ft::vector<int>::value_type x = it[42]; // doesn't throw anything
- //   (void)x;
-
-    std::cout << "operator[] " << GREEN << "OK" << RESET << std::endl;
-}
-
-void
-iterators_tests()
-{
-    // TODO
-    // - reverse_iterator_base_test();
-    // - add reverse_iterator and const_reverse_iterator to all tests below
-
     std::cout << "== Iterators ==" << std::endl;
 
-    //iterator_constructors_test(); // TODO
-    iterator_assignation_test();
+    begin_test(); // move to iterator test suite ?
+    end_test();   // move to iterator test suite ?
 
-    begin_test(); // move to vector test suite ?
-    end_test();   // move to vector test suite ?
+    rbegin_test(); // move to iterator test suite ?
+    rend_test();   // move to iterator test suite ?
 
-    rbegin_test(); // move to vector test suite ?
-    rend_test();   // move to vector test suite ?
-
-    increment_test(); // both prefix and posifix
-    decrement_test(); // both prefix and posifix
-
-    iterator_dereference_test();
-    iterator_dereference_pointer_test();
-
-    iterator_equal_test();
-    iterator_not_equal_test();
-
-    iterator_addition_test();
-    iterator_substraction_test();
-
-    iterator_less_than_test();
-    iterator_greather_than_test();
-
-    iterator_less_than_or_equal_test();
-    iterator_greather_than_or_equal_test();
-
-    iterator_add_then_assign_test();
-    iterator_sub_then_assign_test();
-
-    iterator_brackets_operator_test();
 }
 
 /****** Vector tests **********************************************************/
@@ -2217,14 +1378,17 @@ iterators_tests()
 template <typename T>
 void vector_test()
 {
-    constructors_tests<T>();
-    allocator_tests<T>();
-    capacity_tests<T>();
-    accessors_tests<T>();
-    modifiers_tests<T>(); // TODO
-    operators_tests<T>();
+    // constructors_tests<T>();
+    // allocator_tests<T>();
+    // capacity_tests<T>();
+    // accessors_tests<T>();
+    // modifiers_tests<T>(); // TODO
+    // operators_tests<T>();
+    // iterators_tests(); // TODO
 
-    iterators_tests(); // TODO
+    /// @todo bug
+   // iterator_test<std::vector<T>>();
+    iterator_test< ft::vector<T>>();
 }
 
 /****** All tests *************************************************************/
@@ -2232,9 +1396,20 @@ void vector_test()
 int main()
 {
     vector_test<int>();
-    vector_test<double>();
+//    vector_test<double>();
+//    vector_test<A>();
 
-//    vector_test<A>(); // TODO
+//    ft::vector<int> v;
+//    assert(v.begin() == v.begin());
+
+//    {
+//        std::vector<std::pair<int,int> >::iterator a;
+//        std::vector<const std::pair<int,int> >::const_iterator b;
+//    }
+//    {
+//        ft::vector<ft::pair<int,int> >::iterator a;
+//        ft::vector<const ft::pair<int,int> >::const_iterator b;
+//    }
 
     return 0;
 }

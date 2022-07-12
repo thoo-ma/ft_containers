@@ -26,6 +26,7 @@ class stack {
     /*                                                                        */
     /**************************************************************************/
 
+    /// @todo protected
     private:
 
     container_type _c;
@@ -41,36 +42,33 @@ class stack {
     stack(const container_type & container = container_type())
     : _c(container) { }
 
-    bool
-    empty() const
+    bool empty() const
     { return _c.empty(); }
 
-    size_type
-    size() const
+    size_type size() const
     { return _c.size(); }
 
-    value_type &
-    top()
+    value_type & top()
     { return _c.back(); }
 
-    const value_type &
-    top() const
+    const value_type & top() const
     { return _c.back(); } ;
 
-    void
-    push(const value_type & val)
+    void push(const value_type & val)
     { return _c.push_back(val); }
 
-    void
-    pop()
+    void pop()
     { return _c.pop_back(); }
 
-    // friend keyword enable the call of private member methods (here operators)
+    /// @note since the following operator is defined outside of `map` but still
+    /// want to acces its private members, we declare it here as a `friend`.
     template <class T_, class Container_>
     friend bool
     operator==(const stack<T_, Container_> & lhs,
                const stack<T_, Container_> & rhs);
 
+    /// @note since the following operator is defined outside of `map` but still
+    /// want to acces its private members, we declare it here as a `friend`.
     template <class T_, class Container_>
     friend bool
     operator<(const stack<T_, Container_> & lhs,

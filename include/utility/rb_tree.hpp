@@ -5,16 +5,21 @@
 #include <iostream> // std::ostream
 #include <memory> // std::allocator
 
-// TODO
-// - inline function or macro to replace ternaries
-// - handle allocator failure
+#include "ft_type_traits.hpp" // ??
+#include "ft_reverse_iterator.hpp"
+#include "ft_iterator_base_types.hpp"
+#include "ft_bidirectional_iterator.hpp" // delete
+
+/**
+ * @todo use comp
+ * @todo inline function or macro to replace ternaries
+ * @todo handle allocator failure
+ * @todo unsupport duplicate nodes
+ */
 
 namespace ft {
 
-template <typename T,
-          typename Compare = std::less<T>
-//          typename Allocator = std::allocator<struct node>
->
+template <typename T, typename Compare = std::less<T> >
 class rb_tree
 {
     /**************************************************************************/
@@ -27,7 +32,7 @@ class rb_tree
 
     struct node; // forward declaration
 
-    typedef struct node	                node_type; // value_type ?
+    typedef struct node	                value_type;
     typedef struct node *	            pointer;
     typedef struct node &               reference;
     typedef size_t	                    size_type;
@@ -36,27 +41,131 @@ class rb_tree
     typedef std::allocator<struct node>	allocator_type;
     typedef enum { Black, Red }	        color_type;
 
+    typedef struct node const &         const_reference;
+    typedef struct node const *         const_pointer;
+
+    // private ?
     struct node
     {
+        /****** Variables *****************************************************/
+
         key_type	key;
         color_type	color;
         pointer     left;
         pointer     right;
         pointer     parent;
 
-        node(const key_type & key = key_type())
+        /****** Constructors **************************************************/
+
+        /// @brief Constructor by default
+        node (key_type const & key = key_type())
         : key(key), color(Red), left(NULL), right(NULL), parent(NULL) { }
 
-        node(const node_type & node)
+        /// @brief Constructor by copy
+        node (value_type const & node)
         : key(node.key), color(node.color), left(NULL), right(NULL), parent(NULL) { }
 
-      //  node(const node_type & node) { *this = node; }
+        /// @brief Constructor by color
+        node (color_type const & color)
+        : key(key_type()), color(color), left(NULL), right(NULL), parent(NULL) { }
 
-        struct node & operator=(const struct node & a)
+        /****** Operators *****************************************************/
+
+        reference operator= (const_reference node)
         {
-            this->key = a.key;
-            this->color = a.color;
+            this->key = node.key;
+            this->color = node.color;
             return *this;
+        }
+
+        bool operator== (const_reference node) const
+        { return this->key == node.key; }
+
+        /****** Utils *********************************************************/
+
+        /// @brief return the successor of current node according to `compare`
+     //   pointer next () const
+     //   {
+     //       // case 1: current node has a right child
+     //       if (this->right)
+     //           return min(this->right);
+     //       if (this->parent)
+     //       {
+     //           // case 2: next is parent
+     //           if (this == this->parent->left)
+     //               return this->parent;
+     //           // case 3: next is further parent or is not
+     //           pointer next = this->parent;
+     //           while (next && next->parent && next == next->parent->right)
+     //               next = next->parent;
+     //           return next->parent;
+     //       }
+     //       // case 4: no next node (node is the max/rightmost)
+     //       //return const_cast<pointer>(NULL);
+     //       return NULL;
+     //   }
+
+        /// @todo ??
+        pointer next () const
+        {
+            // case 1: current node has a right child
+            if (this->right)
+                return min(this->right);
+
+            // case 2: next is parent
+            if (this->parent && this == this->parent->left)
+                return this->parent;
+
+            // case 3: next is further parent or is not at all
+            pointer next = this->parent;
+            while (next && next->parent && next == next->parent->right)
+                next = next->parent;
+            //return next;
+            return next == parent ? NULL : next;
+        }
+
+        /// @brief return the predecessor of current node according to `compare`
+        /// @todo on standby until map is implemented and tested
+        /// @todo use compare
+        pointer prev () const
+        {
+            /*
+            // case 1:
+            if (this->left)
+            {
+                // return max(this->left);
+                pointer prev = this->left;
+                while (prev && prev->right)
+                    prev = prev->right;
+                return prev;
+            }
+
+            if (this->parent)
+            {
+                // case 2: prev is parent
+                if (this == this->parent->right)
+                    return this->parent;
+
+                // case 3: prev is grand-parent
+                if (this->parent == this->parent->parent->right)
+                    return this->parent->parent;
+            }
+
+            // case 4: no prev node (node is max)
+            return const_cast<pointer>(this);
+            */
+
+            if (this->parent)
+            {
+                if (this == this->parent->right)
+                {
+                    return this->parent->left
+                    ? max(this->parent->left)
+                    : this->parent;
+                }
+                else return this->parent->parent->parent;
+            }
+            else return NULL;
         }
 
     };
@@ -71,8 +180,138 @@ class rb_tree
 
     pointer         _root;
     size_type	    _size;
-    compare	        _comp;
+    compare	        _comp; // TODO
     allocator_type	_alloc;
+
+    /**************************************************************************/
+    /*                                                                        */
+    /*      Tree iterator                                                     */
+    /*                                                                        */
+    /**************************************************************************/
+
+    public:
+
+    // private ?
+    template <typename U> // remove
+    class rb_tree_iterator : public iterator<bidirectional_iterator_tag, U>
+    {
+        /****** Member types **************************************************/
+
+        public:
+
+        typedef iterator_traits<rb_tree_iterator>	traits;
+        typedef typename traits::iterator_category  iterator_category;
+        typedef typename traits::value_type         value_type;
+        typedef typename traits::difference_type    difference_type;
+        typedef typename traits::pointer	        pointer;
+        typedef typename traits::reference	        reference;
+
+        /****** Private data **************************************************/
+
+        private:
+
+        pointer _data;
+        pointer * _root_pointer;
+
+        /****** Constructors **************************************************/
+
+        public:
+
+        /// @brief Constructor by default and by pointer
+        explicit rb_tree_iterator (pointer data = NULL, pointer * root_pointer = NULL)
+        : _data(data), _root_pointer(root_pointer)
+        { }
+
+        rb_tree_iterator (rb_tree_iterator<rb_tree::value_type> const & it)
+        : _data(it.data()), _root_pointer(const_cast<pointer*>(it.root_pointer()))
+        { }
+
+        rb_tree_iterator (rb_tree_iterator<rb_tree::value_type const> const & it)
+        : _data(it.data()), _root_pointer(const_cast<pointer*>(it.root_pointer()))
+        { }
+
+        /****** Operators *****************************************************/
+
+        rb_tree_iterator & operator= (rb_tree_iterator const & it)
+        { _data = it._data; return *this; }
+
+        /// @note A more natural semantic for this operator would be to return
+        /// a node. However, to match the `map` iterator behavior (witch is no
+        /// more than a typedef from the current one) we choose to return the
+        /// node key instead. In the cntact of `map`, the node key is a pair.
+        key_type & operator* () const
+        { return _data->key; }
+
+        /// @note cf. operator*
+        key_type * operator-> () const
+        { return &_data->key; }
+
+        //template <typename V = U>
+        //bool operator== (rb_tree_iterator<U> const & it) const
+        //{ return _data == it._data; }
+        bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
+        { return _data == it.data(); }
+
+        //template <typename V = U>
+        //bool operator== (rb_tree_iterator<U const> const & it) const
+        //{ return _data == it._data; }
+        bool operator== (rb_tree_iterator<rb_tree::value_type const> const & it) const
+        { return _data == it.data(); }
+
+        //template <typename V = U>
+        //bool operator!= (rb_tree_iterator<V> & it) const
+        //{ return !(_data == it._data); }
+        bool operator!= (rb_tree_iterator<rb_tree::value_type> const & it) const
+        { return !(*this == it); }
+
+        //template <typename V = U>
+        //bool operator!= (rb_tree_iterator<V const> & it) const
+        //{ return !(_data == it._data); }
+        bool operator!= (rb_tree_iterator<rb_tree::value_type const> const & it) const
+        { return !(*this == it); }
+
+        /// @note prefix
+        rb_tree_iterator & operator++ ()
+        {
+            _data ? _data = _data->next() : _data = min(*_root_pointer);
+            return *this;
+        }
+
+        /// @note prefix
+        rb_tree_iterator & operator-- ()
+        {
+            _data ? _data = _data->prev() : _data = max(*_root_pointer);
+            return *this;
+        }
+
+        /// @note postfix
+        rb_tree_iterator operator++ (int)
+        { rb_tree_iterator tmp = *this; this->operator++(); return tmp; }
+
+        /// @note postfix
+        rb_tree_iterator operator-- (int)
+        { rb_tree_iterator tmp = *this; this->operator--(); return tmp; }
+
+        /****** Utils (MUST delete later) *************************************/
+
+        pointer data () const
+        { return _data;}
+
+        pointer * root_pointer () const
+        { return _root_pointer; }
+
+    };
+
+    typedef rb_tree_iterator<value_type>            iterator;
+    typedef rb_tree_iterator<value_type const>      const_iterator;
+
+    /// @note 'ft::' mandatory since typedef operands share the same name
+    typedef ft::reverse_iterator<iterator>          reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+
+    // what is private inside iterator class should now be protected
+    // class rb_tree_const_iterator : public rb_tree_iterator<value_type const> {};
+    // typedef rb_tree_const_iterator test;
 
     /**************************************************************************/
     /*                                                                        */
@@ -80,8 +319,8 @@ class rb_tree
     /*                                                                        */
     /**************************************************************************/
 
-    // utility for recursive fashion destructor
-    void _destroy(pointer const node)
+    /// @brief utility for recursive fashion destructor
+    void _destroy (pointer const node)
     {
         if (node == NULL)
             return;
@@ -91,18 +330,19 @@ class rb_tree
         _alloc.deallocate(node, 1);
     }
 
-    // TODO
-    pointer _get_brother(pointer const node)
+    /// @todo ??
+    pointer _get_brother (pointer const node)
     {
         return node == node->parent->left
         ? node->parent->right
         : node->parent->left;
     }
 
-    // recursive fashion
-    pointer _copy(node_type * src, node_type * parent)
+    /// @brief recursive fashion
+    /// @todo  give std/ft ratio
+    pointer _copy (pointer src, pointer parent)
     {
-        node_type * dst;
+        pointer dst;
 
         if (src == NULL)
             return NULL;
@@ -119,11 +359,12 @@ class rb_tree
         return dst;
     }
 
-    // iterative fashion
-    pointer _copy(node_type * src)
+    /// @brief iterative fashion
+    /// @todo  give std/ft ratio
+    pointer _copy (pointer src)
     {
-        node_type * dst;
-        node_type * dst_root;
+        pointer dst;
+        pointer dst_root;
 
         if (src == NULL)
             return NULL;
@@ -157,7 +398,7 @@ class rb_tree
                     dst->right = NULL;
                 while (1)
                 {
-                    node_type * tmp = src;
+                    pointer tmp = src;
 
                     src = src->parent;
                     if (src == NULL)
@@ -180,11 +421,16 @@ class rb_tree
 
     /****** Utility (might delete later) **************************************/
 
-    pointer * root_ptr() { return &_root; }
-    pointer & root_ref() { return  _root; } // !const bc used into map[]
-    pointer  root_node() const { return  _root; }
+    pointer * root_ptr ()
+    { return &_root; }
 
-    void print(const pointer node)
+    pointer & root_ref ()
+    { return  _root; } // !const bc used into map[]
+
+    pointer  root_node () const
+    { return _root; }
+
+    void print (const pointer node)
     {
         if (node == NULL)
             return;
@@ -206,27 +452,139 @@ class rb_tree
         }
     }
 
-    rb_tree & operator=(const rb_tree & tree)
+    rb_tree & operator= (const rb_tree & tree)
     {
         _root = _copy(tree._root, NULL);
         //_root = _copy(tree._root);
         return *this;
     }
 
+    /// @todo private + rename to leftmost
+    static pointer min (pointer node)
+    {
+        for (; node && node->left; node = node->left);
+        return node;
+    }
+
+    /// @todo private + rename to leftmost
+    static const_pointer min (const_pointer node)
+    {
+        for (; node && node->left; node = node->left);
+        return node;
+    }
+
+    /// @todo private + rename to rightmost
+    static pointer max (pointer node)
+    {
+        for (; node && node->right; node = node->right);
+        return node;
+    }
+
+    /// @todo private + rename to rightmost
+    static const_pointer max (const_pointer node)
+    {
+        for (; node && node->right; node = node->right);
+        return node;
+    }
+
+/*
+    /// @todo delete: moved into node class
+    pointer next(pointer & node)
+    {
+        // case 1: no next node (empty tree)
+        if (node == NULL)
+            return node;
+
+        // case 2:
+        if (node->right)
+        {
+            pointer next = node->right;
+            while (next && next->left)
+                next = next->left;
+            return next;
+            // return min(node->right);
+        }
+
+        if (node->parent)
+        {
+            // case 3: next is parent
+            if (node == node->parent->left)
+                return node->parent;
+
+            // case 4: next is grand-parent
+            if (node->parent == node->parent->parent->left)
+                return node->parent->parent;
+
+            // case 4: next is grand-parent
+//            pointer next = node->parent;
+//            while (next && next->parent && next == next->parent->right)
+//                next = next->parent;
+//            if (next->parent)
+//                return next->parent;
+        }
+
+        // case 5: no next node (node is max)
+        return node;
+    }
+
+    /// @todo delete: moved into node class
+    pointer prev(pointer const & node)
+    {
+        // case 0: prev node is max
+        if (node )
+            return (max());
+
+        // case 1: no prev node (empty tree)
+        if (node == NULL)
+            return node;
+
+        // case 2:
+        if (node->left)
+        {
+            pointer prev = node->left;
+            while (prev && prev->right)
+                prev = prev->right;
+            return prev;
+            // return max(node->left);
+        }
+
+        if (node->parent)
+        {
+            // case 3: prev is parent
+            if (node == node->parent->right)
+                return node->parent;
+
+            // case 4: prev is grand-parent
+            if (node->parent == node->parent->parent->right)
+                return node->parent->parent;
+        }
+
+        // case 5: no prev node (node is max)
+        return node;
+    }
+*/
+
     /****** Constructors ******************************************************/
 
-    rb_tree()
+    /// @brief Constructor by default
+    rb_tree ()
     : _root(NULL), _size(0), _comp(compare()), _alloc(allocator_type()) { }
 
-    rb_tree(const rb_tree & tree)
+    /// @brief Constructor by copy
+    rb_tree (const rb_tree & tree)
     : _root(NULL), _size(tree._size), _comp(tree._comp), _alloc(tree._alloc)
     { *this = tree; }
     //{ _root = _copy(tree._root, NULL); }
 
+    /// @brief Constructor by iterator range
+    rb_tree (iterator first, iterator last, compare comp = compare())
+    : _root(NULL), _size(0), _comp(comp), _alloc(allocator_type())
+    { insert(first, last); }
+
     /****** Destructor ********************************************************/
 
-    // iterative fashion
-    ~rb_tree()
+    /// @brief Iterative fashion destructor
+    ~rb_tree ()
     {
         pointer	    node;
         pointer     parent;
@@ -256,20 +614,31 @@ class rb_tree
         }
     }
 
-    // recursive fashion
-    //~rb_tree() { _destroy(_root); }
+    /// @brief Recursive fashion destructor
+    //~rb_tree ()
+    //{ _destroy(_root); }
 
     /****** Capacity **********************************************************/
 
-    //size_type height() const { return _height; } // TODO ?
-    size_type size() const { return _size; }
+    /// @todo ??
+    //size_type height () const { return _height; }
+
+    size_type size () const
+    { return _size; }
+
+    bool empty() const
+    { return _size == 0; }
 
     /****** Element access ****************************************************/
 
-    // recursive fashion
-    // This Red Black Tree support duplicate keys.
-    // This function return the first equivalent key when there are.
-    pointer find(const pointer node, const key_type & key) const
+    pointer find (key_type const & key) const
+    { return find(_root, key); }
+
+    /// @brief Recursive fashion find
+    /// @note  This Red Black Tree support duplicate keys.
+    ///        This function return the first equivalent key when there are.
+    /// @todo  private ?
+    pointer find (const pointer node, const key_type & key) const
     {
         if (node == NULL || node->key == key)
             return node;
@@ -280,15 +649,34 @@ class rb_tree
 
     /****** Modifiers *********************************************************/
 
-    // with a recursive fashion search -- BUG
-    void insert(pointer * const node, pointer * const parent, key_type & key)
+    void insert(key_type const & key)
+    { return insert(_root, key); }
+
+    /// @note this would be very helpful. it could allow us to remove
+    /// `root_node()`, which is mandatory for the momment since we need
+    /// `pointer` to insert and `_root` is private.
+    void insert (value_type const & val)
+    { return insert(_root, val.key); }
+
+    /// @brief To be compliant with tests.
+    /// @todo delete this since insert by key will be replaced with insert by value_type
+    void insert (iterator position, value_type const val)
+    { return insert(&(*position), val.key); }
+
+    void insert (iterator position, key_type key)
+    { return insert(position.data(), key); }
+
+    /// @brief Recursive insert
+    /// @todo  replace key by node
+    /// @note  this is buggy, got to fix it
+    void insert (pointer * const node, pointer * const parent, key_type & key)
     {
         // insert at leaf -- or root
         if (*node == NULL)
         {
             // allocate & construct `node` from `key`
             *node = _alloc.allocate(1);
-            _alloc.construct(*node, node_type(key));
+            _alloc.construct(*node, value_type(key));
             _size++;
             // insert `node` below `parent`
             if (parent == NULL)
@@ -320,8 +708,10 @@ class rb_tree
         : insert(&(*node)->right, node, key);
     }
 
-    // with an iterative fashion search
-    void insert(pointer node, key_type key)
+    /// @brief Iterative insert
+    /// @todo  replace key by node ?
+    /// @todo  return pair<iterator,bool> like map insert
+    void insert (pointer node, key_type key)
     {
         // parent of the new node
         pointer parent = NULL;
@@ -347,7 +737,7 @@ class rb_tree
 
         // alloc and construct new node
         pointer new_node = _alloc.allocate(1);
-        _alloc.construct(new_node, node_type(key));
+        _alloc.construct(new_node, value_type(key));
 
         // update size
         _size++;
@@ -534,12 +924,27 @@ class rb_tree
             }
         }
 
-        //
+        // TODO
         _root->color = Black;
     }
 
-    void erase(pointer node)
+    /// @brief Insert by iterator range
+    void insert (iterator first, iterator last)
     {
+        while (first != last)
+        {
+            insert(*first);
+            ++first;
+        }
+    }
+
+    /// @brief the 'erase' used by all other 'erase'
+    /// @todo work on colors
+    /// @todo private ?
+    void erase (pointer node)
+    {
+        if (node == NULL) return;
+
         // case 1: node has no right child
         if (node->right == NULL)
         {
@@ -551,15 +956,18 @@ class rb_tree
             }
             if (node->left)
                 node->left->parent = node->parent;
-            // not sure
-            _alloc.destroy(node);
-            _alloc.deallocate(node);
-            _size--;
-            return;
+
+           // _alloc.destroy(node);
+           // _alloc.deallocate(node, 1);
+            //_size--;
+            //_root = NULL; // add
+
+            pointer substitute = node->left;
         }
 
         // case 2: node's right child has no left child
-        if (node->right->left == NULL)
+        else if (node->right->left == NULL)
+        // if (node->right->left == NULL)
         {
             if (node->parent)
             {
@@ -571,16 +979,18 @@ class rb_tree
             node->right->left = node->left;
             if (node->left)
                 node->left->parent = node->right;
-            // not sure
-            _alloc.destroy(node);
-            _alloc.deallocate(node);
-            _size--;
+
+           // _alloc.destroy(node);
+           // _alloc.deallocate(node, 1);
+            //_size--;
+
+            pointer substitute = node->right;
         }
 
         // case 3: node's right child has a left child
         else
         {
-            // find inorder sucecssor
+            // find inorder successor
             pointer succ = node->right->left;
             while (succ->left) { succ = succ->left; }
 
@@ -590,16 +1000,167 @@ class rb_tree
                 succ->right->parent = succ->parent;
 
             // replace node by succ
-            node->key = succ->key;
+            //node->key = succ->key;
 
-            // not sure
-            _alloc.destroy(node);
-            _alloc.deallocate(node);
-            _size--;
+            // link `succ` to `node` parent
+            succ->parent = node->parent;
+            if (node->parent)
+            {
+                node == node->parent->left
+                ? node->parent->left = succ
+                : node->parent->right = succ;
+            }
+
+            // link `succ` to `node` left subtree
+            succ->left = node->left;
+            if (succ->left)
+                succ->left->parent = succ;
+
+            // link `succ` to `node` right subtree
+            succ->right = node->right;
+            if (succ->right)
+                succ->right->parent = succ;
+
+            // destroy and deallocate
+           // _alloc.destroy(node);
+           // _alloc.deallocate(node, 1);
+            //_size--;
+
+            pointer substitute = succ; // node.next();
         }
+
+        // substitute --> x
+        // subling    --> w
+
+        // rebalance
+        if (node->color == Black)
+        {
+            while (1)
+            {
+                if (substitute && substitute->color == Red)
+                {
+                    substitute->color = Black;
+                    break;
+                }
+
+                if (!substitute->parent)
+                    break;
+
+                // left-balance
+                if (substitute == substitute->parent->left)
+                {
+                    pointer sibling = get_brother(substitute);
+
+                    // case reduction
+                    if (sibling->color == Red)
+                    {
+                        sibling->color = Black;
+                        sibling->parent->color = Red;
+                        sibling->parent->right = sibling->left;
+                        sibling->left->parent = sibling->parent;
+                        sibling->left = sibling->parent;
+                        sibling->parent = sibling->left->parent;
+                        sibling->left->parent = sibling;
+                        sibling == sibling->parent->left
+                        ? sibling->parent->left = sibling
+                        : sibling->parent->right = sibling;
+
+                        sibling = substitute->parent->right;
+                    }
+
+                    // case 1
+                    if ()
+                        ;
+                    else
+                    {
+                        // case 3 (transforming to case 2)
+                        if ()
+                        {
+
+                        }
+                        // case 2
+                        break;
+                    }
+                }
+                // right-balance
+                else
+                {
+
+                }
+            }
+        }
+
+        // destroy and deallocate
+        _alloc.destroy(node);
+        _alloc.deallocate(node, 1);
+
+        // update size
+        _size--;
     }
 
+    // erase by position (1)
+    void erase(iterator position)
+    { return erase(position.data()); }
+
+    // erase by key (2)
+    void erase(key_type const & key)
+    { return erase(find(key)); }
+
+    // erase by range (3)
+    //void erase(iterator first, iterator last)
+    //{ for(; first != last; erase(first), first++); }
+
+    /****** Iterators *********************************************************/
+
+	iterator begin ()
+    { return iterator(min(_root), &_root); }
+
+	const_iterator begin () const
+    { return const_iterator(min(_root), &_root); }
+
+	iterator end ()
+    { return iterator(NULL, &_root); }
+
+	const_iterator end () const
+    { return const_iterator(NULL, &_root); }
+
+	reverse_iterator rbegin ()
+    { return reverse_iterator(--end()); }
+
+	const_reverse_iterator rbegin () const
+    { return const_reverse_iterator(--end()); }
+
+	reverse_iterator rend ()
+    { return reverse_iterator(--begin()); }
+
+	const_reverse_iterator rend () const
+    { return const_reverse_iterator(--begin()); }
+
 };
+
+/******************************************************************************/
+/*                                                                            */
+/*      Non member functions                                                  */
+/*                                                                            */
+/******************************************************************************/
+
+/// @todo add constness to lhs and rhs (then use const_iterators)
+template <typename T, typename Comp>
+bool operator== (rb_tree<T, Comp> & lhs, rb_tree<T, Comp> & rhs)
+{
+    typename rb_tree<T, Comp>::iterator lit = lhs.begin();
+    typename rb_tree<T, Comp>::iterator rit = rhs.begin();
+    typename rb_tree<T, Comp>::iterator lite = lhs.end();
+    typename rb_tree<T, Comp>::iterator rite = rhs.end();
+
+    for (; lit != lite && rit != rite && *lit == *rit; lit++, rit++);
+    return (lit == lite && rit == rite);
+}
+
+/// @todo add constness to lhs and rhs
+template <typename T, typename Comp>
+bool operator!= (rb_tree<T, Comp> & lhs, rb_tree<T, Comp> & rhs)
+{ return !(lhs == rhs); }
 
 } // namespace
 

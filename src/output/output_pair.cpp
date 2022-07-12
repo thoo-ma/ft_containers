@@ -127,7 +127,7 @@ void test_pair_constructed_by_init()
 
 void test_pair_assignation()
 {
-    // add more tests ? like above, mixin' types and using user-defined ones
+    /// @todo add tests ? like above, mixin' types and using user-defined ones
     {
         // ft
         ft::pair<int,int> a(42,42);

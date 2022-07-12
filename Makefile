@@ -1,8 +1,8 @@
 ################### COMPILER ###################################################
 
-CXX				=	g++
+CXX				=	c++ -g
 
-CXXFLAGS		=	-std=c++11 -Wall -Wextra -Wconversion
+CXXFLAGS		=	-std=c++11 -Wall -Wextra -Wconversion# -fpermissive
 
 ################### DIRECTORIES ################################################
 
@@ -98,7 +98,7 @@ output_stack:		bin/output/output_stack.out
 
 output_vector:		bin/output/output_vector.out
 
-output:				output_stack output_vector output_map output_pair
+output:				output_stack output_vector output_map# output_pair
 
 timing_map:			bin/timing/timing_map.out
 
