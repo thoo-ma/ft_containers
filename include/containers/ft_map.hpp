@@ -112,7 +112,10 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 //    mapped_type const & at (key_type const & k) const;
 
     mapped_type & operator[] (const key_type & key)
-    { (*(insert(make_pair(key, mapped_type())).first)).second; }
+    {
+
+    }
+    //{ return (*(insert(make_pair(key, mapped_type())).first)).second; }
 
     /****** Capacity **********************************************************/
 
@@ -208,7 +211,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /****** Operations ********************************************************/
 
     iterator find (const key_type & key)
-    { return iterator(_tree.find(_tree.root_node(), key)); }
+    { return iterator(_tree.find(value_type(key, mapped_type()))); }
 
     const_iterator find (const key_type & key) const;
 

@@ -103,6 +103,7 @@ void constructor_by_iterator_range_test()
     log("constructor by iterator range");
 }
 
+/// @todo
 template <typename T, typename U>
 void constructors_tests()
 {
@@ -118,15 +119,16 @@ void constructors_tests()
 
 /****** Allocator test ********************************************************/
 
+/// @todo
 template <typename Map>
 void get_allocator_test()
 {
-    // TODO
-    // result may change whether we use:
-    // - ft::pair or std::pair
-    // - ft::add_const or std::add_const
-    //
-    // see. https://mapoverflow.com/a/40598287 about use of double brackets
+    /// @todo
+    /// result may change whether we use:
+    /// - ft::pair or std::pair
+    /// - ft::add_const or std::add_const
+    ///
+    /// see. https://mapoverflow.com/a/40598287 about use of double brackets
 
     typedef typename Map::key_type      key_type;
     typedef typename Map::mapped_type   mapped_type;
@@ -216,9 +218,48 @@ void capacity_tests()
 /****** Accessors test ********************************************************/
 
 /// @todo
-template <typename Vector>
+template <typename Map>
 void operator_bracket_test()
 {
+    typedef typename Map::value_type    value;
+    typedef typename Map::key_type      key;
+    typedef typename Map::mapped_type   mapped;
+
+    {
+        // undefined behavior when map is empty
+        // assert(Map().back() == 0);
+    }
+    {
+        Map m;
+        m.insert(value(key(65), mapped(65)));
+    //    m.insert(value(key(79), mapped(79)));
+    //    m.insert(value(key(21), mapped(21)));
+    //    m.insert(value(key(88), mapped(88)));
+    //    m.insert(value(key(16), mapped(16)));
+
+        //assert(m[65] == 65);
+        std::cout << m[65] << std::endl;
+    }
+//    {
+//        Map v(10, 42);
+//        for (typename Map::size_type i = 0; i < 10; i++)
+//            assert(m[i] == 42);
+//    }
+//    {
+//        // doesn't thow anything
+//        Map(10)[10];
+//    }
+//    {
+//        const Map m(10);
+//        typename Map::value_type i = typename Map::value_type();
+//        for (typename Map::size_type j = 0; j < 10; j++)
+//            assert(m[j] == i);
+//    }
+//    {
+//        const Map m(10, 42);
+//        for (typename Map::size_type i = 0; i < 10; i++)
+//            assert(m[i] == 42);
+//    }
     log("operator[]");
 }
 
@@ -621,13 +662,13 @@ void iterator_tests()
 template <typename T, typename U>
 void map_test()
 {
-    constructors_tests<T,U>();
-//    allocator_tests<T,U>();
-//    observers_tests<T,U>();
-//    capacity_tests<T,U>();
-//    accessors_tests<T,U>();
-//    modifiers_tests<T,U>();
-//    operations_tests<T,U>(); // TODO
+   // constructors_tests<T,U>();
+   // allocator_tests<T,U>();
+   // observers_tests<T,U>();
+   // capacity_tests<T,U>();
+    accessors_tests<T,U>();
+   // modifiers_tests<T,U>();
+   // operations_tests<T,U>(); // TODO
 
 //    iterator_test<std::map<T,U>>();
 //    iterator_test< ft::map<T,U>>();

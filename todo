@@ -45,6 +45,7 @@ readme
 it would do with the template solution.)
 - say some about the vague subject and why some tests here may be overkill
 - explain why map.end() dereferencing segfault: no sentinel node
+- make note that insert with hint is just a regular insert
 ________
 
 iterators

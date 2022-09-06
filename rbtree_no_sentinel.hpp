@@ -1,13 +1,13 @@
-#ifndef RB_TREE_HPP
-#define RB_TREE_HPP 1
+#ifndef RBTREE_HPP
+#define RBTREE_HPP 1
 
 #include <stddef.h> // NULL
 #include <memory> // std::allocator
 #include <iostream> // std::ostream
 #include <fstream> // std::fstream
 
-#include "ft_iterator_base_types.hpp"
-#include "ft_reverse_iterator.hpp"
+#include "include/iterators/ft_iterator_base_types.hpp"
+#include "include/iterators/ft_reverse_iterator.hpp"
 
 /**
  * @todo benchmark destructors execution time (prefer recursive one if possible)
@@ -18,7 +18,7 @@
 namespace ft {
 
 template <typename T>
-class rb_tree
+class rbtree
 {
     /****** Types *************************************************************/
 
@@ -47,21 +47,17 @@ class rb_tree
 
         node (key_type const & key = key_type())
         : key(key), color(Black), left(NULL), right(NULL), parent(NULL) {}
-        //: key(key), color(Black), left(NULL), right(NULL), parent(NULL), sentinel(&_sentinel) {}
 
         node (struct node const & n)
         : key(n.key), color(n.color), left(NULL), right(NULL), parent(NULL) { }
-        //: key(n.key), color(n.color), left(NULL), right(NULL), parent(NULL), sentinel(&_sentinel) { }
 
-        struct node & operator= (struct node const & rhs)
-        {
-            this->key = rhs.key;
-            this->color = rhs.color;
-            return *this;
-        }
+        // struct node & operator= (struct node const & rhs) {}
+        // bool operator== (struct node const & rhs) {}
 
-        bool operator== (struct node const & rhs) const
-        { return this->key == rhs.key; }
+       // pointer min ()
+       // pointer max ();
+       // pointer next ();
+       // pointer prev ();
 
     };
 
@@ -69,16 +65,14 @@ class rb_tree
 
     private:
 
-   // class rb_tree_iterator
-   // : public iterator<bidirectional_iterator_tag, value_type>
-    template <typename U>
-    class rb_tree_iterator : public iterator<bidirectional_iterator_tag, U>
+    class rbtree_iterator
+    : public iterator<bidirectional_iterator_tag, value_type>
     {
         /****** Types *********************************************************/
 
         public:
 
-        typedef iterator_traits<rb_tree_iterator>	traits; // to shorten below
+        typedef iterator_traits<rbtree_iterator>	traits; // to shorten below
         typedef typename traits::iterator_category  iterator_category;
         typedef typename traits::value_type         value_type;
         typedef typename traits::difference_type    difference_type;
@@ -90,153 +84,78 @@ class rb_tree
         private:
 
         pointer _data;
-        pointer _sentinel_ptr;
 
         /****** Public methods ************************************************/
 
         public:
 
         /// @note explicit ?
-        explicit rb_tree_iterator (pointer data = NULL, pointer sentinel_ptr = NULL)
-        : _data(data), _sentinel_ptr(sentinel_ptr) { }
+        rbtree_iterator (pointer data = NULL)
+        : _data(data) { }
 
-        rb_tree_iterator (rb_tree_iterator<rb_tree::value_type> const & it)
-        : _data(it.data()), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
-        { }
+        key_type & operator* () const
+        { return _data->key; }
 
-        rb_tree_iterator (rb_tree_iterator<rb_tree::value_type const> const & it)
-        : _data(it.data()), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
-        { }
+        bool operator== (rbtree_iterator const & it) const
+        { return _data == it.data(); }
 
-        rb_tree_iterator operator= (rb_tree_iterator const & it)
-        { _data = it.data(); _sentinel_ptr = it.sentinel_ptr(); return *this; }
-
-       // key_type & operator* () const
-       // { return _data->key; }
-
-        value_type & operator* () const
-        { return *_data; }
-
-        bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
-        {
-            return (_data == it.data()
-                || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
-        }
-
-        bool operator== (rb_tree_iterator<rb_tree::value_type const> const & it) const
-        {
-            return (_data == it.data()
-                || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
-        }
-
-        bool operator!= (rb_tree_iterator<rb_tree::value_type> const & it) const
-        { return !(*this == it); }
-
-        bool operator!= (rb_tree_iterator<rb_tree::value_type const> const & it) const
-        { return !(*this == it); }
+        bool operator!= (rbtree_iterator const & it) const
+        { return _data != it.data(); }
 
         /// @note prefix
-        /// @pre into rb_tree : _sentinel.right == _root
-        /// @note maybe can improve case 3
-        rb_tree_iterator & operator++ ()
+        /// @note BUG
+        rbtree_iterator & operator++ ()
         {
-            // case 1: next node is min(_data->right)
-            if (_data->right != _sentinel_ptr)
+            if (_data)
             {
                 _data = _data->right;
-                while (_data != _sentinel_ptr && _data->left != _sentinel_ptr)
-                    _data = _data->left;
-                return *this;
+                while (_data && _data->left) _data = _data->left;
             }
-
-            // case 2: next node is parent
-            if (_data->parent != _sentinel_ptr && _data == _data->parent->left)
+            else
             {
-                _data = _data->parent;
-                return *this;
+                while (_data->parent) _data = _data->parent;
+                while (_data && _data->left) _data = _data->left;
             }
-
-            // case 3: next node is further parent or not at all
-            _data = _data->parent;
-            while (_data != _sentinel_ptr
-                && _data->parent != _sentinel_ptr
-                && _data == _data->parent->left)
-                _data = _data->parent;
-
-            if (_data->parent == _sentinel_ptr)
-                _data = _sentinel_ptr;
-
             return *this;
         }
 
         /// @note prefix
-        /// @pre into rb_tree : _sentinel.right == _root
-        /// @note maybe can improve case 3
-        rb_tree_iterator & operator-- ()
+        /// @note BUG
+        rbtree_iterator & operator-- ()
         {
-            // case 0: previous node is max(root)
-            if (_data == _sentinel_ptr)
+            if (_data)
             {
-                //std::cout << "case 0" << std::endl;
-                _data = _data->right;
-                while (_data != _sentinel_ptr && _data->right != _sentinel_ptr)
-                    _data = _data->right;
-                return *this;
-            }
-
-            // case 1: previous node is max(_data->left)
-            if (_data->left != _sentinel_ptr)
-            {
-                //std::cout << "case 1" << std::endl;
                 _data = _data->left;
-                while (_data != _sentinel_ptr && _data->right != _sentinel_ptr)
-                    _data = _data->right;
-                return *this;
+                while (_data && _data->right) _data = _data->right;
             }
-
-            // case 2: previous node is parent
-            if (_data->parent != _sentinel_ptr && _data == _data->parent->right)
+            else
             {
-                //std::cout << "case 2" << std::endl;
-                _data = _data->parent;
-                return *this;
+
+                while (_data->parent) _data = _data->parent;
+                while (_data && _data->right) _data = _data->right;
             }
-
-            // case 3: previous node is further parent or not at all
-            //std::cout << "case 3" << std::endl;
-            _data = _data->parent;
-            while (_data != _sentinel_ptr
-                && _data->parent != _sentinel_ptr
-                && _data == _data->parent->right)
-                _data = _data->parent;
-
-            if (_data->parent == _sentinel_ptr)
-                _data = _sentinel_ptr;
-
             return *this;
         }
 
         /// @note postfix
-        rb_tree_iterator operator++ (int)
-        { rb_tree_iterator tmp = *this; this->operator++(); return tmp; }
+        rbtree_iterator operator++ (int)
+        { rbtree_iterator tmp = *this; this->operator++(); return tmp; }
 
         /// @note postfix
-        rb_tree_iterator operator-- (int)
-        { rb_tree_iterator tmp = *this; this->operator--(); return tmp; }
+        rbtree_iterator operator-- (int)
+        { rbtree_iterator tmp = *this; this->operator--(); return tmp; }
 
         pointer data() const
         { return _data; }
 
-        pointer sentinel_ptr() const
-        { return _sentinel_ptr; }
     };
 
     public:
 
-    typedef rb_tree_iterator<value_type>             iterator;
-    typedef rb_tree_iterator<value_type const>       const_iterator;
-    typedef ft::reverse_iterator<iterator>          reverse_iterator;
-    typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+    typedef rbtree_iterator iterator;
+//    typedef const_iterator;
+//    typedef reverse_iterator<iterator> reverse_iterator;
+//    typedef reverse_iterator<const_iterator> const_reverse_iterator;
 
     /****** Data **************************************************************/
 
@@ -244,16 +163,15 @@ class rb_tree
 
     pointer         _root;
     size_type       _size;
-    value_type      _sentinel;
     allocator_type  _alloc;
 
     /****** Internals *********************************************************/
 
-    //inline bool _is_leaf(pointer x) { return x == &_sentinel; }
-    //bool is_sentinel() const ();
+    //inline bool _is_leaf(pointer x) { return !x->left && !x->right; }
 
     /**
      *  @pre 'x' right child is not the sentinel node
+     *  @pre 'x' right child is not NULL
      *
      *       y                           x
      *      / \                         / \
@@ -269,7 +187,8 @@ class rb_tree
         if (y->left)
             y->left->parent = x;
         y->parent = x->parent;
-        if (x->parent == &_sentinel)
+        //if (x->parent == &_sentinel)
+        if (x->parent == NULL)
             _root = y;
         else if (x == x->parent->left)
             x->parent->left = y;
@@ -281,6 +200,7 @@ class rb_tree
 
     /**
      *  @pre `y` left child is not the sentinel node
+     *  @pre `y` left child is not NULL
      *
      *       y                           x
      *      / \                         / \
@@ -296,7 +216,8 @@ class rb_tree
         if (x->right)
             x->right->parent = y;
         x->parent = y->parent;
-        if (y->parent == &_sentinel)
+        //if (y->parent == &_sentinel)
+        if (y->parent == NULL)
             _root = x;
         else if (y == y->parent->left)
             y->parent->left = x;
@@ -308,17 +229,18 @@ class rb_tree
 
     /// @param z A newly inserted red node
     /// @note If 'z' is root its parent node (sentinel) is black
+    /// @todo Protect against null-dereferencing
     void _insert_fixup (pointer z)
     {
         pointer y; // 'z' uncle
-        while (z->parent->color == Red)
+        while (z != _root && z->parent->color == Red)
         {
             // left-balance
             if (z->parent == z->parent->parent->left)
             {
                 y = z->parent->parent->right;
                 // case 1
-                if (y->color == Red)
+                if (y && y->color == Red)
                 {
                     z->parent->color = Black;
                     y->color = Black;
@@ -344,7 +266,7 @@ class rb_tree
             {
                 y = z->parent->parent->left;
                 // case 1
-                if (y->color == Red)
+                if (y && y->color == Red)
                 {
                     z->parent->color = Black;
                     y->color = Black;
@@ -371,24 +293,28 @@ class rb_tree
 
     void _erase_fixup (pointer x)
     {
-       // if (x)
-       // {
-       //     std::cout << "erase_fixup(" << x->key << ")" << std::endl;
-       //     x->color == Red
-       //     ? std::cout << "color: Red" << std::endl
-       //     : std::cout << "color: Black" << std::endl;
-       // }
+        if (x)
+        {
+            std::cout << "erase_fixup(" << x->key << ")" << std::endl;
+            x->color == Red
+            ? std::cout << "color: Red" << std::endl
+            : std::cout << "color: Black" << std::endl;
+        }
+        else
+            std::cout << "erase_fixup _nil_" << std::endl;
 
         pointer w; // `x` sibling
-        while (x != _root && x->color == Black)
+        while (x && x != _root && x->color == Black)
         {
             // left-balance
             if (x == x->parent->left)
             {
+                std::cout << "erase_fixup left" << std::endl;
                 w = x->parent->right;
                 // case 1
                 if (w->color == Red)
                 {
+                    std::cout << "erase_fixup case 1" << std::endl;
                     w->color = Black;
                     x->parent->color = Red;
                     _left_rotate(x->parent);
@@ -397,6 +323,7 @@ class rb_tree
                 // case 2
                 if (w->left->color == Black && w->right->color == Black)
                 {
+                    std::cout << "erase_fixup case 2" << std::endl;
                     w->color = Red;
                     x = x->parent;
                 }
@@ -405,12 +332,14 @@ class rb_tree
                     // case 3
                     if (w->right->color == Black)
                     {
+                        std::cout << "erase_fixup case 3" << std::endl;
                         w->left->color = Black;
                         w->color = Red;
                         _right_rotate(w);
                         w = x->parent->right;
                     }
                     // case 4
+                    std::cout << "erase_fixup case 4" << std::endl;
                     w->color = x->parent->color;
                     x->parent->color = Black;
                     w->right->color = Black;
@@ -421,10 +350,12 @@ class rb_tree
             // right-balance
             else
             {
+                std::cout << "erase_fixup right" << std::endl;
                 w = x->parent->left;
                 // case 1
                 if (w->color == Red)
                 {
+                    std::cout << "erase_fixup case 1" << std::endl;
                     w->color = Black;
                     x->parent->color = Red;
                     _right_rotate(x->parent);
@@ -433,6 +364,7 @@ class rb_tree
                 // case 2
                 if (w->left->color == Black && w->right->color == Black)
                 {
+                    std::cout << "erase_fixup case 2" << std::endl;
                     w->color = Red;
                     x = x->parent;
                 }
@@ -441,12 +373,14 @@ class rb_tree
                     // case 3
                     if (w->left->color == Black)
                     {
+                    std::cout << "erase_fixup case 3" << std::endl;
                         w->right->color = Black;
                         w->color = Red;
                         _left_rotate(w);
                         w = x->parent->left;
                     }
                     // case 4
+                    std::cout << "erase_fixup case 4" << std::endl;
                     w->color = x->parent->color;
                     x->parent->color = Black;
                     w->left->color = Black;
@@ -455,25 +389,27 @@ class rb_tree
                 }
             }
         }
-        x->color = Black;
+        if (x)
+            x->color = Black;
     }
 
     /// @brief Replace subtree `u` by subtree `v`
     void _transplant (pointer u, pointer v)
     {
-        if (u->parent == &_sentinel)
+        if (u->parent == NULL)
             _root = v;
         else if (u == u->parent->left)
             u->parent->left = v;
         else
             u->parent->right = v;
-        v->parent = u->parent;
+        if (v)
+            v->parent = u->parent;
     }
 
     /// @brief Destroy and deallocate subtree `x`
     void _destroy (pointer x)
     {
-        if (x == &_sentinel)
+        if (x == NULL)
             return;
         _destroy(x->left);
         _destroy(x->right);
@@ -484,23 +420,26 @@ class rb_tree
     /// @return a deep copy of subtree `src`
     /// @param src root of subtree to be copied
     /// @param sentinel sentinel node of subtree `src`
-    pointer _copy (pointer src, pointer sentinel)
+    pointer _copy (pointer src/*, pointer sentinel*/)
     {
         pointer tmp;
         pointer dst;
         pointer dst_root;
 
         if (src == NULL)
-            return &_sentinel;
+            //return &_sentinel;
+            return NULL;
 
         dst_root = _alloc.allocate(1);
         _alloc.construct(dst_root, *src);
-        dst_root->parent = &_sentinel;
+        //dst_root->parent = &_sentinel;
+        dst_root->parent = NULL;
         dst = dst_root;
 
         while (1)
         {
-            while (src->left != sentinel)
+            //while (src->left != sentinel)
+            while (src->left)
             {
                 dst->left = _alloc.allocate(1);
                 _alloc.construct(dst->left, *(src->left));
@@ -508,10 +447,12 @@ class rb_tree
                 src = src->left;
                 dst = dst->left;
             }
-            dst->left = &_sentinel;
+            //dst->left = &_sentinel;
+            dst->left = NULL;
             while (1)
             {
-                if (src->right != sentinel)
+                //if (src->right != sentinel)
+                if (src->right)
                 {
                     dst->right = _alloc.allocate(1);
                     _alloc.construct(dst->right, *src);
@@ -521,12 +462,14 @@ class rb_tree
                     break;
                 }
                 else
-                    dst->right = &_sentinel;
+                    //dst->right = &_sentinel;
+                    dst->right = NULL;
                 while (1)
                 {
                     tmp = src;
                     src = src->parent;
-                    if (src == sentinel)
+                    //if (src == sentinel)
+                    if (src == NULL)
                         return dst_root;
                     dst = dst->parent;
                     if (tmp == src->left)
@@ -540,77 +483,58 @@ class rb_tree
 
     public:
 
-    /// @brief Constructor by default (1)
-    rb_tree ()
-    : _root(&_sentinel), _size(0)
-    {
-        _sentinel.left = _root;
-        _sentinel.right = _root;
-        _sentinel.parent = _root;
-    }
+    rbtree ()
+    : _root(NULL), _size(0) {}
 
     /// @brief Constructor by copy (2)
-    rb_tree (rb_tree & tree)
-    : _root(&_sentinel)
-    {
-        *this = tree;
-        _sentinel.left = _root;
-        _sentinel.right = _root;
-        _sentinel.parent = _root;
-    }
+    rbtree (const rbtree & tree)
+    : _root(NULL), _size(tree._size), _alloc(tree._alloc)
+    { *this = tree; }
     //{ _root = _copy(tree._root, NULL); }
 
     /// @brief Constructor by iterator range (3)
-    rb_tree (iterator first, iterator last)
-    : _root(&_sentinel), _size(0)
-    {
-        _sentinel.left = _root;
-        _sentinel.right = _root;
-        _sentinel.parent = _root;
-        insert(first, last);
-    }
 
     /// @brief Recursive destructor
-//    ~rb_tree ()
+//    ~rbtree ()
 //    { _destroy(_root); }
 
     /// @brief Iterative destructor
-    ~rb_tree ()
+    ~rbtree ()
     {
-       pointer x = _root;
-       pointer p = x->parent;
-       while (x != &_sentinel)
-       {
-           p = x->parent;
-           while (x != &_sentinel && x->left != &_sentinel)
-           {
-               p = x;
-               x = x->left;
-           }
-           if (x != &_sentinel && x->right != &_sentinel)
-           {
-               p = x;
-               x = x->right;
-           }
-           if (x != &_sentinel && x->left == &_sentinel && x->right == &_sentinel)
-           {
-               _alloc.destroy(x);
-               _alloc.deallocate(x, 1);
-               if (p != &_sentinel)
-                   x == p->left ? p->left = &_sentinel : p->right = &_sentinel;
-               x = p;
-           }
-       }
+        pointer x = _root;
+        pointer p;
+        while (x)
+        {
+            p = x->parent;
+            while (x && x->left)
+            {
+                p = x;
+                x = x->left;
+            }
+            if (x && x->right)
+            {
+                p = x;
+                x = x->right;
+            }
+            if (x && x->left == NULL && x->right == NULL)
+            {
+                _alloc.destroy(x);
+                _alloc.deallocate(x, 1);
+                if (p)
+                    x == p->left ? p->left = NULL : p->right = NULL;
+                x = p;
+            }
+        }
     }
 
-    /// @brief Base routine to insert a node
-    /// @param z New node to be inserted in the tree
     void insert (pointer z)
     {
-        pointer y = &_sentinel;
+        //pointer y = &_sentinel;
+        pointer y = NULL;
         pointer x = _root;
 
-        while (x != &_sentinel)
+        //while (x != &_sentinel)
+        while (x)
         {
             y = x;
             if (z->key < x->key)
@@ -619,26 +543,21 @@ class rb_tree
                 x = x->right;
         }
         z->parent = y;
-        if (y == &_sentinel) // ?? _sentinel->parent == &_sentinel ?
-        {
+        //if (y == &_sentinel) // ?? _sentinel->parent == &_sentinel ?
+        if (y == NULL)
             _root = z;
-            _sentinel.left = _root;
-            _sentinel.right = _root;
-
-        }
         else if (z->key < y->key)
             y->left = z;
         else
             y->right = z;
-        z->left = &_sentinel;
-        z->right = &_sentinel;
+       // z->left = &_sentinel;
+       // z->right = &_sentinel;
+        z->left = NULL;
+        z->right = NULL;
         z->color = Red;
         _insert_fixup(z);
     }
 
-    /// @brief Insert by key
-    /// @param key Key of the new node inserted
-    /// @note Is it necessary ?...
     void insert (key_type const & key)
     {
         // do not insert duplicated key
@@ -656,39 +575,23 @@ class rb_tree
         _size++;
     }
 
-    /// @brief Insert by value (1)
     void insert (value_type const & val)
     { return insert(val.key); }
 
-    /// @brief Insert with hint (2)
-    /// @todo Use position to improve speed
-    void insert (iterator position, value_type const & val)
-    { (void)position; return insert(val); }
-
-    /// @brief Insert by iterator range (3)
-    void insert (iterator first, iterator last)
-    {
-        while (first != last)
-        {
-            insert(*first);
-            ++first;
-        }
-    }
-
-    /// @brief Base routine to erase a node
-    /// @param z New node to be erased from the tree
     void erase (pointer z)
     {
+        //std::cout << "erase " << z->key << std::endl;
+
         pointer x;
         pointer y = z;
         color_type c = y->color;
 
-        if (z->left == &_sentinel)
+        if (z->left == NULL)
         {
             x = z->right;
             _transplant(z, z->right);
         }
-        else if (z->right == &_sentinel)
+        else if (z->right == NULL)
         {
             x = z->left;
             _transplant(z, z->left);
@@ -699,7 +602,10 @@ class rb_tree
             c = y->color;
             x = y->right;
             if (y->parent == z)
-                x->parent = y;
+            {
+                if (x)
+                    x->parent = y;
+            }
             else
             {
                 _transplant(y, y->right);
@@ -718,8 +624,6 @@ class rb_tree
         _size--;
     }
 
-    /// @brief Erase by key
-    /// @param key Key of the node to be removed from the tree
     void erase (key_type const & key)
     {
         pointer x = find(_root, key);
@@ -732,39 +636,52 @@ class rb_tree
 
     pointer find (pointer x, key_type const & key) const
     {
-        while (x != &_sentinel && x->key != key)
+        // while (x != &_sentinel && x->key != key)
+        //     key < x->key ? x = x->left : x = x->right;
+        // return x != &_sentinel ? x : NULL;
+
+        while (x && x->key != key)
             key < x->key ? x = x->left : x = x->right;
-        return x != &_sentinel ? x : NULL;
+        return x;
     }
 
     pointer find (key_type const & key) const
     { return find(_root, key); }
 
-    /// @note is it very useful ?...
     pointer min (pointer x) const
     {
-        while (x != &_sentinel && x->left != &_sentinel) x = x->left;
+        while (x && x->left) x = x->left;
         return x;
     }
 
-    /// @note is it very useful ?...
     pointer max (pointer x) const
     {
-        while (x != &_sentinel && x->right != &_sentinel) x = x->right;
+        while (x && x->right) x = x->right;
         return x;
     }
 
-    rb_tree & operator= (rb_tree & rhs)
+    /// @todo
+    pointer pred (pointer x)
+    { return x ? min(x->right) : min(_root); }
+
+    /// @todo
+    pointer next (pointer x)
+    { return x ? min(x->right) : min(_root); }
+
+//    size_type black_height (pointer x) const;
+
+    rbtree & operator= (rbtree & rhs)
     {
         _destroy(_root);
         if (rhs.empty())
         {
-            _root = &_sentinel;
+            _root = NULL;
             _size = 0;
         }
         else
         {
-            _root = _copy(rhs.root(), rhs.sentinel());
+            //_root = _copy(rhs.root(), rhs.sentinel());
+            _root = _copy(rhs.root());
             _size = rhs.size();
         }
         return *this;
@@ -779,38 +696,13 @@ class rb_tree
     pointer root () const
     { return _root; }
 
-    pointer sentinel ()
-    { return &_sentinel; }
-
-//    size_type black_height (pointer x) const;
-//    pointer pred (pointer x);
-//    pointer next (pointer x);
-
     /****** Iterator **********************************************************/
 
     iterator begin ()
-    { return iterator(min(_root), &_sentinel); }
-
-    const_iterator begin () const
-    { return const_iterator(min(_root), &_sentinel); }
+    { return iterator(min(_root)); }
 
     iterator end()
-    { return iterator(&_sentinel, &_sentinel); }
-
-    const_iterator end() const
-    { return const_iterator(&_sentinel, &_sentinel); }
-
-    reverse_iterator rbegin()
-    { return reverse_iterator(--end()); }
-
-    const_reverse_iterator rbegin() const
-    { return const_reverse_iterator(--end()); }
-
-    reverse_iterator rend()
-    { return reverse_iterator(end()); }
-
-    const_reverse_iterator rend() const
-    { return const_reverse_iterator(end()); }
+    { return iterator(max(_root)); }
 
     /****** Debug *************************************************************/
 
@@ -819,42 +711,47 @@ class rb_tree
 		std::ofstream file ("graph.md");
         file << "```mermaid" << std::endl;
         file << "graph TD;" << std::endl;
-        file << "style sentinel fill:black" << std::endl;
+        //file << "style sentinel fill:black" << std::endl;
         if (_size)
             _draw_graph(file, _root);
         file << "```" << std::endl;
         file.close();
     }
 
-    private: void _draw_graph (std::ofstream & file, pointer node) const
+    private:
+    void _draw_graph (std::ofstream & file, pointer node) const
     {
         file << node->key << "; style " << node->key << " fill:";
         node->color == Red ? file << "red" : file << "black";
         file << std::endl;
 
-        if (node->left != &_sentinel)
+        //if (node->left != &_sentinel)
+        if (node->left)
         {
             file << node->key << " --- " << node->left->key << std::endl;
             _draw_graph(file, node->left);
-        } else file << node->key << " --- sentinel" << std::endl;
+        //} else file << node->key << " --- sentinel" << std::endl;
+        } else file << node->key << " --- nil" << std::endl;
 
-        if (node->right != &_sentinel)
+        //if (node->right != &_sentinel)
+        if (node->right)
         {
             file << node->key << " --- " << node->right->key << std::endl;
             _draw_graph(file, node->right);
-        } else file << node->key << " --- sentinel" << std::endl;
+        // } else file << node->key << " --- sentinel" << std::endl;
+        } else file << node->key << " --- nil" << std::endl;
     }
 
 };
 
 /// @todo add constness to lhs and rhs
 template <typename T>
-bool operator== (rb_tree<T> & lhs, rb_tree<T> & rhs)
+bool operator== (rbtree<T> & lhs, rbtree<T> & rhs)
 {
-    typename rb_tree<T>::iterator lit = lhs.begin();
-    typename rb_tree<T>::iterator rit = rhs.begin();
-    typename rb_tree<T>::iterator lite = lhs.end();
-    typename rb_tree<T>::iterator rite = rhs.end();
+    typename rbtree<T>::iterator lit = lhs.begin();
+    typename rbtree<T>::iterator rit = rhs.begin();
+    typename rbtree<T>::iterator lite = lhs.end();
+    typename rbtree<T>::iterator rite = rhs.end();
 
     for (; lit != lite && rit != rite && *lit == *rit; lit++, rit++);
     return (lit == lite && rit == rite);
@@ -862,9 +759,9 @@ bool operator== (rb_tree<T> & lhs, rb_tree<T> & rhs)
 
 /// @todo add constness to lhs and rhs
 template <typename T>
-bool operator!= (rb_tree<T> & lhs, rb_tree<T> & rhs)
+bool operator!= (rbtree<T> & lhs, rbtree<T> & rhs)
 { return !(lhs == rhs); }
 
 } // namespace
 
-#endif /* RB_TREE_HPP */
+#endif /* RBTREE_HPP */

@@ -7,7 +7,8 @@
 #include <type_traits> // std::is_base_of
 //#include <stdexcept>
 
-#include "ft_type_traits.hpp" // ??
+#include "ft_type_traits.hpp"
+#include "ft_iterator_base_types.hpp"
 #include "../utils/colors.hpp" // put into log
 
 /****** TODO ******************************************************************/
@@ -259,8 +260,8 @@ void iterator_increment_test()
     c.insert(c.begin(), b);
     c.insert(c.begin(), a);
 
-    // TODO intervert those 2 lines to remove (++)
-    // On standby until testing map
+    /// @todo Intervert those 2 lines to remove (++)
+    /// @note On standby until testing map
     // c.insert(c.begin(), a);
     // c.insert(++(c.begin()), b); // yes, we use `++` before testing it
 
@@ -272,6 +273,7 @@ void iterator_increment_test()
             assert(*it == a);
             assert(*(++it) == b);
             assert(*it == b);
+            //std::cout << "it" << std::endl;
         }
         {
             // const_it
@@ -279,15 +281,15 @@ void iterator_increment_test()
             assert(*it == a);
             assert(*(++it) == b);
             assert(*it == b);
+            //std::cout << "const_it" << std::endl;
         }
         {
             // rev_it
             typename Container::reverse_iterator it = c.rbegin();
             assert(*it == b);
-            //std::cout << "AH" << std::endl;
             assert(*(++it) == a);
-            //std::cout << "AH" << std::endl;
             assert(*it == a);
+            //std::cout << "rev_it" << std::endl;
         }
         {
             // const_rev_it
@@ -1611,7 +1613,6 @@ void iterator_test()
     /****** Common iterator test **********************************************/
 
     iterator_constructor_by_default_test<Container>();
-    //return;
 
     iterator_constructor_by_pointer_test<Container>();
 
@@ -1621,19 +1622,19 @@ void iterator_test()
 
     /// @note both prefix and postfix
     /// @todo on standby for rbtree until map is implemented
-//    iterator_increment_test<Container>();
+    iterator_increment_test<Container>();
 
-//    typedef typename Container::iterator::iterator_category iterator_category;
+    typedef typename Container::iterator::iterator_category iterator_category;
 
     /****** Input iterator test ***********************************************/
 
-//    typedef typename  ft::input_iterator_tag     ft_input_tag;
-//    typedef typename std::input_iterator_tag    std_input_tag;
+    typedef typename  ft::input_iterator_tag     ft_input_tag;
+    typedef typename std::input_iterator_tag    std_input_tag;
 
-//    input_iterator_test<
-//    std::is_base_of< ft_input_tag, iterator_category>::value ||
-//    std::is_base_of<std_input_tag, iterator_category>::value, Container
-//    >();
+    input_iterator_test<
+    std::is_base_of< ft_input_tag, iterator_category>::value ||
+    std::is_base_of<std_input_tag, iterator_category>::value, Container
+    >();
 
     /****** Output iterator test **********************************************/
 

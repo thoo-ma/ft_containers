@@ -1,13 +1,15 @@
-#include <map> // ??
-#include <vector> // delete
 #include <cassert>
-#include <type_traits> // std::is_same
+#include <iostream>
 
-#include "rb_tree.hpp"
-#include "ft_pair.hpp" // delete
-#include "ft_vector.hpp" // delete
 #include "../utils/colors.hpp" // put into log
 #include "output_iterator.hpp"
+
+// To use it, substitute `insert(tree.root(), i)' by 'insert(i)`
+//#include "../../old_rb_tree.hpp"
+
+// To use it, substitute `insert(i)' by 'insert(tree.root(), i)`
+#include "rb_tree.hpp"
+//#include "../../rbtree_no_sentinel.hpp"
 
 ///@note These 'tests' are not to be run at ft_containers evaluation.
 ///      Their purpose is to check for my own red black tree implementation if
@@ -54,35 +56,46 @@ void debug()
     {
         ft::rb_tree<int> tree;
         for (int i = 0; i < 18; i++) {
-            tree.insert(tree.root_node(), i);
-            tree.print(tree.root_node());
+            tree.insert(i);
+           // tree.insert(tree.root(), i);
+            //tree.print(tree.root());
             std::cout << std::endl;
         }
     }
     {
         ft::rb_tree<int> tree;
         for (int i = 19; i > 0; i--) {
-            tree.insert(tree.root_node(), i);
-            tree.print(tree.root_node());
+            tree.insert(i);
+           // tree.insert(tree.root(), i);
+           // tree.print(tree.root());
             std::cout << std::endl;
         }
     }
     {
         ft::rb_tree<int> tree;
-        tree.insert(tree.root_node(), 2);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 1);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 5);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 8);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 7);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 3);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 4);
-        tree.print(tree.root_node()); std::cout << std::endl;
+
+        //tree.insert(tree.root(), 2);
+        //tree.print(tree.root()); std::cout << std::endl;
+        //tree.insert(tree.root(), 1);
+        //tree.print(tree.root()); std::cout << std::endl;
+        //tree.insert(tree.root(), 5);
+        //tree.print(tree.root()); std::cout << std::endl;
+        //tree.insert(tree.root(), 8);
+        //tree.print(tree.root()); std::cout << std::endl;
+        //tree.insert(tree.root(), 7);
+        //tree.print(tree.root()); std::cout << std::endl;
+        //tree.insert(tree.root(), 3);
+        //tree.print(tree.root()); std::cout << std::endl;
+        //tree.insert(tree.root(), 4);
+        //tree.print(tree.root()); std::cout << std::endl;
+
+        tree.insert(2);
+        tree.insert(1);
+        tree.insert(5);
+        tree.insert(8);
+        tree.insert(7);
+        tree.insert(3);
+        tree.insert(4);
     }
 }
 
@@ -92,12 +105,14 @@ void min_test()
 {
     ft::rb_tree<int> tree;
 
-    assert(tree.min(tree.root_node()) == NULL);
+    //assert(tree.min(tree.root()) == NULL);
+    //assert(tree.min(tree.root()) == tree.sentinel());
 
     for (int i = 10; i > 0; i--)
     {
-        tree.insert(tree.root_node(), i);
-        assert(tree.min(tree.root_node()) && tree.min(tree.root_node())->key == i);
+        //tree.insert(tree.root(), i);
+        tree.insert(i);
+        assert(tree.min(tree.root()) && tree.min(tree.root())->key == i);
     }
 
 }
@@ -106,12 +121,14 @@ void max_test()
 {
     ft::rb_tree<int> tree;
 
-    assert(tree.min(tree.root_node()) == NULL);
+   // assert(tree.min(tree.root()) == NULL);
+    //assert(tree.min(tree.root()) == tree.sentinel());
 
     for (int i = 0; i < 10; i++)
     {
-        tree.insert(tree.root_node(), i);
-        assert(tree.min(tree.root_node()) && tree.max(tree.root_node())->key == i);
+        //tree.insert(tree.root(), i);
+        tree.insert(i);
+        assert(tree.min(tree.root()) && tree.max(tree.root())->key == i);
     }
 
 }
@@ -170,6 +187,7 @@ void constructor_by_iterator_range_test()
 template <typename Tree>
 void constructors_tests()
 {
+    std::cout << "== Constructors ==" << std::endl;
     constructor_by_default_test<Tree>();
     constructor_by_copy_test<Tree>();
     constructor_by_iterator_range_test<Tree>();
@@ -177,6 +195,7 @@ void constructors_tests()
 
 /****** Capacity test *********************************************************/
 
+/// @todo add by copy and by range tests
 template <typename Tree>
 void empty_test()
 {
@@ -196,6 +215,7 @@ void empty_test()
     log("empty");
 }
 
+/// @todo add by copy and by range tests
 template <typename Tree>
 void size_test()
 {
@@ -225,6 +245,7 @@ void size_test()
 template <typename Tree>
 void capacity_tests()
 {
+    std::cout << "== Capacity ==" << std::endl;
     empty_test<Tree>();
     size_test<Tree>();
 }
@@ -253,11 +274,13 @@ void find_test()
 template <typename Tree>
 void accessors_tests()
 {
+    std::cout << "== Accessors ==" << std::endl;
     find_test<Tree>();
 }
 
 /****** Modifiers tests *******************************************************/
 
+/// @todo insert cases not well tested
 template <typename Tree>
 void insert_test()
 {
@@ -268,24 +291,55 @@ void insert_test()
         Tree t;
         t.insert(k);
         t.insert(l);
+
+        Tree tree;
+        tree.insert(50);
+        tree.insert(79);
+        tree.insert(21);
+        tree.insert(88);
+        tree.insert(16);
+        tree.insert(67);
+        tree.insert(10);
+        tree.insert(19);
+        tree.insert(11);
+        tree.insert(42);
+        tree.insert(27);
+        tree.insert(90);
+        tree.insert(55);
+
+        // insert case 1: uncle is red
+        tree.insert(45);
+
+        // insert case 2: uncle is black and new node is a right child
+        tree.insert(70);
+
+        // insert case 3: uncle is black and new node is a left child
+        tree.insert(9);
+
+        // insert duplicate node
+        tree.insert(42);
     }
     {
         // with hint (2)
-        Tree t;
-        t.insert(t.begin(), k);
-        t.insert(t.begin(), l);
+        /// @todo add some statements ?
+        Tree tree;
+        tree.insert(tree.begin(), k);
+        tree.insert(tree.begin(), l);
     }
     {
         // by range (3)
+        /// @todo add some statements ?
         Tree t, u;
         t.insert(k);
         t.insert(l);
+        assert(t != u);
         u.insert(t.begin(), t.end());
         assert(t == u);
     }
     log("insert");
 }
 
+/// @todo erase cases not well tested
 template <typename Tree>
 void erase_test()
 {
@@ -293,7 +347,7 @@ void erase_test()
         // by iterator position
         Tree a, b;
         assert(a == b);
-        a.insert(typename Tree::key_type(42));
+        a.insert(typename Tree::value_type());
         assert(a != b);
         a.erase(a.begin());
         assert(a == b);
@@ -310,7 +364,8 @@ void erase_test()
 template <typename Tree>
 void modifiers_tests()
 {
-//    insert_test<Tree>();
+    std::cout << "== Modifiers ==" << std::endl;
+    insert_test<Tree>();
     erase_test<Tree>();
 }
 
@@ -319,55 +374,56 @@ void modifiers_tests()
 template <typename T>
 void tree_test()
 {
-//    constructors_tests<ft::rb_tree<T>>();
-//    capacity_tests<ft::rb_tree<T>>();
-//    accessors_tests<ft::rb_tree<T>>();
-
-    // allocator_tests<ft::rb_tree<T>>();
-
+    constructors_tests<ft::rb_tree<T>>();
+    capacity_tests<ft::rb_tree<T>>();
+    accessors_tests<ft::rb_tree<T>>();
     modifiers_tests<ft::rb_tree<T>>();
-    // operators_tests<ft::rb_tree<T>>();
-    // iterators_tests(); // TODO
 
-/// @note this tests are not possible
-//  iterator_test<ft::rb_tree<int>>();
-//  iterator_test<ft::rb_tree<double>>();
+    /// @todo
+    // allocator_tests<ft::rb_tree<T>>();
+    // operators_tests<ft::rb_tree<T>>();
+
+    std::cout << "== Iterators ==" << std::endl;
+    iterator_test<ft::rb_tree<T>>();
 }
 
 /****** Main ******************************************************************/
 
 int main()
 {
+
 //    debug();
+
 //    min_test();
 //    max_test();
 
-//    tree_test<int>();
+    tree_test<int>();
 
-    {
-        ft::rb_tree<int> tree;
+    // everything below segfault
 
-        std::cout << "-- insertion --" << std::endl;
-        tree.insert(tree.root_node(), 2);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 1);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 5);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 8);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 7);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 3);
-        tree.print(tree.root_node()); std::cout << std::endl;
-        tree.insert(tree.root_node(), 4);
-        tree.print(tree.root_node()); std::cout << std::endl;
+//    {
+//        ft::rb_tree<int>::iterator it;
+//        ++it;
+//        int x = *it;
+//        (void)x;
+//        std::cout << *it  << std::endl;
+//    }
 
-        std::cout << "-- deletion --" << std::endl;
-   //     tree.erase(2);
-   //     tree.print(tree.root_node()); std::cout << std::endl;
+//    {
+//        std::map<int,int>::iterator it;
+//        std::map<int,int>::value_type x = *it;
+//        std::map<int,int>::iterator it2 = ++it;
+//        (void)x;
+//        (void)it2;
+//    }
 
-    }
+//    {
+//        std::map<int,int> m;
+//        std::map<int,int>::iterator it = m.begin();
+//
+//        std::map<int,int>::iterator it2 = --it;
+//        (void)it2;
+//    }
 
     return 0;
 }
