@@ -10,27 +10,25 @@
 #include "ft_type_traits.hpp"
 #include "ft_iterator_base_types.hpp"
 #include "../utils/colors.hpp" // put into log
+#include "output_iterator.hpp"
 
-/****** TODO ******************************************************************/
-/*                                                                            */
-/*        Type                     --> VariableName                           */
-/*        -----------------------------------------                           */
-/*      - iterator                 --> it                                     */
-/*      - const_iterator           --> cit                                    */
-/*      - reverse_iterator         --> rit                                    */
-/*      - const_reverse_iterator   --> crit                                   */
-/*     /  -----------------------------------------                           */
-/*        Instead of solely `it`.                                             */
-/*                                                                            */
-/*      - Add `reverse_iterator_base_test()`.                                 */
-/*      - README: say some about iterator and reverse iterator relationship.  */
-/*      - Before testing make sure that `Container` has the following public  */
-/*        methods: begin(), end(), rbegin(), rend().                          */
-/*        --> Otherwise, some tests will fail.                                */
-/*      - Make also sure that type `T` support some property-based tests.     */
-/*      - Add tests to increment and decrement out of container boundaries.   */
-/*                                                                            */
-/******************************************************************************/
+//#include "ft_map.hpp"
+/// @todo make value_type instances templated to use this tests over map also
+/// @todo Type                     --> VariableName
+///       -----------------------------------------
+///       iterator                 --> it
+///       const_iterator           --> cit
+///       reverse_iterator         --> rit
+///       const_reverse_iterator   --> crit
+///       -----------------------------------------
+///       Instead of solely `it`.
+/// @todo Add `reverse_iterator_base_test()`.
+/// @todo README: say some about iterator and reverse iterator relationship.
+/// @todo Before testing make sure that `Container` has the following public.
+/// @todo methods: begin(), end(), rbegin(), rend().
+///       --> Otherwise, some tests will fail.
+/// @todo Make also sure that type `T` support some property-based tests.
+/// @todo Add tests to increment and decrement out of container boundaries.
 
 /****** Log *******************************************************************/
 
@@ -1603,9 +1601,22 @@ random_access_iterator_test() { }
 
 /****** All iterator tests ****************************************************/
 
+//template <typename Container>
+//typename Container::value_type get_value ()
+//{ return typename Container::value_type(); }
+
+//template <typename T, typename U>
+//typename ft::map<T,U>::value_type get_value<ft::map<T,U>> ()
+//{ return typename ft::map<T,U>::value_type(); }
+
 template <typename Container>
 void iterator_test()
 {
+
+//    static typename Container::value_type i = get_value<Container>(1);
+//    static typename Container::value_type j = get_value<Container>(2);
+//    static typename Container::value_type k = get_value<Container>(3);
+
     /// @note Since we can't template a namespace, we will use the `||` operator
     /// to match iterator tag for both `std` and `ft` based containers. There
     /// might be better approach.

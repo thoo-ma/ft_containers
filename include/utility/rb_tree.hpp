@@ -9,11 +9,11 @@
 #include "ft_iterator_base_types.hpp"
 #include "ft_reverse_iterator.hpp"
 
-/**
- * @todo benchmark destructors execution time (prefer recursive one if possible)
- * @todo handle allocator failure
- * @todo use comp ??
- */
+/// @todo benchmark destructors execution time (prefer recursive one if possible)
+/// @todo handle allocator failure
+/// @todo use comp
+/// @todo unsupport duplicate nodes
+/// @todo (?) inline function or macro to replace ternaries
 
 namespace ft {
 
@@ -45,13 +45,13 @@ class rb_tree
         pointer right;
         pointer parent;
 
+        /// @brief Constructor by default (1)
         node (key_type const & key = key_type())
         : key(key), color(Black), left(NULL), right(NULL), parent(NULL) {}
-        //: key(key), color(Black), left(NULL), right(NULL), parent(NULL), sentinel(&_sentinel) {}
 
+        /// @brief Constructor by copy (2)
         node (struct node const & n)
         : key(n.key), color(n.color), left(NULL), right(NULL), parent(NULL) { }
-        //: key(n.key), color(n.color), left(NULL), right(NULL), parent(NULL), sentinel(&_sentinel) { }
 
         struct node & operator= (struct node const & rhs)
         {
@@ -69,8 +69,6 @@ class rb_tree
 
     private:
 
-   // class rb_tree_iterator
-   // : public iterator<bidirectional_iterator_tag, value_type>
     template <typename U>
     class rb_tree_iterator : public iterator<bidirectional_iterator_tag, U>
     {
@@ -97,7 +95,7 @@ class rb_tree
         public:
 
         /// @note explicit ?
-        explicit rb_tree_iterator (pointer data = NULL, pointer sentinel_ptr = NULL)
+        rb_tree_iterator (pointer data = NULL, pointer sentinel_ptr = NULL)
         : _data(data), _sentinel_ptr(sentinel_ptr) { }
 
         rb_tree_iterator (rb_tree_iterator<rb_tree::value_type> const & it)
@@ -229,12 +227,15 @@ class rb_tree
 
         pointer sentinel_ptr() const
         { return _sentinel_ptr; }
+
     };
 
     public:
 
     typedef rb_tree_iterator<value_type>             iterator;
     typedef rb_tree_iterator<value_type const>       const_iterator;
+
+    // namespace below is mandatory since typedef operands share the same name
     typedef ft::reverse_iterator<iterator>          reverse_iterator;
     typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
@@ -514,7 +515,7 @@ class rb_tree
                 if (src->right != sentinel)
                 {
                     dst->right = _alloc.allocate(1);
-                    _alloc.construct(dst->right, *src);
+                    _alloc.construct(dst->right, *src->right);
                     dst->right->parent = dst;
                     src = src->right;
                     dst = dst->right;
@@ -541,24 +542,25 @@ class rb_tree
     public:
 
     /// @brief Constructor by default (1)
-    rb_tree ()
+    explicit rb_tree ()
     : _root(&_sentinel), _size(0)
     {
         _sentinel.left = _root;
         _sentinel.right = _root;
         _sentinel.parent = _root;
-    }
+    } //{ _root = _copy(tree._root, NULL); }
 
     /// @brief Constructor by copy (2)
-    rb_tree (rb_tree & tree)
+    /// @todo those three assignations not needed if constructor by default is
+    ///       called before function execution. need to check this. (delete ?)
+    rb_tree (rb_tree const & tree)
     : _root(&_sentinel)
     {
         *this = tree;
-        _sentinel.left = _root;
-        _sentinel.right = _root;
-        _sentinel.parent = _root;
-    }
-    //{ _root = _copy(tree._root, NULL); }
+    //    _sentinel.left = _root;
+    //    _sentinel.right = _root;
+    //    _sentinel.parent = _root;
+    } //{ _root = _copy(tree._root, NULL); }
 
     /// @brief Constructor by iterator range (3)
     rb_tree (iterator first, iterator last)
@@ -577,30 +579,30 @@ class rb_tree
     /// @brief Iterative destructor
     ~rb_tree ()
     {
-       pointer x = _root;
-       pointer p = x->parent;
-       while (x != &_sentinel)
-       {
-           p = x->parent;
-           while (x != &_sentinel && x->left != &_sentinel)
-           {
-               p = x;
-               x = x->left;
-           }
-           if (x != &_sentinel && x->right != &_sentinel)
-           {
-               p = x;
-               x = x->right;
-           }
-           if (x != &_sentinel && x->left == &_sentinel && x->right == &_sentinel)
-           {
-               _alloc.destroy(x);
-               _alloc.deallocate(x, 1);
-               if (p != &_sentinel)
-                   x == p->left ? p->left = &_sentinel : p->right = &_sentinel;
-               x = p;
-           }
-       }
+        pointer x = _root;
+        pointer p = x->parent;
+        while (x != &_sentinel)
+        {
+            p = x->parent;
+            while (x != &_sentinel && x->left != &_sentinel)
+            {
+                p = x;
+                x = x->left;
+            }
+            if (x != &_sentinel && x->right != &_sentinel)
+            {
+                p = x;
+                x = x->right;
+            }
+            if (x != &_sentinel && x->left == &_sentinel && x->right == &_sentinel)
+            {
+                _alloc.destroy(x);
+                _alloc.deallocate(x, 1);
+                if (p != &_sentinel)
+                    x == p->left ? p->left = &_sentinel : p->right = &_sentinel;
+                x = p;
+            }
+        }
     }
 
     /// @brief Base routine to insert a node
@@ -675,8 +677,8 @@ class rb_tree
         }
     }
 
-    /// @brief Base routine to erase a node
-    /// @param z New node to be erased from the tree
+    /// @brief Erase base routine
+    /// @todo private/protected ?
     void erase (pointer z)
     {
         pointer x;
@@ -718,17 +720,28 @@ class rb_tree
         _size--;
     }
 
-    /// @brief Erase by key
-    /// @param key Key of the node to be removed from the tree
+    /// @brief Erase by position (1)
+    void erase (iterator position)
+    { return erase(position.data()); }
+
+    /// @brief Erase by key (2)
     void erase (key_type const & key)
     {
         pointer x = find(_root, key);
         if (x) erase(x);
     }
 
-    // erase by position (1)
-    void erase (iterator position)
-    { return erase(position.data()); }
+    /// @brief Erase by iterator range (3)
+    void erase (iterator first, iterator last)
+    {
+        iterator node;
+        while (first != last)
+        {
+            node = first;
+            ++first;
+            erase(node);
+        }
+    }
 
     pointer find (pointer x, key_type const & key) const
     {
@@ -754,7 +767,7 @@ class rb_tree
         return x;
     }
 
-    rb_tree & operator= (rb_tree & rhs)
+    rb_tree & operator= (rb_tree const & rhs)
     {
         _destroy(_root);
         if (rhs.empty())
@@ -767,6 +780,9 @@ class rb_tree
             _root = _copy(rhs.root(), rhs.sentinel());
             _size = rhs.size();
         }
+        _sentinel.left = _root;
+        _sentinel.right = _root;
+        _sentinel.parent = _root;
         return *this;
     }
 
@@ -779,8 +795,8 @@ class rb_tree
     pointer root () const
     { return _root; }
 
-    pointer sentinel ()
-    { return &_sentinel; }
+    pointer sentinel () const
+    { return const_cast<pointer>(&_sentinel); }
 
 //    size_type black_height (pointer x) const;
 //    pointer pred (pointer x);
@@ -847,22 +863,20 @@ class rb_tree
 
 };
 
-/// @todo add constness to lhs and rhs
 template <typename T>
-bool operator== (rb_tree<T> & lhs, rb_tree<T> & rhs)
+bool operator== (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 {
-    typename rb_tree<T>::iterator lit = lhs.begin();
-    typename rb_tree<T>::iterator rit = rhs.begin();
-    typename rb_tree<T>::iterator lite = lhs.end();
-    typename rb_tree<T>::iterator rite = rhs.end();
+    typename rb_tree<T>::const_iterator lit = lhs.begin();
+    typename rb_tree<T>::const_iterator rit = rhs.begin();
+    typename rb_tree<T>::const_iterator lite = lhs.end();
+    typename rb_tree<T>::const_iterator rite = rhs.end();
 
     for (; lit != lite && rit != rite && *lit == *rit; lit++, rit++);
     return (lit == lite && rit == rite);
 }
 
-/// @todo add constness to lhs and rhs
 template <typename T>
-bool operator!= (rb_tree<T> & lhs, rb_tree<T> & rhs)
+bool operator!= (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 { return !(lhs == rhs); }
 
 } // namespace

@@ -41,6 +41,9 @@ struct pair
     /// then we cannot assign, we must list-initialize: this is what will be done here.
     pair(const pair<T1,T2> & pair) : first(pair.first), second(pair.second) { }
 
+    /// @brief Constructor by initialization (3)
+    pair(const first_type & a, const second_type & b) : first(a), second(b) { }
+
     /// @todo add ?
     //  pair(pair<T1,T2> & pair) : first(pair.first), second(pair.second) { }
 
@@ -51,9 +54,6 @@ struct pair
     //      second = pair.second;
     //      return *this;
     //  }
-
-    /// @brief Constructor by initialization (3)
-    pair(const first_type & a, const second_type & b) : first(a), second(b) { }
 
     pair & operator=(const pair & pair)
     {

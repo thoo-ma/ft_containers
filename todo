@@ -14,6 +14,9 @@ todo
 12. debug iso_stardard script
 13. base_iterator: iterator traits typedefs + comparison operators
 14. output_iterator.hpp to .cpp
+15. bien penser a tester les valeurs de retour des methodes des containers
+16. Faire un namespace test ou mettre tous les typedef, toutes les instances de
+    types utiles et les fonctions de log
 ________
 
 maybe

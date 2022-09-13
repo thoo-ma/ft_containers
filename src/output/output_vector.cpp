@@ -6,26 +6,18 @@
 
 #include "ft_pair.hpp" // delete
 #include "ft_vector.hpp"
-//#include "ft_type_traits.hpp" // ??
 #include "output_iterator.hpp"
 #include "../utils/colors.hpp" // put into log
+//#include "ft_type_traits.hpp" // ??
 
-/*
- *  TODO
- *
- *  - ft::vector<int> v(5, 42);
- *  --> std::cout << std::distance(v.begin(), v.end()) << std::endl;
- *
- *  - make custom datatype `class A` support all tests
- *	--> then, template all tests not templated yet
- *
- *  - log only if: std:is_same<Vector,ft::vector<Vector::value_type>>
- *
- *  1. template tests upon basic arithmetic datatypes (int, char, double, etc.)
- *  2. template tests upon custom datatypes
- *  3. iterators_tests into separate file (shared with vector_test and map_test)
- *
- */
+/// @todo ft::vector<int> v(5, 42);
+///       --> std::cout << std::distance(v.begin(), v.end()) << std::endl;
+/// @todo make custom datatype `class A` support all tests
+///       --> then, template all tests not templated yet
+/// @todo log only if: std:is_same<Vector,ft::vector<Vector::value_type>>
+/// @todo template tests upon basic arithmetic datatypes (int, char, etc.)
+/// @todo template tests upon custom datatypes
+/// @todo iterators_tests into separate file (shared with vector and map tests)
 
 /****** Custom datatype *******************************************************/
 
@@ -247,7 +239,7 @@ void size_test()
     std::cout << "size " << GREEN << "OK" << RESET << std::endl;
 }
 
-// TODO
+/// @todo
 template <typename Vector>
 void max_size_test()
 {
@@ -1360,7 +1352,7 @@ void rend_test()
     std::cout << "rend " << GREEN << "OK" << RESET << std::endl;
 }
 
-// TODO
+/// @todo
 void iterators_tests()
 {
     std::cout << "== Iterators ==" << std::endl;

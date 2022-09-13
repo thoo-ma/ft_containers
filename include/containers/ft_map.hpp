@@ -84,22 +84,22 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /****** Constructors ******************************************************/
 
-    /// @brief empty (1)
+    /// @brief Constructor by default (1)
     explicit map (const key_compare & comp = key_compare(),
               const allocator_type & alloc = allocator_type())
     : _alloc(alloc), _comp(comp) { }
 
-    /// @brief range (2)
+    /// @brief Constructor by range (2)
     /// @todo
     //template <class InputIterator>
     //map (InputIterator first, InputIterator last,
-//    map (iterator first, iterator last,
-//        const key_compare & comp = key_compare(),
-//        const allocator_type & alloc = allocator_type())
-//    : _alloc(alloc), _comp(comp) { insert(first, last); }
+    map (iterator first, iterator last,
+        const key_compare & comp = key_compare(),
+        const allocator_type & alloc = allocator_type())
+    : _alloc(alloc), _comp(comp) { insert(first, last); }
 
-    /// @brief copy (3)
-    map (const map & a) : _alloc(a._alloc), _comp(a._comp), _tree(a._tree) { }
+    /// @brief Constructor by copy (3)
+    map (map const & a) : _alloc(a._alloc), _comp(a._comp), _tree(a._tree) { }
 
     /****** Destructor ********************************************************/
 
@@ -132,47 +132,57 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /// @todo remove
   //  void insert (value_type const & val)
-  //  { return _tree.insert(_tree.root_node(), val); }
+  //  { return _tree.insert(_tree.root(), val); }
 
-    /// @brief insert single element (1)
+    /// @brief Insert single element (1)
+    /// @todo modify _tree.insert() return value to allow ternary below
     pair<iterator, bool> insert (value_type const & val)
     {
-        //return find(val.first) == end()
-        //? make_pair(_tree.insert(_tree.root_node(), val), true)
-        //: make_pair(end(), false);
+        //iterator it = find(val.first);
+        //return it == end()
+        //? make_pair(_tree.insert(val), true)
+        //: make_pair(it, false);
 
         if (find(val.first) == end())
         {
-            _tree.insert(_tree.root_node(), val);
+            _tree.insert(val);
             return make_pair(iterator(find(val.first)), true);
         }
-        return make_pair(end(), false);
+        return make_pair(find(val.first), false);
     }
 
-    /// @brief insert with hint (2)
-    //iterator insert (iterator position, const value_type & val);
+    /// @brief Insert with hint (2)
+    iterator insert (iterator position, value_type const & val)
+    { (void)position; insert(val); return find(val.first); }
 
-    /// @brief insert range (3)
+    /// @brief Insert by iterator range (3)
     //template <class InputIterator>
     //void insert (InputIterator first, InputIterator last);
-//    void insert (iterator first, iterator last)
-//    { return _tree.insert(first, last); }
+    void insert (iterator first, iterator last)
+    { return _tree.insert(first, last); }
 
     /// @brief erase by iterator position (1)
-    void erase (iterator position);
+    void erase (iterator position)
+    { return _tree.erase(position); }
 
     /// @brief erase by key (2)
-    size_type erase (const key_type & key);
+    /// @note always return 1 since our map doesn't support duplicated keys
+    size_type erase (key_type const & key)
+    { _tree.erase(value_type(key, mapped_type())); return 1; }
 
     /// @brief erase by iterator range (3)
-    void erase (iterator first, iterator last);
+    void erase (iterator first, iterator last)
+    { return _tree.erase(first, last); }
 
-    /// @todo
-    void swap (map & m);
+    void swap (map & m)
+    {
+        map tmp(m);
+        m = *this;
+        *this = tmp;
+    }
 
-    /// @todo
-   //  void clear ()
-   //  { erase(begin(), end()); }
+    void clear ()
+    { erase(begin(), end()); }
 
     /****** Observers *********************************************************/
 
@@ -233,13 +243,14 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     allocator_type get_allocator () const { return _alloc; }
 
-    map & operator= (const map & m);
+    map & operator= (const map & m)
+    { _tree = m._tree; return *this; }
 
     /// @note since the following operator is defined outside of `map` but still
     /// want to acces its private members, we declare it here as a `friend`.
     template <typename Key_, typename T_, typename Comp_, typename Alloc_>
-    friend bool operator== (map<Key_, T_, Comp_, Alloc_> & lhs,
-                            map<Key_, T_, Comp_, Alloc_> & rhs);
+    friend bool operator== (map<Key_, T_, Comp_, Alloc_> const & lhs,
+                            map<Key_, T_, Comp_, Alloc_> const & rhs);
 
 };
 
@@ -249,14 +260,24 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 /*                                                                            */
 /******************************************************************************/
 
-/// @todo add constness to lhs and rhs (then use const_iterators) -- cf rb_tree
+/// @note not possible to compare underlying tree since they are private and we
+///       not allowed to add public methods from stl spec.
 template <typename Key, typename T, typename Comp, typename Alloc>
-bool operator== (map<Key, T, Comp, Alloc> & lhs, map<Key, T, Comp, Alloc> & rhs)
-{ return lhs._tree == rhs._tree; }
+bool operator== (map<Key, T, Comp, Alloc> const & lhs,
+                 map<Key, T, Comp, Alloc> const & rhs)
+{
+    typename map<Key, T, Comp, Alloc>::const_iterator lit = lhs.begin();
+    typename map<Key, T, Comp, Alloc>::const_iterator rit = rhs.begin();
+    typename map<Key, T, Comp, Alloc>::const_iterator lite = lhs.end();
+    typename map<Key, T, Comp, Alloc>::const_iterator rite = rhs.end();
 
-/// @todo add constness to lhs and rhs (then use const_iterators) -- cf rb_tree
+    for (; lit != lite && rit != rite && *lit == *rit; lit++, rit++);
+    return (lit == lite && rit == rite);
+}
+
 template <typename Key, typename T, typename Comp, typename Alloc>
-bool operator!= (map<Key, T, Comp, Alloc> & lhs, map<Key, T, Comp, Alloc> & rhs)
+bool operator!= (map<Key, T, Comp, Alloc> const & lhs,
+                 map<Key, T, Comp, Alloc> const & rhs)
 { return !(lhs == rhs); }
 
 } // namespace

@@ -51,6 +51,7 @@ void node_test()
 
 /****** Debug *****************************************************************/
 
+/// @todo delete
 void debug()
 {
     {
@@ -149,6 +150,8 @@ void constructor_by_default_test()
 template <typename Tree>
 void constructor_by_copy_test()
 {
+    typename Tree::value_type i(1);
+    typename Tree::value_type j(2);
     {
         // from empty
         Tree a;
@@ -158,7 +161,8 @@ void constructor_by_copy_test()
     {
         // from non-empty
         Tree a;
-        a.insert(typename Tree::value_type());
+        a.insert(i);
+        a.insert(j);
         Tree b(a);
         assert(a == b);
     }
@@ -168,6 +172,8 @@ void constructor_by_copy_test()
 template <typename Tree>
 void constructor_by_iterator_range_test()
 {
+    typename Tree::value_type i(1);
+    typename Tree::value_type j(2);
     {
         // empty range
         Tree a;
@@ -177,7 +183,8 @@ void constructor_by_iterator_range_test()
     {
         // non-empty range
         Tree a;
-        a.insert(typename Tree::value_type());
+        a.insert(i);
+        a.insert(j);
         Tree b(a.begin(), a.end());
         assert(a == b);
     }
@@ -339,7 +346,7 @@ void insert_test()
     log("insert");
 }
 
-/// @todo erase cases not well tested
+/// @todo add more tests
 template <typename Tree>
 void erase_test()
 {
@@ -354,9 +361,23 @@ void erase_test()
     }
     {
         // by key
+        Tree a, b;
+        assert(a == b);
+        a.insert(typename Tree::value_type());
+        assert(a != b);
+        a.erase(typename Tree::value_type().key);
+        assert(a == b);
     }
     {
         // by iterator range
+        Tree a, b;
+        assert(a == b);
+        a.insert(typename Tree::value_type());
+        assert(a != b);
+        a.erase(a.begin(), a.begin());
+        assert(a != b);
+        a.erase(a.begin(), a.end());
+        assert(a == b);
     }
     log("erase");
 }
@@ -369,22 +390,78 @@ void modifiers_tests()
     erase_test<Tree>();
 }
 
+/****** Operators tests *******************************************************/
+
+template <typename Tree>
+void equal_test()
+{
+    /// @note This is important because right hand side Tree has to be const
+    { assert(Tree() == Tree()); }
+
+    {
+        Tree a, b;
+        typename Tree::key_type k(42);
+        typename Tree::key_type l(21);
+
+        assert(a == b);
+
+        a.insert(k);
+        b.insert(k);
+        assert(a == b);
+
+        a.insert(l);
+        b.insert(l);
+        assert(a == b);
+    }
+
+    log("operator==");
+}
+
+template <typename Tree>
+void not_equal_test()
+{
+    {
+        Tree a, b;
+        typename Tree::key_type k(42);
+        typename Tree::key_type l(21);
+
+        a.insert(k);
+        assert(a != b);
+        b.insert(k);
+
+        a.insert(l);
+        assert(a != b);
+        b.insert(l);
+    }
+
+    log("operator!=");
+}
+
+/// @todo
+template <typename Tree>
+void operators_tests()
+{
+    std::cout << "== Operators ==" << std::endl;
+    equal_test<Tree>();
+    not_equal_test<Tree>();
+}
+
 /****** Tree tests ************************************************************/
 
 template <typename T>
 void tree_test()
 {
     constructors_tests<ft::rb_tree<T>>();
-    capacity_tests<ft::rb_tree<T>>();
-    accessors_tests<ft::rb_tree<T>>();
-    modifiers_tests<ft::rb_tree<T>>();
+//    capacity_tests<ft::rb_tree<T>>();
+//    accessors_tests<ft::rb_tree<T>>();
+//    modifiers_tests<ft::rb_tree<T>>();
+//    operators_tests<ft::rb_tree<T>>();
 
     /// @todo
     // allocator_tests<ft::rb_tree<T>>();
-    // operators_tests<ft::rb_tree<T>>();
 
-    std::cout << "== Iterators ==" << std::endl;
-    iterator_test<ft::rb_tree<T>>();
+//    std::cout << "== Iterators ==" << std::endl;
+//    iterator_test<ft::rb_tree<T>>();
 }
 
 /****** Main ******************************************************************/
@@ -398,6 +475,7 @@ int main()
 //    max_test();
 
     tree_test<int>();
+    //tree_test<int const>();
 
     // everything below segfault
 

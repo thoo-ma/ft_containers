@@ -17,30 +17,20 @@
 /// \file ft_vector.hpp
 ///
 
-/****** TODO ******************************************************************/
-/*                                                                            */
-/*      - Bien templater les iterateurs en arguments de certaines fonctions   */
-/*      --> assert, assign, etc.                                              */
-/*      - Ne jamais set _capacity ou _size avant d'avoir appele allocate()    */
-/*      - Bien gerer les allocations et les exceptions                        */
-/*      - Prendre en compte `size_max`` pour jeter les exceptions appropriees */
-/*      - private: _allocate_and_copy() pour eviter les redites               */
-/*                                                                            */
-/******************************************************************************/
-
-/****** MAYBE *****************************************************************/
-/*                                                                            */
-/*      - Add some private functions like STL (like internal primitives for   */
-/*      public methods).                                                      */
-/*      Ex: _reallocate_and_copy(position, n, first, last)                    */
-/*      def: reallocate n * sizeof(T) at position and copy there values       */
-/*           inside [first,last)                                              */
-/*      - Use `_first` and `_finish` instead of `_size`                       */
-/*      - Why can we write `vector` instead of `vector<value_type>` ?         */
-/*      - Why can we access private variable of vector passed as arguments ?  */
-/*      - `val` vs `value`.                                                   */
-/*                                                                            */
-/******************************************************************************/
+/// @todo bien templater les iterateurs en arguments de certaines fonctions
+///       (assert, assign, etc.)
+/// @todo ne jamais set _capacity ou _size avant d'avoir appele allocate()
+/// @todo bien gerer les allocations et les exceptions
+/// @todo prendre en compte `size_max`` pour jeter les exceptions appropriees
+/// @todo private: _allocate_and_copy() pour eviter les redites
+/// @todo (?) add some private functions like STL (like internal primitives for
+///       public methods). ex: _reallocate_and_copy(position, n, first, last)
+///       def: reallocate n * sizeof(T) at position and copy there values
+///            inside [first,last)
+/// @todo (?) use `_first` and `_finish` instead of `_size`
+/// @todo (?) why can we write `vector` instead of `vector<value_type>`
+/// @todo (?) why can we access private variable of vector passed as arguments
+/// @todo (?) `val` vs `value`
 
 namespace ft {
 
@@ -642,7 +632,7 @@ class vector {
 /*                                                                            */
 /******************************************************************************/
 
-/// @todo ??
+/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator== (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 {
@@ -657,10 +647,12 @@ bool operator== (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 //    lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
+/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator!= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return !(lhs == rhs); }
 
+/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator< (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 {
@@ -668,14 +660,17 @@ bool operator< (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
     lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
+/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator> (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return rhs < lhs; }
 
+/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator<= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return !(lhs > rhs); }
 
+/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator>= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return !(lhs < rhs); }
