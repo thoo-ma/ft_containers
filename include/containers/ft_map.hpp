@@ -2,7 +2,7 @@
 #define FT_MAP_HPP 1
 
 #include <memory> // std::allocator
-#include <functional> // std::less
+#include <functional> // std::less (delete since into rb_tree.hpp)
 
 #include "ft_pair.hpp"
 #include "rb_tree.hpp"
@@ -43,24 +43,21 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     public:
 
-  //  typename rb_tree<value_type>::iterator iterator;
-  //  typename rb_tree<value_type>::const_iterator const_iterator;
-
-    // old
+    /// @note same semantic than tree for `operator *`
     typedef typename btree_type::iterator	            iterator;
     typedef typename btree_type::const_iterator         const_iterator;
     typedef typename btree_type::reverse_iterator       reverse_iterator;
     typedef typename btree_type::const_reverse_iterator const_reverse_iterator;
 
-    // new (test)
-  //  class iterator : public rb_tree<value_type>::iterator
-  //  { public: Key const & operator* () { return operator*()->key; } };
-
-  //  class const_iterator : public rb_tree<value_type>::const_iterator
-  //  { public: Key const & operator* () { return operator*()->key; } };
-
-  //  typedef ft::reverse_iterator<iterator>          reverse_iterator;
-  //  typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+    /// @note different semantic than tree for `operator *`
+//    class iterator : public rb_tree<value_type>::iterator
+//    { public: Key const & operator* () { return operator*()->key; } };
+//
+//    class const_iterator : public rb_tree<value_type>::const_iterator
+//    { public: Key const & operator* () { return operator*()->key; } };
+//
+//    typedef ft::reverse_iterator<iterator>          reverse_iterator;
+//    typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
     /**************************************************************************/
     /*                                                                        */
@@ -130,7 +127,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /****** Modifiers *********************************************************/
 
-    /// @todo remove
+    /// @todo ??
   //  void insert (value_type const & val)
   //  { return _tree.insert(_tree.root(), val); }
 
@@ -147,6 +144,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         {
             _tree.insert(val);
             return make_pair(iterator(find(val.first)), true);
+            //return make_pair(find(val.first), true);
         }
         return make_pair(find(val.first), false);
     }
@@ -186,8 +184,10 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /****** Observers *********************************************************/
 
+    /// @todo
     key_compare key_comp () const
     { return _comp; }
+    //{ return _comp(); }
 
     /// @todo
     //value_compare value_comp () const;
@@ -220,28 +220,83 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /****** Operations ********************************************************/
 
-    iterator find (const key_type & key)
-    { return iterator(_tree.find(value_type(key, mapped_type()))); }
+    /// @todo update following `operator*` and `operator->` iterator semantic
+    iterator find (key_type const & key)
+    {
+        iterator it = begin();
+        iterator ite = end();
 
-    const_iterator find (const key_type & key) const;
+        while (it != ite && it->first != key) it++;
+        //while (it != ite && it->key.first != key) it++;
+        return it;
+    }
 
-    size_type count (const key_type & key);
+    /// @todo update following `operator*` and `operator->` iterator semantic
+    const_iterator find (key_type const & key) const
+    {
+        const_iterator it = begin();
+        const_iterator ite = end();
 
-    iterator lower_bound (const key_type & key);
-    const_iterator lower_bound (const key_type & key) const;
+        while (it != ite && it->first != key) it++;
+        //while (it != ite && it->key.first != key) it++;
+        return it;
+    }
 
-    iterator upper_bound (const key_type & key);
-    const_iterator upper_bound (const key_type & key) const;
+    size_type count (key_type const & key)
+    { return find(key) == end() ? 0 : 1; }
+
+    /// @todo update following `operator*` and `operator->` iterator semantic
+    iterator lower_bound (key_type const & key)
+    {
+        iterator it = begin();
+        iterator ite = end();
+
+        while (it != ite && _comp(it->key.first, key)) it++;
+        return it;
+    }
+
+    /// @todo update following `operator*` and `operator->` iterator semantic
+    const_iterator lower_bound (key_type const & key) const
+    {
+        const_iterator it = begin();
+        const_iterator ite = end();
+
+        while (it != ite && _comp(it->key.first, key)) it++;
+        return it;
+    }
+
+    /// @todo update following `operator*` and `operator->` iterator semantic
+    iterator upper_bound (key_type const & key)
+    {
+        iterator it = begin();
+        iterator ite = end();
+
+        while (it != ite && !_comp(key, it->key.first)) it++;
+        return it;
+    }
+
+    /// @todo update following `operator*` and `operator->` iterator semantic
+    const_iterator upper_bound (key_type const & key) const
+    {
+        const_iterator it = begin();
+        const_iterator ite = end();
+
+        while (it != ite && !_comp(key, it->key.first)) it++;
+        return it;
+    }
 
     pair<iterator, iterator>
-    equal_range (const key_type & key);
+    equal_range (key_type const & key)
+    { return pair<iterator, iterator>(lower_bound(key), upper_bound(key)); }
 
     pair<const_iterator, const_iterator>
-    equal_range (const key_type & key) const;
+    equal_range (key_type const & key) const
+    { return pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key)); }
 
     /****** Miscellaneous *****************************************************/
 
-    allocator_type get_allocator () const { return _alloc; }
+    allocator_type get_allocator () const
+    { return _alloc; }
 
     map & operator= (const map & m)
     { _tree = m._tree; return *this; }

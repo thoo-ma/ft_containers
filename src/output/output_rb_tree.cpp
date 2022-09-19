@@ -452,10 +452,10 @@ template <typename T>
 void tree_test()
 {
     constructors_tests<ft::rb_tree<T>>();
-//    capacity_tests<ft::rb_tree<T>>();
-//    accessors_tests<ft::rb_tree<T>>();
-//    modifiers_tests<ft::rb_tree<T>>();
-//    operators_tests<ft::rb_tree<T>>();
+    capacity_tests<ft::rb_tree<T>>();
+    accessors_tests<ft::rb_tree<T>>();
+    modifiers_tests<ft::rb_tree<T>>();
+    operators_tests<ft::rb_tree<T>>();
 
     /// @todo
     // allocator_tests<ft::rb_tree<T>>();

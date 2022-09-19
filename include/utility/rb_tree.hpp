@@ -5,14 +5,15 @@
 #include <memory> // std::allocator
 #include <iostream> // std::ostream
 #include <fstream> // std::fstream
+#include <functional> // std::less
 
 #include "ft_iterator_base_types.hpp"
 #include "ft_reverse_iterator.hpp"
 
 /// @todo benchmark destructors execution time (prefer recursive one if possible)
 /// @todo handle allocator failure
-/// @todo use comp
 /// @todo unsupport duplicate nodes
+/// @todo (?) use comp
 /// @todo (?) inline function or macro to replace ternaries
 
 namespace ft {
@@ -109,11 +110,19 @@ class rb_tree
         rb_tree_iterator operator= (rb_tree_iterator const & it)
         { _data = it.data(); _sentinel_ptr = it.sentinel_ptr(); return *this; }
 
-       // key_type & operator* () const
-       // { return _data->key; }
+//        /// @todo
+        key_type const & operator* () const
+        { return _data->key; }
 
-        value_type & operator* () const
-        { return *_data; }
+//        /// @todo
+        key_type * operator-> () const
+        { return &_data->key; }
+
+//        value_type & operator* () const
+//        { return *_data; }
+//
+//        pointer operator-> () const
+//        { return _data; }
 
         bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
         {

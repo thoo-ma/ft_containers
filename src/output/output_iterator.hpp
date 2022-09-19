@@ -1,19 +1,18 @@
 #ifndef OUTPUT_ITERATOR_HPP
 #define OUTPUT_ITERATOR_HPP 1
 
-#include <vector>
+#include <map> // is_map
+#include <vector> // is_vector
 #include <cassert>
 //#include <iostream>
 #include <type_traits> // std::is_base_of
-//#include <stdexcept>
 
 #include "ft_type_traits.hpp"
 #include "ft_iterator_base_types.hpp"
 #include "../utils/colors.hpp" // put into log
-#include "output_iterator.hpp"
+#include "ft_map.hpp" // is_map
+#include "ft_vector.hpp" // is_vector
 
-//#include "ft_map.hpp"
-/// @todo make value_type instances templated to use this tests over map also
 /// @todo Type                     --> VariableName
 ///       -----------------------------------------
 ///       iterator                 --> it
@@ -25,10 +24,38 @@
 /// @todo Add `reverse_iterator_base_test()`.
 /// @todo README: say some about iterator and reverse iterator relationship.
 /// @todo Before testing make sure that `Container` has the following public.
-/// @todo methods: begin(), end(), rbegin(), rend().
+///       methods: begin(), end(), rbegin(), rend().
 ///       --> Otherwise, some tests will fail.
 /// @todo Make also sure that type `T` support some property-based tests.
 /// @todo Add tests to increment and decrement out of container boundaries.
+
+/****** Value type utilities **************************************************/
+
+template <typename Container>
+struct is_vector : std::false_type { };
+
+template <typename T>
+struct is_vector<ft::vector<T> > : std::true_type { };
+
+template <typename T>
+struct is_vector<std::vector<T> > : std::true_type { };
+
+template <typename Container>
+struct is_map : std::false_type { };
+
+template <typename T, typename U>
+struct is_map<ft::map<T,U> > : std::true_type { };
+
+template <typename T, typename U>
+struct is_map<std::map<T,U> > : std::true_type { };
+
+template <typename Container>
+typename std::enable_if<is_vector<Container>::value, typename Container::value_type>::type
+value_type (int x) { return typename Container::value_type(x); }
+
+template <typename Container>
+typename std::enable_if<is_map<Container>::value, typename Container::value_type>::type
+value_type (int x) { return typename Container::value_type(x,x); }
 
 /****** Log *******************************************************************/
 
@@ -110,17 +137,19 @@ void iterator_constructor_by_copy_test()
     std::cout << "constructor by copy " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @note vector case
 template <typename Container>
-void iterator_constructor_by_pointer_test()
+typename std::enable_if<is_vector<Container>::value, void>::type
+iterator_constructor_by_pointer_test()
 {
-    typename Container::value_type  i(42);
+    typename Container::value_type i = value_type<Container>(21);
     typename Container::pointer     p = &i;
 
     { typename Container::iterator	        it(p); }
     { typename Container::const_iterator    it(p); }
 
-    // the following should not compile -- we get this behavior by
-    // adding `explicit` qualifier to iterator_base constructor by pointer
+    // The following should not compile. We get this behavior by adding
+    // `explicit` qualifier to iterator_base constructor by pointer.
 
     // { typename Container::reverse_iterator	        it(p); }
     // { typename Container::const_reverse_iterator     it(p); }
@@ -128,6 +157,13 @@ void iterator_constructor_by_pointer_test()
     std::cout << "constructor by pointer " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @note map case
+template <typename Container>
+typename std::enable_if<is_map<Container>::value, void>::type
+iterator_constructor_by_pointer_test()
+{ }
+
+/// @todo problem with map (iterator constructor by pointer)
 /// @note cf. `is_assignable` vs `is_copy_assignable`.
 /// Seems to be a c++11 thing (cf. also the  `= delete` functionnality).
 template <typename Container>
@@ -135,39 +171,42 @@ void iterator_assignation_test()
 {
     {
         // it = it
-        typename Container::value_type  i(42);
-        typename Container::pointer     p = &i;
-
-        typename Container::iterator    a;
-        typename Container::iterator    b(p);
-
-        assert(a != b);
-        a = b;
-        assert(a == b);
+//        typename Container::value_type i = value_type<Container>(42);
+//   //     typename Container::value_type  i(42);
+//        typename Container::pointer     p = &i;
+//
+//        typename Container::iterator    a;
+//        typename Container::iterator    b(p);
+//
+//        assert(a != b);
+//        a = b;
+//        assert(a == b);
     }
     {
         // const_it = const_it
-        typename Container::value_type      i(42);
-        typename Container::pointer         p = &i;
+    //    typename Container::value_type i = value_type<Container>(42);
+    //    //typename Container::value_type      i(42);
+    //    typename Container::pointer         p = &i;
 
-        typename Container::const_iterator  a;
-        typename Container::const_iterator  b(p);
+    //    typename Container::const_iterator  a;
+    //    typename Container::const_iterator  b(p);
 
-        assert(a != b);
-        a = b;
-        assert(a == b);
+    //    assert(a != b);
+    //    a = b;
+    //    assert(a == b);
     }
     {
         // const_it = it
-        typename Container::value_type      i(42);
-        typename Container::pointer         p = &i;
+    //    typename Container::value_type i = value_type<Container>(42);
+    //    //typename Container::value_type      i(42);
+    //    typename Container::pointer         p = &i;
 
-        typename Container::const_iterator  a;
-        typename Container::iterator	    b(p);
+    //    typename Container::const_iterator  a;
+    //    typename Container::iterator	    b(p);
 
-        assert(a != b);
-        a = b;
-        assert(a == b);
+    //    assert(a != b);
+    //    a = b;
+    //    assert(a == b);
     }
     {
         // it = const_it -- should not compile
@@ -189,16 +228,17 @@ void iterator_assignation_test()
     }
     {
         // rev_it = rev_it
-        typename Container::value_type          i(42);
-        typename Container::pointer             p = &i;
+    //    typename Container::value_type i = value_type<Container>(42);
+    //    //typename Container::value_type          i(42);
+    //    typename Container::pointer             p = &i;
 
-        typename Container::iterator            a(p);
-        typename Container::reverse_iterator    b(a);
-        typename Container::reverse_iterator    c;
+    //    typename Container::iterator            a(p);
+    //    typename Container::reverse_iterator    b(a);
+    //    typename Container::reverse_iterator    c;
 
-        assert(c != b);
-        c = b;
-        assert(c == b);
+    //    assert(c != b);
+    //    c = b;
+    //    assert(c == b);
     }
     {
         // rev_it = const_rev_it -- should not compile
@@ -220,29 +260,31 @@ void iterator_assignation_test()
     }
     {
         // const_rev_it = rev_it
-        typename Container::value_type              i(42);
-        typename Container::pointer                 p = &i;
+    //    typename Container::value_type i = value_type<Container>(42);
+    //    //typename Container::value_type              i(42);
+    //    typename Container::pointer                 p = &i;
 
-        typename Container::iterator                a(p);
-        typename Container::reverse_iterator        b(a);
-        typename Container::const_reverse_iterator	c;
+    //    typename Container::iterator                a(p);
+    //    typename Container::reverse_iterator        b(a);
+    //    typename Container::const_reverse_iterator	c;
 
-        assert(c != b);
-        c = b;
-        assert(c == b);
+    //    assert(c != b);
+    //    c = b;
+    //    assert(c == b);
     }
     {
         // const_rev_it = const_rev_it
-        typename Container::value_type              i(42);
-        typename Container::pointer                 p = &i;
+       // typename Container::value_type i = value_type<Container>(42);
+        //typename Container::value_type              i(42);
+        //typename Container::pointer                 p = &i;
 
-        typename Container::iterator                a(p);
-        typename Container::const_reverse_iterator	b(a);
-        typename Container::const_reverse_iterator	c;
+        //typename Container::iterator                a(p);
+        //typename Container::const_reverse_iterator	b(a);
+        //typename Container::const_reverse_iterator	c;
 
-        assert(c != b);
-        c = b;
-        assert(c == b);
+        //assert(c != b);
+        //c = b;
+        //assert(c == b);
     }
     std::cout << "assignation " << GREEN << "OK" << RESET << std::endl;
 }
@@ -250,10 +292,13 @@ void iterator_assignation_test()
 template <typename Container>
 void iterator_increment_test()
 {
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
+
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+//    typename Container::value_type a(21);
+//    typename Container::value_type b(42);
 
     c.insert(c.begin(), b);
     c.insert(c.begin(), a);
@@ -333,6 +378,186 @@ void iterator_increment_test()
 
 /****** Input iterator test ***************************************************/
 
+template <typename Container>
+void iterator_equal_test_constructed_by_default()
+{
+    {
+        // it == it
+        typename Container::iterator a;
+        typename Container::iterator b;
+        assert(a == b);
+        assert(b == a);
+    }
+    {
+        // it == const_it && const_it == it
+        typename Container::iterator	     a;
+        typename Container::const_iterator   b;
+        assert(a == b);
+        assert(b == a);
+    }
+    {
+        // const_it == const_it
+        typename Container::const_iterator   a;
+        typename Container::const_iterator   b;
+        assert(a == b);
+        assert(b == a);
+    }
+}
+
+template <typename Container>
+void iterator_non_equal_test_constructed_by_default()
+{
+    {
+        // it != it
+        typename Container::iterator a;
+        typename Container::iterator b;
+        assert(!(a != b));
+        assert(!(b != a));
+    }
+    {
+        // it != const_it
+        // const_it != it
+        typename Container::iterator	     a;
+        typename Container::const_iterator   b;
+        assert(!(a != b));
+        assert(!(b != a));
+    }
+    {
+        // const_it != const_it
+        typename Container::const_iterator   a;
+        typename Container::const_iterator   b;
+        assert(!(a != b));
+        assert(!(b != a));
+    }
+}
+
+/// @note vector case
+template <typename Container>
+typename std::enable_if<is_vector<Container>::value, void>::type
+iterator_equal_test_constructed_by_pointer()
+{
+    typename Container::value_type i = value_type<Container>(21);
+    typename Container::value_type * p = &i;
+    {
+        // it == it
+        typename Container::iterator a(p);
+        typename Container::iterator b(p);
+        assert(a == b);
+        assert(b == a);
+    }
+    {
+        // it == const_it && const_it == it
+        typename Container::iterator	    a(p);
+        typename Container::const_iterator  b(p);
+        assert(a == b);
+        assert(b == a);
+    }
+    {
+        // const_it == const_it
+        typename Container::const_iterator  a(p);
+        typename Container::const_iterator  b(p);
+        assert(a == b);
+        assert(b == a);
+    }
+}
+
+/// @note map case
+template <typename Container>
+typename std::enable_if<is_map<Container>::value, void>::type
+iterator_equal_test_constructed_by_pointer()
+{ }
+
+/// @note vector case
+template <typename Container>
+typename std::enable_if<is_vector<Container>::value, void>::type
+iterator_non_equal_test_constructed_by_pointer()
+{
+    typename Container::value_type i = value_type<Container>(42);
+    typename Container::value_type j = value_type<Container>(42);
+
+    typename Container::value_type * p = &i;
+    typename Container::value_type * q = &j;
+    {
+        // it != it
+        typename Container::iterator a(p);
+        typename Container::iterator b(q);
+        assert(a != b);
+        assert(b != a);
+    }
+    {
+        // it != const_it
+        // const_it != it
+        typename Container::iterator	    a(p);
+        typename Container::const_iterator  b(q);
+        assert(a != b);
+        assert(b != a);
+    }
+    {
+        // const_it != const_it
+        typename Container::const_iterator	a(p);
+        typename Container::const_iterator  b(q);
+        assert(a != b);
+        assert(b != a);
+    }
+}
+
+/// @note map case
+template <typename Container>
+typename std::enable_if<is_map<Container>::value, void>::type
+iterator_non_equal_test_constructed_by_pointer()
+{ }
+
+template <typename Container>
+void iterator_equal_test_constructed_by_copy()
+{
+    Container c;
+
+    typename Container::value_type i = value_type<Container>(21);
+    typename Container::value_type j = value_type<Container>(42);
+
+    c.insert(c.begin(), i);
+    c.insert(++(c.begin()), j);
+
+    typename Container::iterator a = c.begin();
+    typename Container::iterator b(a);
+
+    assert(a == b);
+    assert(b == a);
+    assert(a == c.begin());
+    assert(b == c.begin());
+    assert(c.begin() == c.begin());
+    assert(c.end() == c.end());
+
+    (void)i;
+    (void)j;
+}
+
+template <typename Container>
+void iterator_non_equal_test_constructed_by_copy()
+{
+    Container c1;
+    Container c2;
+
+    typename Container::value_type i = value_type<Container>(42);
+    typename Container::value_type j = value_type<Container>(42);
+
+    c1.insert(c1.begin(), i);
+    c1.insert(++(c1.begin()), j);
+
+    c2.insert(c2.begin(), i);
+    c2.insert(++(c2.begin()), j);
+
+    typename Container::iterator a = c1.begin();
+    typename Container::iterator b = c2.begin();
+
+    assert(a != b);
+    assert(a != c2.begin());
+    assert(b != c1.begin());
+    assert(c1.begin() != c2.begin());
+    /// @todo
+    //assert(c1.end() != c2.end());
+}
+
 /// @todo add reverse iterators
 /// @todo clear distinction between:
 ///       - test constructed by copy
@@ -340,164 +565,24 @@ void iterator_increment_test()
 template <typename Container>
 void iterator_equal_test()
 {
-    {
-        // constructed by defalut
-        {
-            // it == it
-            typename Container::iterator a;
-            typename Container::iterator b;
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // it == const_it && const_it == it
-            typename Container::iterator	     a;
-            typename Container::const_iterator   b;
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // const_it == const_it
-            typename Container::const_iterator   a;
-            typename Container::const_iterator   b;
-            assert(a == b);
-            assert(b == a);
-        }
-    }
-    {
-        // constructed by pointer
-        typename Container::value_type i(42);
-        typename Container::value_type * p = &i;
-        {
-            // it == it
-            typename Container::iterator a(p);
-            typename Container::iterator b(p);
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // it == const_it && const_it == it
-            typename Container::iterator	    a(p);
-            typename Container::const_iterator  b(p);
-            assert(a == b);
-            assert(b == a);
-        }
-        {
-            // const_it == const_it
-            typename Container::const_iterator  a(p);
-            typename Container::const_iterator  b(p);
-            assert(a == b);
-            assert(b == a);
-        }
-    }
-    {
-        // constructed by copy
-        Container c;
+    iterator_equal_test_constructed_by_default<Container>();
+    iterator_equal_test_constructed_by_pointer<Container>();
+    iterator_equal_test_constructed_by_copy<Container>();
 
-        typename Container::value_type i(21);
-        typename Container::value_type j(42);
-
-        c.insert(c.begin(), i);
-        c.insert(++(c.begin()), j);
-
-        typename Container::iterator a = c.begin();
-        typename Container::iterator b(a);
-
-        assert(a == b);
-        assert(b == a);
-        assert(a == c.begin());
-        assert(b == c.begin());
-        assert(c.begin() == c.begin());
-        assert(c.end() == c.end());
-
-        (void)i;
-        (void)j;
-    }
     std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
 }
 
 /// @todo add reverse iterators
+/// @todo clear distinction between:
+///       - test constructed by copy
+///       - test constructed by container public method
 template <typename Container>
 void iterator_not_equal_test()
 {
-    {
-        // constructed by defalut
-        {
-            // it != it
-            typename Container::iterator a;
-            typename Container::iterator b;
-            assert(!(a != b));
-            assert(!(b != a));
-        }
-        {
-            // it != const_it
-            // const_it != it
-            typename Container::iterator	     a;
-            typename Container::const_iterator   b;
-            assert(!(a != b));
-            assert(!(b != a));
-        }
-        {
-            // const_it != const_it
-            typename Container::const_iterator   a;
-            typename Container::const_iterator   b;
-            assert(!(a != b));
-            assert(!(b != a));
-        }
-    }
-    {
-        // constructed by pointer
-        typename Container::value_type i(42);
-        typename Container::value_type j(42);
+    iterator_non_equal_test_constructed_by_default<Container>();
+    iterator_non_equal_test_constructed_by_pointer<Container>();
+    iterator_non_equal_test_constructed_by_copy<Container>();
 
-        typename Container::value_type * p = &i;
-        typename Container::value_type * q = &j;
-        {
-            // it != it
-            typename Container::iterator a(p);
-            typename Container::iterator b(q);
-            assert(a != b);
-            assert(b != a);
-        }
-        {
-            // it != const_it
-            // const_it != it
-            typename Container::iterator	    a(p);
-            typename Container::const_iterator  b(q);
-            assert(a != b);
-            assert(b != a);
-        }
-        {
-            // const_it != const_it
-            typename Container::const_iterator	a(p);
-            typename Container::const_iterator  b(q);
-            assert(a != b);
-            assert(b != a);
-        }
-    }
-    {
-        // constructed by container public methods -- here `begin()`
-        Container c1;
-        Container c2;
-
-        typename Container::value_type i(21);
-        typename Container::value_type j(42);
-
-        c1.insert(c1.begin(), i);
-        c1.insert(++(c1.begin()), j);
-
-        c2.insert(c2.begin(), i);
-        c2.insert(++(c2.begin()), j);
-
-        typename Container::iterator a = c1.begin();
-        typename Container::iterator b = c2.begin();
-
-        assert(a != b);
-        assert(a != c2.begin());
-        assert(b != c1.begin());
-        assert(c1.begin() != c2.begin());
-        //assert(c1.end() != c2.end()); // TODO
-    }
     std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
 }
 
@@ -516,144 +601,174 @@ input_iterator_test() { }
 /****** Output iterator test **************************************************/
 
 template <typename Container>
+void iterator_dereference_test_constructed_by_default()
+{
+    // segfault
+    // typename Container::iterator a;
+    // assert(*a);
+}
+
+/// @todo add reverse iterators
+/// @note vector case
+template <typename Container>
+typename std::enable_if<is_vector<Container>::value, void>::type
+iterator_dereference_test_constructed_by_pointer()
+{
+    typename Container::value_type i = value_type<Container>(42);
+    typename Container::value_type * p = &i;
+    {
+        // it
+        typename Container::iterator a(p);
+        assert(*a == *p);
+        assert(*a ==  i);
+    }
+    {
+        // const_it
+        typename Container::const_iterator a(p);
+        assert(*a == *p);
+        assert(*a ==  i);
+    }
+    {
+        // rev_it
+    }
+    {
+        // const_rev_it
+    }
+}
+
+/// @note map case
+template <typename Container>
+typename std::enable_if<is_map<Container>::value, void>::type
+iterator_dereference_test_constructed_by_pointer()
+{ }
+
+/// @todo add reverse iterators
+template <typename Container>
+void iterator_dereference_test_constructed_by_container()
+{
+    Container c;
+
+    typename Container::value_type i = value_type<Container>(21);
+    typename Container::value_type j = value_type<Container>(42);
+
+    c.insert(c.begin(), i);
+    c.insert(++(c.begin()), j);
+    {
+        // it
+        typename Container::iterator a = c.begin();
+        typename Container::iterator b(a);
+
+        assert(*a == *b);
+        assert(*a == *(c.begin()));
+        assert(*b == *(c.begin()));
+        assert(*(c.begin()) == *(c.begin()));
+    }
+    {
+        // const_it
+        typename Container::const_iterator a = c.begin();
+        typename Container::const_iterator b(a);
+
+        assert(*a == *b);
+        assert(*a == *(c.begin()));
+        assert(*b == *(c.begin()));
+        assert(*(c.begin()) == *(c.begin()));
+    }
+    {
+        // rev_it
+    }
+    {
+        // const_rev_it
+    }
+}
+
+template <typename Container>
 void iterator_dereference_test()
 {
-    {
-        // segfault
-        // typename Container::iterator a;
-        // assert(*a);
-    }
-    {
-        // from pointer
-        typename Container::value_type i(42);
-        typename Container::value_type * p = &i;
-        {
-            // it
-            typename Container::iterator a(p);
-            assert(*a == *p);
-            assert(*a ==  i);
-        }
-        {
-            // const_it
-            typename Container::const_iterator a(p);
-            assert(*a == *p);
-            assert(*a ==  i);
-        }
-        {
-            // TODO
-            // rev_it
-        }
-        {
-            // TODO
-            // const_rev_it
-        }
-    }
-    {
-        // from container
-        Container c;
+    iterator_dereference_test_constructed_by_default<Container>();
+    iterator_dereference_test_constructed_by_pointer<Container>();
+    iterator_dereference_test_constructed_by_container<Container>();
 
-        typename Container::value_type i(21);
-        typename Container::value_type j(42);
-
-        c.insert(c.begin(), i);
-        c.insert(++(c.begin()), j);
-        {
-            // it
-            typename Container::iterator a = c.begin();
-            typename Container::iterator b(a);
-
-            assert(*a == *b);
-            assert(*a == *(c.begin()));
-            assert(*b == *(c.begin()));
-            assert(*(c.begin()) == *(c.begin()));
-        }
-        {
-            // const_it
-            typename Container::const_iterator a = c.begin();
-            typename Container::const_iterator b(a);
-
-            assert(*a == *b);
-            assert(*a == *(c.begin()));
-            assert(*b == *(c.begin()));
-            assert(*(c.begin()) == *(c.begin()));
-        }
-        {
-            // TODO
-            // rev_it
-        }
-        {
-            // TODO
-            // const_rev_it
-        }
-    }
     std::cout << "operator* " << GREEN << "OK" << RESET << std::endl;
+}
+
+/// @todo add reverse iterators
+/// @note vector case
+template <typename Container>
+typename std::enable_if<is_vector<Container>::value, void>::type
+iterator_dereference_pointer_test_constructed_by_pointer()
+{
+    typename Container::value_type i = value_type<Container>(42);
+    typename Container::value_type * p = &i;
+    {
+        // it
+        typename Container::iterator a(p);
+        assert(a.operator->() == p);
+    }
+    {
+        // const_it
+        typename Container::const_iterator a(p);
+        assert(a.operator->() == p);
+    }
+    {
+        // rev_it
+    }
+    {
+        // const_rev_it
+    }
+}
+
+/// @note map case
+template <typename Container>
+typename std::enable_if<is_map<Container>::value, void>::type
+iterator_dereference_pointer_test_constructed_by_pointer()
+{ }
+
+/// @todo add reverse iterators
+template <typename Container>
+void iterator_dereference_pointer_test_constructed_by_container()
+{
+    Container c;
+
+    typename Container::value_type i = value_type<Container>(21);
+    typename Container::value_type j = value_type<Container>(42);
+
+    c.insert(c.begin(), i);
+    c.insert(++(c.begin()), j);
+    {
+        // it
+        typename Container::iterator a = c.begin();
+        typename Container::iterator b(a);
+
+        assert(a.operator->() == &(*b));
+        assert(a.operator->() == &(*(c.begin())));
+        assert(b.operator->() == &(*(c.begin())));
+        assert(c.begin().operator->() == &(*c.begin()));
+    }
+    {
+        // const_it
+        typename Container::const_iterator a = c.begin();
+        typename Container::const_iterator b(a);
+
+        assert(a.operator->() == &(*b));
+        assert(a.operator->() == &(*(c.begin())));
+        assert(b.operator->() == &(*(c.begin())));
+        assert(c.begin().operator->() == &(*c.begin()));
+    }
+    {
+        // rev_it
+    }
+    {
+        // const_rev_it
+    }
 }
 
 /// @todo test with a `value_type` callable public method.
 template <typename Container>
 void iterator_dereference_pointer_test()
 {
-    {
-        // from pointer
-        typename Container::value_type i(42);
-        typename Container::value_type * p = &i;
-        {
-            // it
-            typename Container::iterator a(p);
-            assert(a.operator->() == p);
-        }
-        {
-            // const_it
-            typename Container::const_iterator a(p);
-            assert(a.operator->() == p);
-        }
-        {
-            // TODO
-            // rev_it
-        }
-        {
-            // TODO
-            // const_rev_it
-        }
-    }
-    {
-        // from container
-        Container c;
+    iterator_dereference_pointer_test_constructed_by_pointer<Container>();
+    iterator_dereference_pointer_test_constructed_by_container<Container>();
 
-        typename Container::value_type i(21);
-        typename Container::value_type j(42);
-
-        c.insert(c.begin(), i);
-        c.insert(++(c.begin()), j);
-        {
-            // it
-            typename Container::iterator a = c.begin();
-            typename Container::iterator b(a);
-
-            assert(a.operator->() == &(*b));
-            assert(a.operator->() == &(*(c.begin())));
-            assert(b.operator->() == &(*(c.begin())));
-            assert(c.begin().operator->() == &(*c.begin()));
-        }
-        {
-            // const_it
-            typename Container::const_iterator a = c.begin();
-            typename Container::const_iterator b(a);
-
-            assert(a.operator->() == &(*b));
-            assert(a.operator->() == &(*(c.begin())));
-            assert(b.operator->() == &(*(c.begin())));
-            assert(c.begin().operator->() == &(*c.begin()));
-        }
-        {
-            // TODO
-            // rev_it
-        }
-        {
-            // TODO
-            // const_rev_it
-        }
-    }
     std::cout << "operator-> " << GREEN << "OK" << RESET << std::endl;
 }
 
@@ -662,7 +777,7 @@ typename ft::enable_if<B>::type
 output_iterator_test()
 {
     iterator_dereference_test<Container>();
-//    iterator_dereference_pointer_test<Container>();
+    iterator_dereference_pointer_test<Container>();
 }
 
 template <bool B, typename Container>
@@ -686,8 +801,8 @@ void iterator_decrement_test()
 {
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     // Iterators supporting `--` operator must also support `++` operator.
     // But they don't need to support `+` operator.
@@ -786,9 +901,9 @@ void iterator_addition_test()
 {
     Container ctn;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
-    typename Container::value_type c(55);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
+    typename Container::value_type c = value_type<Container>(55);
 
     ctn.insert(ctn.begin(), a);
     ctn.insert(++(ctn.begin()), b);
@@ -854,9 +969,9 @@ void iterator_substraction_test()
 {
     Container ctn;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
-    typename Container::value_type c(55);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
+    typename Container::value_type c = value_type<Container>(55);
 
     ctn.insert(ctn.begin(), a);
     ctn.insert(++(ctn.begin()), b);
@@ -1025,8 +1140,8 @@ void iterator_less_than_test()
 {
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     c.insert(c.begin(), a);
     c.insert(++(c.begin()), b);
@@ -1131,8 +1246,8 @@ void iterator_greather_than_test()
 {
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     c.insert(c.begin(), a);
     c.insert(++(c.begin()), b);
@@ -1220,8 +1335,8 @@ void iterator_less_than_or_equal_test()
 {
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     c.insert(c.begin(), a);
     c.insert(++(c.begin()), b);
@@ -1326,8 +1441,8 @@ void iterator_greather_than_or_equal_test()
 {
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     c.insert(c.begin(), a);
     c.insert(++(c.begin()), b);
@@ -1432,8 +1547,8 @@ void iterator_add_then_assign_test()
 {
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     c.insert(c.begin(), a);
     c.insert(++(c.begin()), b);
@@ -1479,8 +1594,8 @@ void iterator_sub_then_assign_test()
 {
     Container c;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     c.insert(c.begin(), a);
     c.insert(++(c.begin()), b);
@@ -1526,9 +1641,9 @@ void iterator_brackets_operator_test()
 {
     Container ctn;
 
-    typename Container::value_type a(21);
-    typename Container::value_type b(42);
-    typename Container::value_type c(55);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
+    typename Container::value_type c = value_type<Container>(55);
 
     ctn.insert(ctn.begin(), a);
     ctn.insert(++(ctn.begin()), b);
@@ -1601,21 +1716,12 @@ random_access_iterator_test() { }
 
 /****** All iterator tests ****************************************************/
 
-//template <typename Container>
-//typename Container::value_type get_value ()
-//{ return typename Container::value_type(); }
-
-//template <typename T, typename U>
-//typename ft::map<T,U>::value_type get_value<ft::map<T,U>> ()
-//{ return typename ft::map<T,U>::value_type(); }
-
 template <typename Container>
 void iterator_test()
 {
-
-//    static typename Container::value_type i = get_value<Container>(1);
-//    static typename Container::value_type j = get_value<Container>(2);
-//    static typename Container::value_type k = get_value<Container>(3);
+//    static typename Container::value_type i = value<Container>(1);
+//    static typename Container::value_type j = value<Container>(2);
+//    static typename Container::value_type k = value<Container>(3);
 
     /// @note Since we can't template a namespace, we will use the `||` operator
     /// to match iterator tag for both `std` and `ft` based containers. There
@@ -1649,46 +1755,46 @@ void iterator_test()
 
     /****** Output iterator test **********************************************/
 
-//    typedef typename  ft::output_iterator_tag    ft_output_tag;
-//    typedef typename std::output_iterator_tag   std_output_tag;
+    typedef typename  ft::output_iterator_tag    ft_output_tag;
+    typedef typename std::output_iterator_tag   std_output_tag;
 
-//    output_iterator_test<
-//    std::is_base_of< ft_output_tag, iterator_category>::value ||
-//    std::is_base_of<std_output_tag, iterator_category>::value, Container
-//    >();
+    output_iterator_test<
+    std::is_base_of< ft_output_tag, iterator_category>::value ||
+    std::is_base_of<std_output_tag, iterator_category>::value, Container
+    >();
 
-    /// @note Yes this is shit. Hopefully temporary.
-//    output_iterator_test<true, Container>();
+  /// @note Yes this is shit. Hopefully temporary.
+    output_iterator_test<true, Container>();
 
-    /****** Forward iterator test *********************************************/
+  /****** Forward iterator test *********************************************/
 
-//    typedef typename  ft::forward_iterator_tag   ft_forward_tag;
-//    typedef typename std::forward_iterator_tag  std_forward_tag;
+    typedef typename  ft::forward_iterator_tag   ft_forward_tag;
+    typedef typename std::forward_iterator_tag  std_forward_tag;
 
-//    forward_iterator_test<
-//    std::is_base_of< ft_forward_tag, iterator_category>::value ||
-//    std::is_base_of<std_forward_tag, iterator_category>::value, Container
-//    >();
+    forward_iterator_test<
+    std::is_base_of< ft_forward_tag, iterator_category>::value ||
+    std::is_base_of<std_forward_tag, iterator_category>::value, Container
+    >();
 
-    /****** Bidirectional iterator test ***************************************/
+  /****** Bidirectional iterator test ***************************************/
 
-//    typedef typename  ft::bidirectional_iterator_tag     ft_bidirectional_tag;
-//    typedef typename std::bidirectional_iterator_tag    std_bidirectional_tag;
+    typedef typename  ft::bidirectional_iterator_tag     ft_bidirectional_tag;
+    typedef typename std::bidirectional_iterator_tag    std_bidirectional_tag;
 
-//    bidirectional_iterator_test<
-//    std::is_base_of< ft_bidirectional_tag, iterator_category>::value ||
-//    std::is_base_of<std_bidirectional_tag, iterator_category>::value, Container
-//    >();
+    bidirectional_iterator_test<
+    std::is_base_of< ft_bidirectional_tag, iterator_category>::value ||
+    std::is_base_of<std_bidirectional_tag, iterator_category>::value, Container
+    >();
 
-    /****** Random access iterator test ***************************************/
+  /****** Random access iterator test ***************************************/
 
-//    typedef typename  ft::random_access_iterator_tag     ft_random_access_tag;
-//    typedef typename std::random_access_iterator_tag    std_random_access_tag;
+    typedef typename  ft::random_access_iterator_tag     ft_random_access_tag;
+    typedef typename std::random_access_iterator_tag    std_random_access_tag;
 
-//    random_access_iterator_test<
-//    std::is_base_of< ft_random_access_tag, iterator_category>::value ||
-//    std::is_base_of<std_random_access_tag, iterator_category>::value, Container
-//    >();
+    random_access_iterator_test<
+    std::is_base_of< ft_random_access_tag, iterator_category>::value ||
+    std::is_base_of<std_random_access_tag, iterator_category>::value, Container
+    >();
 
 }
 

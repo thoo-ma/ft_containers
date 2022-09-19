@@ -59,6 +59,7 @@ inline void log(std::string s)
 
 /****** Constructors test *****************************************************/
 
+/// @todo test max_sixe()
 template <typename Vector>
 void constructor_by_default_test()
 {
@@ -67,11 +68,12 @@ void constructor_by_default_test()
     assert(a.empty());
     assert(a.size() == 0);
     assert(a.capacity() == 0);
-    //assert(a.max_size() == 0); // TODO
+    //assert(a.max_size() == 0);
 
     log("constructor by default");
 }
 
+/// @todo test max_sixe()
 template <typename Vector>
 void constructor_by_fill_test()
 {
@@ -81,7 +83,7 @@ void constructor_by_fill_test()
 
         assert(a.size() == 10);
         assert(a.capacity() == 10);
-        //assert(a.max_size() == 0); // TODO
+        //assert(a.max_size() == 0);
 
         log("constructor by fill (without value)");
     }
@@ -91,7 +93,7 @@ void constructor_by_fill_test()
 
         assert(a.size() == 10);
         assert(a.capacity() == 10);
-        //assert(a.max_size() == 0); // TODO
+        //assert(a.max_size() == 0);
 
         log("constructor by fill (with value)");
     }
@@ -166,6 +168,7 @@ void constructors_tests()
 
 /****** Allocator test ********************************************************/
 
+/// @todo
 template <typename Vector>
 void get_allocator_test()
 {
@@ -175,7 +178,7 @@ void get_allocator_test()
     assert(v.get_allocator() == std::allocator<typename Vector::value_type>());
     assert(v.get_allocator() == std::allocator<Foo>());
 
-    // TODO -- move this into traits test suite
+    /// @todo move this into traits test suite
     assert((std::is_same<
                 typename Vector::allocator_type::value_type,
                 typename Vector::value_type
@@ -271,6 +274,7 @@ void capacity_test()
     std::cout << "capacity " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @todo
 template <typename Vector>
 void reserve_test()
 {
@@ -297,10 +301,8 @@ void reserve_test()
             assert(a.capacity() == 11);
         } catch (...) { /* log */ }
 
-        // TODO
-        // With stl, since `size_type` is unsigned,
-        // -1 would be converted into some big number.
-        // Then `reserve` would throw an `std::length_error`.
+        /// @note with stl, since `size_type` is unsigned, -1 would be converted
+        /// into some big number. Then `reserve` would throw `std::length_error`
     //    try { a.reserve(-1); }
     //    catch (...) { /* log */ }
     //    assert(a.capacity() == 11);
@@ -323,8 +325,8 @@ void capacity_tests()
     capacity_test<std::vector<T>>();
     capacity_test< ft::vector<T>>();
 
-    reserve_test<std::vector<T>>(); // TODO
-    reserve_test< ft::vector<T>>(); // TODO
+    reserve_test<std::vector<T>>();
+    reserve_test< ft::vector<T>>();
 }
 
 /****** Accessors test ********************************************************/
@@ -544,11 +546,11 @@ void clear_test()
     std::cout << "clear " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @todo try with different values (fill with push back)
+/// @todo maybe add some tricky cases like overflow size or capacity
 template <typename Vector>
 void erase_test()
 {
-    // TODO try with different values (fill with push back)
-    // TODO maybe add some tricky cases like overflow size or capacity
     {
         // erase by position
         Vector a(21, 42);
@@ -633,13 +635,12 @@ void erase_test()
     std::cout << "erase " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @todo add tests with reallocations
+/// @todo add tests like nested or invalid intervals
+/// @todo add tests with differents values with push back
 template <typename Vector>
 void insert_test()
 {
-    // TODO
-    // - add tests with reallocations
-    // - add tests like nested or invalid intervals
-    // - add tests with differents values with push back
     // single element (1)
     {
         {
@@ -736,11 +737,10 @@ void insert_test()
     }
 }
 
+/// @todo (?) add more tests
 template <typename Vector>
 void push_back_test()
 {
-    // TODO
-    // more tests ?
     {
         // with enough capacity
         Vector v;
@@ -768,11 +768,10 @@ void push_back_test()
     std::cout << "push_back() " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @todo (?) add more tests
 template <typename Vector>
 void pop_back_test()
 {
-    // TODO
-    // more tests ?
     {
         // empty vector
         Vector().pop_back();
@@ -1012,11 +1011,11 @@ void modifiers_tests()
     clear_test<std::vector<T>>();
     clear_test< ft::vector<T>>();
 
-    erase_test<std::vector<T>>(); // TODO
-    erase_test< ft::vector<T>>(); // TODO
+    erase_test<std::vector<T>>();
+    erase_test< ft::vector<T>>();
 
-    insert_test<std::vector<T>>(); // TODO
-    insert_test< ft::vector<T>>(); // TODO
+    insert_test<std::vector<T>>();
+    insert_test< ft::vector<T>>();
 
     push_back_test<std::vector<T>>();
     push_back_test< ft::vector<T>>();
@@ -1352,17 +1351,16 @@ void rend_test()
     std::cout << "rend " << GREEN << "OK" << RESET << std::endl;
 }
 
-/// @todo
+/// @todo (?) move to iterator test suite
 void iterators_tests()
 {
     std::cout << "== Iterators ==" << std::endl;
 
-    begin_test(); // move to iterator test suite ?
-    end_test();   // move to iterator test suite ?
+    begin_test();
+    end_test();
 
-    rbegin_test(); // move to iterator test suite ?
-    rend_test();   // move to iterator test suite ?
-
+    rbegin_test();
+    rend_test();
 }
 
 /****** Vector tests **********************************************************/
@@ -1374,9 +1372,9 @@ void vector_test()
     // allocator_tests<T>();
     // capacity_tests<T>();
     // accessors_tests<T>();
-    // modifiers_tests<T>(); // TODO
+    // modifiers_tests<T>();
     // operators_tests<T>();
-    // iterators_tests(); // TODO
+    // iterators_tests();
 
     /// @todo bug
    // iterator_test<std::vector<T>>();

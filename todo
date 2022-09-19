@@ -1,21 +1,20 @@
 todo
-1. add ft_map.hpp + tests
-2. test timing stack
-3. test timing vector iterators
-4. test lexicographical_compare
-5. test type_traits
-6. test _everyting_ with -Wconversion and valgrind
-7. test size_max for vector !!!
-8. is_constructible and co. (cf. type_traits) for pair conversions
+1. test timing stack
+2. test timing vector iterators
+3. test lexicographical_compare
+4. test type_traits
+5. test _everyting_ with -Wconversion and valgrind
+6. test size_max for vector !!!
+7. is_constructible and co. (cf. type_traits) for pair conversions
 --> need by -Wconversion
-9. iterators operators: member or non-member functions ?
-10. rb_tree: use _comp to compare keys (otherwise remove it)
-11. handle error when _any_ allocate() fails (gotta catch bad_alloc)
-12. debug iso_stardard script
-13. base_iterator: iterator traits typedefs + comparison operators
-14. output_iterator.hpp to .cpp
-15. bien penser a tester les valeurs de retour des methodes des containers
-16. Faire un namespace test ou mettre tous les typedef, toutes les instances de
+8. iterators operators: member or non-member functions ?
+9. rb_tree: use _comp to compare keys (otherwise remove it)
+10. handle error when _any_ allocate() fails (gotta catch bad_alloc)
+11. debug iso_stardard script
+12. base_iterator: iterator traits typedefs + comparison operators
+13. output_iterator.hpp to .cpp
+14. bien penser a tester les valeurs de retour des methodes des containers
+15. Faire un namespace test ou mettre tous les typedef, toutes les instances de
     types utiles et les fonctions de log
 ________
 
