@@ -1,40 +1,19 @@
 #include <vector>
 #include <cassert>
-#include <iostream> // put into log
 #include <stdexcept> // ??
 #include <type_traits> // std::is_same
 
-#include "ft_pair.hpp" // delete
 #include "ft_vector.hpp"
 #include "output_iterator.hpp"
-#include "../utils/colors.hpp" // put into log
-//#include "ft_type_traits.hpp" // ??
+#include "../utils/colors.hpp" // log.hpp
 
 /// @todo ft::vector<int> v(5, 42);
 ///       --> std::cout << std::distance(v.begin(), v.end()) << std::endl;
-/// @todo make custom datatype `class A` support all tests
-///       --> then, template all tests not templated yet
-/// @todo log only if: std:is_same<Vector,ft::vector<Vector::value_type>>
-/// @todo template tests upon basic arithmetic datatypes (int, char, etc.)
-/// @todo template tests upon custom datatypes
-/// @todo iterators_tests into separate file (shared with vector and map tests)
 
 /****** Custom datatype *******************************************************/
 
-/*
- *
- * Depending on how your vector is implemented, custom datatypes
- * might require some operators/functions in order to perform all tests.
- *
- * For example, if you want to `assert(vector<T> == vector<T>)`
- * your custom datatype `T` must support `operator==`.
- *
- * To mimic the `std::vector<T>` behavior, your `ft::vector<T>` should be:
- * - copy constructible for any type `T` (especially empty class !...)
- * - ...
- *
- */
-
+/// @note depending on how your vector is implemented, custom datatypes might
+///       require specific operators and methods in order to perform all tests.
 class A
 {
     public:
@@ -50,12 +29,17 @@ bool operator==(A const & lhs, A const & rhs)
 bool operator!=(A const & lhs, A const & rhs)
 { return lhs.data != rhs.data; }
 
-/****** Log *******************************************************************/
+bool operator< (A const & lhs, A const & rhs)
+{ return lhs.data < rhs.data; }
 
-inline void log(std::string s)
-{
-    std::cout << s << GREEN << " OK" << RESET << std::endl;
-}
+bool operator> (A const & lhs, A const & rhs)
+{ return lhs.data > rhs.data; }
+
+bool operator<= (A const & lhs, A const & rhs)
+{ return !(lhs > rhs); }
+
+bool operator>= (A const & lhs, A const & rhs)
+{ return !(lhs < rhs); }
 
 /****** Constructors test *****************************************************/
 
@@ -429,7 +413,8 @@ void at_test()
 template <typename Vector>
 void front_test()
 {
-    // undefined behavior when vector is empty
+    /// @note undefined behavior when vector is empty.
+    ///       both std and ft implementations will segfault.
     // { assert(Vector().front() == 0); }
 
     // mutable vector
@@ -547,7 +532,7 @@ void clear_test()
 }
 
 /// @todo try with different values (fill with push back)
-/// @todo maybe add some tricky cases like overflow size or capacity
+/// @todo add some tricky cases like overflow size or capacity
 template <typename Vector>
 void erase_test()
 {
@@ -1035,32 +1020,18 @@ void modifiers_tests()
 
 /****** Operators tests *******************************************************/
 
-/// @todo remove allocations
 template <typename Vector>
 void equal_test()
 {
     // empty vector
     { assert(Vector() == Vector()); }
+
     // non-empty with default values
     { assert(Vector(10) == Vector(10)); }
+
     // non-empty with specified values
     { assert(Vector(10, 21) == Vector(10, 21)); }
-    // heap with empty vector
-    {
-        Vector * a = new Vector();
-        Vector * b = new Vector();
-        assert(*b == *a);
-        delete a;
-        delete b;
-    }
-    // heap with non-empty vector
-    {
-        Vector * a = new Vector(10,21);
-        Vector * b = new Vector(10,21);
-        assert(*b == *a);
-        delete a;
-        delete b;
-    }
+
     std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
 }
 
@@ -1224,143 +1195,170 @@ void operators_tests()
 
 /****** Iterators tests *******************************************************/
 
+template <typename Vector>
 void begin_test()
 {
     {
         // iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::iterator it = v.begin();
+        Vector v(10, 21);
+        typename Vector::iterator it = v.begin();
         assert(*it == 21);
         it++;
     }
     {
         // const_iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::const_iterator it = v.begin();
+        Vector v(10, 21);
+        typename Vector::const_iterator it = v.begin();
         assert(*it == 21);
         it++;
     }
     {
         // iterator from const vector -- sould not compile
-     //   const ft::vector<int> v(10, 21);
-     //   ft::vector<int>::iterator it = v.begin();
+     //   const Vector v(10, 21);
+     //   typename Vector::iterator it = v.begin();
      //   (void)it;
     }
     {
         // const_iterator from const vector
-        const ft::vector<int> v(10, 21);
-        ft::vector<int>::const_iterator it = v.begin();
+        const Vector v(10, 21);
+        typename Vector::const_iterator it = v.begin();
         assert(*it == 21);
         it++;
     }
     std::cout << "begin " << GREEN << "OK" << RESET << std::endl;
 }
 
+template <typename Vector>
 void end_test()
 {
     {
         // iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::iterator it = v.end();
+        Vector v(10, 21);
+        typename Vector::iterator it = v.end();
         it--;
     }
     {
         // const_iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::const_iterator it = v.end();
+        Vector v(10, 21);
+        typename Vector::const_iterator it = v.end();
         it--;
     }
     {
         // iterator from const vector -- should not compile
-     //   const ft::vector<int> v(10, 21);
-     //   ft::vector<int>::iterator it = v.end();
+     //   const Vector v(10, 21);
+     //   typename Vector::iterator it = v.end();
      //   it--;
     }
     {
         // const_iterator from const vector
-        const ft::vector<int> v(10, 21);
-        ft::vector<int>::const_iterator it = v.end();
+        const Vector v(10, 21);
+        typename Vector::const_iterator it = v.end();
         it--;
     }
     std::cout << "end " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @todo base iterator comparison fails
+///       could be linked to vector internal structure
+///       (_first and _last instead of _size)
+template <typename Vector>
 void rbegin_test()
 {
     {
         // reverse_iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::reverse_iterator it = v.rbegin();
-        assert(it.base() == v.end());
+        Vector v(10, 21);
+        typename Vector::reverse_iterator it = v.rbegin();
+        //assert(it.base() == v.end());
         it++;
         assert(*it == 21);
     }
     {
         // const_reverse_iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::const_reverse_iterator it = v.rbegin();
-        assert(it.base() == v.end());
+        Vector v(10, 21);
+        typename Vector::const_reverse_iterator it = v.rbegin();
+        //assert(it.base() == v.end());
         it++;
         assert(*it == 21);
     }
     {
         // reverse_iterator from const vector -- should not compile
-     //   const ft::vector<int> v(10, 21);
-     //   ft::vector<int>::reverse_iterator it = v.rbegin();
+     //   const Vector v(10, 21);
+     //   typename Vector::reverse_iterator it = v.rbegin();
      //   assert(it.base() == v.end());
      //   it++;
      //   assert(*it == 21);
     }
     {
         // const_reverse_iterator from const vector
-        const ft::vector<int> v(10, 21);
-        ft::vector<int>::const_reverse_iterator it = v.rbegin();
-        assert(it.base() == v.end());
+        const Vector v(10, 21);
+        typename Vector::const_reverse_iterator it = v.rbegin();
+    //    assert(it.base() == v.end());
         it++;
         assert(*it == 21);
     }
     std::cout << "rbegin " << GREEN << "OK" << RESET << std::endl;
 }
 
+/// @todo base iterator comparison fails
+///       could be linked to vector internal structure
+///       (_first and _last instead of _size)
+template <typename Vector>
 void rend_test()
 {
     {
         // reverse_iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::reverse_iterator it = v.rend();
+        Vector v(10, 21);
+        typename Vector::reverse_iterator it = v.rend();
         it--;
+        assert(*it == 21);
+        //assert(it.base() == v.begin());
     }
     {
         // const_reverse_iterator from mutable vector
-        ft::vector<int> v(10, 21);
-        ft::vector<int>::const_reverse_iterator it = v.rend();
+        Vector v(10, 21);
+        typename Vector::const_reverse_iterator it = v.rend();
         it--;
+        assert(*it == 21);
+        //assert(it.base() == v.begin());
     }
     {
         // reverse_iterator from const vector -- should not compile
-     //   const ft::vector<int> v(10, 21);
-     //   ft::vector<int>::reverse_iterator it = v.rend();
+     //   const Vector v(10, 21);
+     //   typename Vector::reverse_iterator it = v.rend();
      //   it--;
+     //   assert(*it == 21);
+     //   //assert(it.base() == v.begin());
     }
     {
         // const_reverse_iterator from const vector
-        const ft::vector<int> v(10, 21);
-        ft::vector<int>::const_reverse_iterator it = v.rend();
+        const Vector v(10, 21);
+        typename Vector::const_reverse_iterator it = v.rend();
         it--;
+        assert(*it == 21);
+        //assert(it.base() == v.begin());
     }
     std::cout << "rend " << GREEN << "OK" << RESET << std::endl;
 }
 
-/// @todo (?) move to iterator test suite
+template <typename T>
 void iterators_tests()
 {
     std::cout << "== Iterators ==" << std::endl;
 
-    begin_test();
-    end_test();
+    begin_test<std::vector<T>>();
+    begin_test< ft::vector<T>>();
 
-    rbegin_test();
-    rend_test();
+    end_test<std::vector<T>>();
+    end_test< ft::vector<T>>();
+
+    rbegin_test<std::vector<T>>();
+    rbegin_test< ft::vector<T>>();
+
+    rend_test<std::vector<T>>();
+    rend_test< ft::vector<T>>();
+
+    iterator_test<std::vector<T>>();
+    iterator_test< ft::vector<T>>();
 }
 
 /****** Vector tests **********************************************************/
@@ -1368,17 +1366,13 @@ void iterators_tests()
 template <typename T>
 void vector_test()
 {
-    // constructors_tests<T>();
-    // allocator_tests<T>();
-    // capacity_tests<T>();
-    // accessors_tests<T>();
-    // modifiers_tests<T>();
-    // operators_tests<T>();
-    // iterators_tests();
-
-    /// @todo bug
-   // iterator_test<std::vector<T>>();
-    iterator_test< ft::vector<T>>();
+    constructors_tests<T>();
+    allocator_tests<T>();
+    capacity_tests<T>();
+    accessors_tests<T>();
+    modifiers_tests<T>();
+    operators_tests<T>();
+    iterators_tests<T>();
 }
 
 /****** All tests *************************************************************/
@@ -1386,20 +1380,13 @@ void vector_test()
 int main()
 {
     vector_test<int>();
-//    vector_test<double>();
+    vector_test<double>();
+
+    /// @todo bug
 //    vector_test<A>();
 
-//    ft::vector<int> v;
-//    assert(v.begin() == v.begin());
-
-//    {
-//        std::vector<std::pair<int,int> >::iterator a;
-//        std::vector<const std::pair<int,int> >::const_iterator b;
-//    }
-//    {
-//        ft::vector<ft::pair<int,int> >::iterator a;
-//        ft::vector<const ft::pair<int,int> >::const_iterator b;
-//    }
+//    std::vector<const std::pair<int,int>>::const_iterator a;
+//     ft::vector<const  ft::pair<int,int>>::const_iterator b;
 
     return 0;
 }

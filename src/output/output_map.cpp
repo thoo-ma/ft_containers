@@ -2,16 +2,11 @@
 #include <memory> // std::allocator
 #include <cassert>
 #include <utility> // std::pair
-#include <iostream> // put into log
 #include <type_traits> // std::is_same std::is_const (c++11)
 
 #include "ft_map.hpp"
 #include "output_iterator.hpp"
-#include "../utils/colors.hpp" // put into log
-
-/// @todo for all tests, find a way to work with different instanciations of
-///       value_types. useful for insert, erase, and some others. (knowing that
-///       this is a templated type...)
+#include "../utils/colors.hpp" // log.hpp
 
 /// @todo delete
 template <typename T1, typename T2>
@@ -42,14 +37,6 @@ void compare_maps(const ft::map<T1,T2> & a, const std::map<T1,T2> & b)
     // custom Compare type
     assert((typeid(ft::map<int,int,std::less<char>>().key_comp()).name() == typeid(std::less<char>).name()));
     assert((typeid(ft::map<int,int,std::less<char>>().key_comp()).name() == typeid(std::map<char,int>().key_comp()).name()));
-}
-
-/****** Log *******************************************************************/
-
-/// @todo remove
-inline void log(std::string s)
-{
-    std::cout << s << GREEN << " OK" << RESET << std::endl;
 }
 
 /****** Constructors test *****************************************************/

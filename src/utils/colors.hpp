@@ -1,6 +1,8 @@
 #ifndef FT_COLORS_HPP
 #define FT_COLORS_HPP 1
 
+#include <iostream> // put into log
+
 #define RESET       "\033[0m"
 #define BLACK       "\033[30m"          /* Black */
 #define RED         "\033[31m"          /* Red */
@@ -18,5 +20,10 @@
 #define BOLDMAGENTA "\033[1m\033[35m"   /* Bold Magenta */
 #define BOLDCYAN    "\033[1m\033[36m"   /* Bold Cyan */
 #define BOLDWHITE   "\033[1m\033[37m"   /* Bold White */
+
+inline void log(std::string s)
+{
+    std::cout << s << GREEN << " OK" << RESET << std::endl;
+}
 
 #endif /* FT_COLORS_HPP */

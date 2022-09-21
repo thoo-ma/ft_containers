@@ -4,12 +4,11 @@
 #include <map> // is_map
 #include <vector> // is_vector
 #include <cassert>
-//#include <iostream>
 #include <type_traits> // std::is_base_of
 
 #include "ft_type_traits.hpp"
 #include "ft_iterator_base_types.hpp"
-#include "../utils/colors.hpp" // put into log
+#include "../utils/colors.hpp" // log.hpp
 #include "ft_map.hpp" // is_map
 #include "ft_vector.hpp" // is_vector
 
@@ -57,13 +56,6 @@ template <typename Container>
 typename std::enable_if<is_map<Container>::value, typename Container::value_type>::type
 value_type (int x) { return typename Container::value_type(x,x); }
 
-/****** Log *******************************************************************/
-
-//inline void log(std::string s)
-//{
-//    std::cout << s << GREEN << " OK" << RESET << std::endl;
-//}
-
 /****** Common iterator test **************************************************/
 
 template <typename Container>
@@ -74,7 +66,7 @@ void iterator_constructor_by_default_test()
     { typename Container::reverse_iterator        it; }
     { typename Container::const_reverse_iterator  it; }
 
-    std::cout << "constructor by default " << GREEN << "OK" << RESET << std::endl;
+    log("constructor by default");
 }
 
 template <typename Container>
@@ -134,7 +126,7 @@ void iterator_constructor_by_copy_test()
     (void)l;
     (void)m;
 
-    std::cout << "constructor by copy " << GREEN << "OK" << RESET << std::endl;
+    log("constructor by copy");
 }
 
 /// @note vector case
@@ -154,7 +146,7 @@ iterator_constructor_by_pointer_test()
     // { typename Container::reverse_iterator	        it(p); }
     // { typename Container::const_reverse_iterator     it(p); }
 
-    std::cout << "constructor by pointer " << GREEN << "OK" << RESET << std::endl;
+    log("constructor by pointer");
 }
 
 /// @note map case
@@ -163,50 +155,40 @@ typename std::enable_if<is_map<Container>::value, void>::type
 iterator_constructor_by_pointer_test()
 { }
 
-/// @todo problem with map (iterator constructor by pointer)
 /// @note cf. `is_assignable` vs `is_copy_assignable`.
 /// Seems to be a c++11 thing (cf. also the  `= delete` functionnality).
 template <typename Container>
 void iterator_assignation_test()
 {
+    Container c;
+    typename Container::value_type i = value_type<Container>(42);
+    c.insert(c.begin(), i);
     {
         // it = it
-//        typename Container::value_type i = value_type<Container>(42);
-//   //     typename Container::value_type  i(42);
-//        typename Container::pointer     p = &i;
-//
-//        typename Container::iterator    a;
-//        typename Container::iterator    b(p);
-//
-//        assert(a != b);
-//        a = b;
-//        assert(a == b);
+        typename Container::iterator    a;
+        typename Container::iterator    b = c.begin();
+
+        assert(a != b);
+        a = b;
+        assert(a == b);
     }
     {
         // const_it = const_it
-    //    typename Container::value_type i = value_type<Container>(42);
-    //    //typename Container::value_type      i(42);
-    //    typename Container::pointer         p = &i;
+        typename Container::const_iterator    a;
+        typename Container::const_iterator    b = c.begin();
 
-    //    typename Container::const_iterator  a;
-    //    typename Container::const_iterator  b(p);
-
-    //    assert(a != b);
-    //    a = b;
-    //    assert(a == b);
+        assert(a != b);
+        a = b;
+        assert(a == b);
     }
     {
         // const_it = it
-    //    typename Container::value_type i = value_type<Container>(42);
-    //    //typename Container::value_type      i(42);
-    //    typename Container::pointer         p = &i;
+        typename Container::const_iterator      a;
+        typename Container::iterator            b = c.begin();
 
-    //    typename Container::const_iterator  a;
-    //    typename Container::iterator	    b(p);
-
-    //    assert(a != b);
-    //    a = b;
-    //    assert(a == b);
+        assert(a != b);
+        a = b;
+        assert(a == b);
     }
     {
         // it = const_it -- should not compile
@@ -228,17 +210,13 @@ void iterator_assignation_test()
     }
     {
         // rev_it = rev_it
-    //    typename Container::value_type i = value_type<Container>(42);
-    //    //typename Container::value_type          i(42);
-    //    typename Container::pointer             p = &i;
+        typename Container::iterator            a = c.begin();
+        typename Container::reverse_iterator    b(a);
+        typename Container::reverse_iterator    c;
 
-    //    typename Container::iterator            a(p);
-    //    typename Container::reverse_iterator    b(a);
-    //    typename Container::reverse_iterator    c;
-
-    //    assert(c != b);
-    //    c = b;
-    //    assert(c == b);
+        assert(c != b);
+        c = b;
+        assert(c == b);
     }
     {
         // rev_it = const_rev_it -- should not compile
@@ -260,45 +238,35 @@ void iterator_assignation_test()
     }
     {
         // const_rev_it = rev_it
-    //    typename Container::value_type i = value_type<Container>(42);
-    //    //typename Container::value_type              i(42);
-    //    typename Container::pointer                 p = &i;
+        typename Container::iterator                a = c.begin();
+        typename Container::reverse_iterator        b(a);
+        typename Container::const_reverse_iterator  c;
 
-    //    typename Container::iterator                a(p);
-    //    typename Container::reverse_iterator        b(a);
-    //    typename Container::const_reverse_iterator	c;
-
-    //    assert(c != b);
-    //    c = b;
-    //    assert(c == b);
+        assert(c != b);
+        c = b;
+        assert(c == b);
     }
     {
         // const_rev_it = const_rev_it
-       // typename Container::value_type i = value_type<Container>(42);
-        //typename Container::value_type              i(42);
-        //typename Container::pointer                 p = &i;
+        typename Container::iterator                a = c.begin();
+        typename Container::const_reverse_iterator  b(a);
+        typename Container::const_reverse_iterator  c;
 
-        //typename Container::iterator                a(p);
-        //typename Container::const_reverse_iterator	b(a);
-        //typename Container::const_reverse_iterator	c;
-
-        //assert(c != b);
-        //c = b;
-        //assert(c == b);
+        assert(c != b);
+        c = b;
+        assert(c == b);
     }
-    std::cout << "assignation " << GREEN << "OK" << RESET << std::endl;
+    log("assignation");
 }
 
+/// @todo
 template <typename Container>
 void iterator_increment_test()
 {
-    typename Container::value_type a = value_type<Container>(21);
-    typename Container::value_type b = value_type<Container>(42);
-
     Container c;
 
-//    typename Container::value_type a(21);
-//    typename Container::value_type b(42);
+    typename Container::value_type a = value_type<Container>(21);
+    typename Container::value_type b = value_type<Container>(42);
 
     c.insert(c.begin(), b);
     c.insert(c.begin(), a);
@@ -373,7 +341,7 @@ void iterator_increment_test()
             assert(*it == a);
         }
     }
-    std::cout << "increment " << GREEN << "OK" << RESET << std::endl;
+    log("increment");
 }
 
 /****** Input iterator test ***************************************************/
@@ -569,7 +537,7 @@ void iterator_equal_test()
     iterator_equal_test_constructed_by_pointer<Container>();
     iterator_equal_test_constructed_by_copy<Container>();
 
-    std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
+    log("operator==");
 }
 
 /// @todo add reverse iterators
@@ -583,7 +551,7 @@ void iterator_not_equal_test()
     iterator_non_equal_test_constructed_by_pointer<Container>();
     iterator_non_equal_test_constructed_by_copy<Container>();
 
-    std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
+    log("operator!=");
 }
 
 template <bool B, typename Container>
@@ -688,7 +656,7 @@ void iterator_dereference_test()
     iterator_dereference_test_constructed_by_pointer<Container>();
     iterator_dereference_test_constructed_by_container<Container>();
 
-    std::cout << "operator* " << GREEN << "OK" << RESET << std::endl;
+    log("operator*");
 }
 
 /// @todo add reverse iterators
@@ -769,7 +737,7 @@ void iterator_dereference_pointer_test()
     iterator_dereference_pointer_test_constructed_by_pointer<Container>();
     iterator_dereference_pointer_test_constructed_by_container<Container>();
 
-    std::cout << "operator-> " << GREEN << "OK" << RESET << std::endl;
+    log("operator->");
 }
 
 template <bool B, typename Container>
@@ -796,6 +764,7 @@ forward_iterator_test() { }
 
 /****** Bidirectional iterator test *******************************************/
 
+/// @note both prefix and postfix
 template <typename Container>
 void iterator_decrement_test()
 {
@@ -804,9 +773,9 @@ void iterator_decrement_test()
     typename Container::value_type a = value_type<Container>(21);
     typename Container::value_type b = value_type<Container>(42);
 
-    // Iterators supporting `--` operator must also support `++` operator.
-    // But they don't need to support `+` operator.
-    // That's why just below we use `++` instead of `+ 1`.
+    /// @note Iterators supporting `--` must also support `++` operator. They
+    ///       don't need to support `+` operator. That's why below we use `++`
+    ///       instead of `+ 1`.
     c.insert(c.begin(), a);
     c.insert(++(c.begin()), b);
 
@@ -880,14 +849,14 @@ void iterator_decrement_test()
             assert(*it == b);
         }
     }
-    std::cout << "decrement " << GREEN << "OK" << RESET << std::endl;
+    log("decrement");
 }
 
 template <bool B, typename Container>
 typename ft::enable_if<B>::type
 bidirectional_iterator_test()
 {
-    iterator_decrement_test<Container>(); // both prefix and posifix
+    iterator_decrement_test<Container>();
 }
 
 template <bool B, typename Container>
@@ -961,7 +930,7 @@ void iterator_addition_test()
         assert(*(rit + 1) == 42);
         assert(*(rit + 2) == 21);
     }
-    std::cout << "operator+ " << GREEN << "OK" << RESET << std::endl;
+    log("operator+");
 }
 
 template <typename Container>
@@ -1114,25 +1083,20 @@ void iterator_substraction_test()
             assert(ite - it == 3);
             assert(ite - it == static_cast<ptrdiff_t>(ctn.size())); // TODO
         }
-        /*
-         * Operations between (const) iterators and (const) reverse iterators
-         * are forbidden. It means each expression below should not compile:
-         *
-         * - iterator - reverse_iterator
-         * - iterator - const_reverse_iterator
-         *
-         * - const_iterator - reverse_iterator
-         * - const_iterator - const_reverse_iterator
-         *
-         * - reverse_iterator - iterator
-         * - reverse_iterator - const_iterator
-         *
-         * - const_reverse_iterator - iterator
-         * - const_reverse_iterator - const_iterator
-         *
-         */
+        /// @note Operations between (const) iterators and (const) reverse
+        ///       iterators are forbidden. It means each expression below should
+        ///       not compile:
+        ///
+        ///     . iterator - reverse_iterator
+        ///     . iterator - const_reverse_iterator
+        ///     . const_iterator - reverse_iterator
+        ///     . const_iterator - const_reverse_iterator
+        ///     . reverse_iterator - iterator
+        ///     . reverse_iterator - const_iterator
+        ///     . const_reverse_iterator - iterator
+        ///     . const_reverse_iterator - const_iterator
     }
-    std::cout << "operator- " << GREEN << "OK" << RESET << std::endl;
+    log("operator-");
 }
 
 template <typename Container>
@@ -1220,25 +1184,19 @@ void iterator_less_than_test()
         assert(crit < crite + 1);
         assert(crit + 1 < crite + 2);
     }
-    /*
-     * Same than operator-.
-     * Operations between (const) iterators and (const) reverse iterators
-     * are forbidden. It means each expression below should not compile:
-     *
-     * - iterator < reverse_iterator
-     * - iterator < const_reverse_iterator
-     *
-     * - const_iterator < reverse_iterator
-     * - const_iterator < const_reverse_iterator
-     *
-     * - reverse_iterator < iterator
-     * - reverse_iterator < const_iterator
-     *
-     * - const_reverse_iterator < iterator
-     * - const_reverse_iterator < const_iterator
-     *
-     */
-    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+    /// @note Same than operator-. Operations between (const) iterators and
+    ///       (const) reverse iterators are forbidden. It means each expression
+    //        below should not compile:
+    ///
+    ///     . iterator < reverse_iterator
+    ///     . iterator < const_reverse_iterator
+    ///     . const_iterator < reverse_iterator
+    ///     . const_iterator < const_reverse_iterator
+    ///     . reverse_iterator < iterator
+    ///     . reverse_iterator < const_iterator
+    ///     . const_reverse_iterator < iterator
+    ///     . const_reverse_iterator < const_iterator
+    log("operator<");
 }
 
 template <typename Container>
@@ -1327,7 +1285,7 @@ void iterator_greather_than_test()
         assert(crit + 2 > crit + 1);
     }
 
-    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+    log("operator>");
 }
 
 template <typename Container>
@@ -1433,7 +1391,7 @@ void iterator_less_than_or_equal_test()
         assert(crit + 1 <= crit + 2);
         assert(crit <= crite);
     }
-    std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
+    log("operator<=");
 }
 
 template <typename Container>
@@ -1539,7 +1497,7 @@ void iterator_greather_than_or_equal_test()
         assert(crit + 2 >= crit + 1);
         assert(crite >= crit);
     }
-    std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
+    log("operator>=");
 }
 
 template <typename Container>
@@ -1586,7 +1544,7 @@ void iterator_add_then_assign_test()
         assert((it += 2) == c.rbegin() + 4);
     }
 
-    std::cout << "operator+= " << GREEN << "OK" << RESET << std::endl;
+    log("operator+=");
 }
 
 template <typename Container>
@@ -1633,7 +1591,7 @@ void iterator_sub_then_assign_test()
         assert((ite -= 2) == c.rend() - 4);
     }
 
-    std::cout << "operator-= " << GREEN << "OK" << RESET << std::endl;
+    log("operator-=");
 }
 
 template <typename Container>
@@ -1688,7 +1646,7 @@ void iterator_brackets_operator_test()
     (void)x;
     (void)y;
 
-    std::cout << "operator[] " << GREEN << "OK" << RESET << std::endl;
+    log("operator[]");
 }
 
 template <bool B, typename Container>
@@ -1719,10 +1677,6 @@ random_access_iterator_test() { }
 template <typename Container>
 void iterator_test()
 {
-//    static typename Container::value_type i = value<Container>(1);
-//    static typename Container::value_type j = value<Container>(2);
-//    static typename Container::value_type k = value<Container>(3);
-
     /// @note Since we can't template a namespace, we will use the `||` operator
     /// to match iterator tag for both `std` and `ft` based containers. There
     /// might be better approach.
@@ -1738,7 +1692,6 @@ void iterator_test()
     iterator_assignation_test<Container>();
 
     /// @note both prefix and postfix
-    /// @todo on standby for rbtree until map is implemented
     iterator_increment_test<Container>();
 
     typedef typename Container::iterator::iterator_category iterator_category;

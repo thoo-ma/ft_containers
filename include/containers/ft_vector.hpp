@@ -317,19 +317,19 @@ class vector {
     const_reference at (size_type n) const
     { if (n < _size) return _data[n]; else throw std::out_of_range(""); }
 
-    /// @note defined behavior if vector is empty
+    /// @note undefined behavior if vector is empty
     reference front ()
     { return _data[0]; }
 
-    /// @note defined behavior if vector is empty
+    /// @note undefined behavior if vector is empty
     const_reference front () const
     { return _data[0]; }
 
-    /// @note defined behavior if vector is empty
+    /// @note undefined behavior if vector is empty
     reference back ()
     { return _data[_size - 1]; }
 
-    /// @note defined behavior if vector is empty
+    /// @note undefined behavior if vector is empty
     const_reference back () const
     { return _data[_size - 1]; }
 

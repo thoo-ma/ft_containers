@@ -1,7 +1,7 @@
 #include <cassert>
 #include <iostream>
 
-#include "../utils/colors.hpp" // put into log
+#include "../utils/colors.hpp" // log.hpp
 #include "output_iterator.hpp"
 
 // To use it, substitute `insert(tree.root(), i)' by 'insert(i)`
@@ -18,13 +18,6 @@
 ///      Since our map implementation heavily rely on our red black tree, the
 ///      utility of these 'tests' is to provide some basic insurance about the
 ///      latter before testing the first one.
-
-/****** Log *******************************************************************/
-
-inline void log(std::string s)
-{
-    std::cout << s << GREEN << " OK" << RESET << std::endl;
-}
 
 /****** Node ******************************************************************/
 
