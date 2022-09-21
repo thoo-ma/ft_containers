@@ -11,7 +11,6 @@
 #include "ft_iterator_base_types.hpp"
 #include "ft_lexicographical_compare.hpp"
 #include "ft_reverse_iterator.hpp"
-//#include "ft_random_access_iterator.hpp"
 
 ///
 /// \file ft_vector.hpp
@@ -21,7 +20,7 @@
 ///       (assert, assign, etc.)
 /// @todo ne jamais set _capacity ou _size avant d'avoir appele allocate()
 /// @todo bien gerer les allocations et les exceptions
-/// @todo prendre en compte `size_max`` pour jeter les exceptions appropriees
+/// @todo prendre en compte `size_max` pour jeter les exceptions appropriees
 /// @todo private: _allocate_and_copy() pour eviter les redites
 /// @todo (?) add some private functions like STL (like internal primitives for
 ///       public methods). ex: _reallocate_and_copy(position, n, first, last)
@@ -68,27 +67,21 @@ class vector {
     /*                                                                        */
     /**************************************************************************/
 
-    /*
-    *	TODO
-    *
-    *	We need 2 more requirments:
-    *
-    *	1. iterator always pointing to same type than underlying container
-    *	    --> NO ft::vector<A>::iterator<B> it;
-    *	2. only declare an iterator inside a container namespace
-    *	    --> NO ft::vector_iterator<A> it;
-    *       --> seems inevitable if iterator class defined outside of container
-    *
-    *   Solutions
-    *
-    *   1. do not template `vector_iterator`
-    *   2. rename `vector_iterator` into `iterator`
-    *
-    */
+    ///	@todo We need 2 more requirements:
+    ///
+    ///  1. Don't allow such: ft::vector<T>::vector_iterator    it;
+    ///  2. Don't allow such: ft::vector<T>::vector_iterator<U> it;
+    ///
+    ///     The best solution seems to label `vector_iterator` with `private`
+    ///     attribute. However, templated nested classes don't support
+    ///     `private` nor `protected` attributes. This is a compiler bug.
+    ///     Check the following link for further informations about it.
+    ///     https://stackoverflow.com/questions/3784652
 
-    template <typename U = T> // delete ?
+    private:
+
+    template <typename U = T>
     class vector_iterator : public iterator<random_access_iterator_tag, U>
-    //class vector_iterator : public iterator<random_access_iterator_tag, T>
     {
         /****** Member types **************************************************/
 
@@ -220,6 +213,8 @@ class vector {
 
     };
 
+    public:
+
     typedef vector_iterator<value_type>	        iterator;
     typedef vector_iterator<value_type const>	const_iterator;
 
@@ -235,13 +230,10 @@ class vector {
 
     private:
 
-    /// @todo rename `T *` into `pointer`
-    T *             _data;
+    pointer         _data;
     size_type	    _size;
     size_type       _capacity;
-    /// @todo Arbitrary initialized at allocator_type.max_size()
-    /// cf. https://stackoverflow.com/questions/3813124/c-vector-max-size
-    size_type       _max_size;
+    size_type       _max_size;// cf. https://stackoverflow.com/questions/3813124
     allocator_type  _alloc;
 
     /**************************************************************************/
@@ -254,13 +246,13 @@ class vector {
 
     /****** Constructors ******************************************************/
 
-    /// @brief Constructor by default
+    /// @brief Constructor by default (1)
     /// @todo  add 'explicit' qualifier ?
     vector (const allocator_type & alloc = allocator_type())
     : _data(NULL), _size(0), _capacity(0), _max_size(alloc.max_size()),
         _alloc(alloc) { }
 
-    /// @brief by fill
+    /// @brief Constructor by fill (2)
     /// @todo  add 'explicit' qualifier ?
     vector ( size_type n, const value_type & val = value_type(),
         const allocator_type & alloc = allocator_type()
@@ -279,7 +271,7 @@ class vector {
         else { _data = NULL; }
     }
 
-    /// @brief Constructor by iterator range
+    /// @brief Constructor by iterator range (3)
     // template <class InputIterator>
     // vector (InputIterator first, InputIterator last,
     // const allocator_type & alloc = allocator_type())
@@ -294,7 +286,7 @@ class vector {
         _capacity = _size;
     }
 
-    /// @brief Constructor by copy
+    /// @brief Constructor by copy (4)
     vector (const vector<value_type, allocator_type> & v)
     : _size(0), _capacity(0), _max_size(v.max_size()), _alloc(v._alloc)
     //: _size(v.size()), _capacity(v.capacity()), _max_size(v.max_size()), _alloc(v._alloc)

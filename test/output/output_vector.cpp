@@ -2,6 +2,7 @@
 #include <cassert>
 #include <stdexcept> // ??
 #include <type_traits> // std::is_same
+#include <cmath> // std::pow
 
 #include "ft_vector.hpp"
 #include "output_iterator.hpp"
@@ -18,9 +19,9 @@ class A
 {
     public:
     int data;
-    A() { }
-    A(int const & i) : data(i) { }
-    A(A const & a) { data = a.data; }
+    A () : data(int()) { }
+    A (int const & i) : data(i) { }
+    A (A const & a) : data(a.data) { }
 };
 
 bool operator==(A const & lhs, A const & rhs)
@@ -43,33 +44,34 @@ bool operator>= (A const & lhs, A const & rhs)
 
 /****** Constructors test *****************************************************/
 
-/// @todo test max_sixe()
 template <typename Vector>
 void constructor_by_default_test()
 {
+    typedef typename Vector::size_type  size;
+    typedef typename Vector::value_type value;
+
     Vector a;
 
     assert(a.empty());
     assert(a.size() == 0);
     assert(a.capacity() == 0);
-    //assert(a.max_size() == 0);
+    assert(a.max_size() == static_cast<size>(std::pow(2, 64)/sizeof(value))-1);
 
-    log("constructor by default");
+    log("constructor by default (1)");
 }
 
-/// @todo test max_sixe()
 template <typename Vector>
 void constructor_by_fill_test()
 {
+    typedef typename Vector::size_type  size;
+    typedef typename Vector::value_type value;
     {
         // without value
         Vector a(10);
 
         assert(a.size() == 10);
         assert(a.capacity() == 10);
-        //assert(a.max_size() == 0);
-
-        log("constructor by fill (without value)");
+        assert(a.max_size() == static_cast<size>(std::pow(2, 64)/sizeof(value))-1);
     }
     {
         // with value
@@ -77,30 +79,9 @@ void constructor_by_fill_test()
 
         assert(a.size() == 10);
         assert(a.capacity() == 10);
-        //assert(a.max_size() == 0);
-
-        log("constructor by fill (with value)");
+        assert(a.max_size() == static_cast<size>(std::pow(2, 64)/sizeof(value))-1);
     }
-}
-
-template <typename Vector>
-void constructor_by_copy_test()
-{
-    {
-        // from empty
-        Vector a;
-        Vector b(a);
-
-        assert(a == b);
-    }
-    {
-        // from non-empty
-        Vector a(10, typename Vector::value_type());
-        Vector b(a);
-
-        assert(a == b);
-    }
-    log("constructor by copy");
+    log("constructor by fill (2)");
 }
 
 template <typename Vector>
@@ -120,15 +101,27 @@ void constructor_by_iterator_range_test()
 
         assert(a == b);
     }
-    log("constructor by iterator range");
+    log("constructor by iterator range (3)");
 }
 
 template <typename Vector>
-void constructor_upon_heap_test()
+void constructor_by_copy_test()
 {
-    { Vector * v = new Vector; delete v; }
-    { Vector * v = new Vector[10]; delete [] v; }
-    log("constructor upon heap");
+    {
+        // from empty
+        Vector a;
+        Vector b(a);
+
+        assert(a == b);
+    }
+    {
+        // from non-empty
+        Vector a(10, typename Vector::value_type());
+        Vector b(a);
+
+        assert(a == b);
+    }
+    log("constructor by copy (4)");
 }
 
 template <typename T>
@@ -145,9 +138,6 @@ void constructors_tests()
 
     constructor_by_iterator_range_test<std::vector<T>>();
     constructor_by_iterator_range_test< ft::vector<T>>();
-
-    constructor_upon_heap_test<std::vector<T>>();
-    constructor_upon_heap_test< ft::vector<T>>();
 }
 
 /****** Allocator test ********************************************************/
@@ -198,7 +188,7 @@ void empty_test()
         // by iterator range
         assert(Vector(v.begin(), v.end()).empty());
     }
-    std::cout << "empty " << GREEN << "OK" << RESET << std::endl;
+    log("empty()");
 }
 
 template <typename Vector>
@@ -223,14 +213,37 @@ void size_test()
         assert(Vector(a).size() == a.size());
         assert(Vector(b).size() == b.size());
     }
-    std::cout << "size " << GREEN << "OK" << RESET << std::endl;
+    log("size()");
 }
 
-/// @todo
 template <typename Vector>
 void max_size_test()
 {
-    std::cout << "max_size " << GREEN << "OK" << RESET << std::endl;
+    typedef typename Vector::size_type  size;
+    typedef typename Vector::value_type value;
+
+    size max_size = static_cast<size>(std::pow(2,64)/sizeof(value))-1;
+
+    {
+        // constructed by default
+        assert(Vector().max_size() == max_size);
+    }
+    {
+        // constructed by fill (without value)
+        assert(Vector(99).max_size() == max_size);
+    }
+    {
+        // constructed by fill (with value)
+        assert(Vector(99,value()).max_size() == max_size);
+    }
+    {
+        // constructed by copy
+        Vector a;
+        Vector b(10);
+        assert(Vector(a).max_size() == a.max_size());
+        assert(Vector(b).max_size() == b.max_size());
+    }
+    log("max_size()");
 }
 
 template <typename Vector>
@@ -255,7 +268,7 @@ void capacity_test()
         assert(Vector(a).capacity() == a.capacity());
         assert(Vector(b).capacity() == b.capacity());
     }
-    std::cout << "capacity " << GREEN << "OK" << RESET << std::endl;
+    log("capacity()");
 }
 
 /// @todo
@@ -291,7 +304,7 @@ void reserve_test()
     //    catch (...) { /* log */ }
     //    assert(a.capacity() == 11);
     }
-    std::cout << "reserve " << GREEN << "OK" << RESET << std::endl;
+    log("reserve()");
 }
 
 template <typename T>
@@ -407,7 +420,7 @@ void at_test()
             }
         }
     }
-    std::cout << "at " << GREEN << "OK" << RESET << std::endl;
+    log("at()");
 }
 
 template <typename Vector>
@@ -425,7 +438,7 @@ void front_test()
     { const Vector v(10); assert(v.front() == typename Vector::value_type()); }
     { const Vector v(10, 42); assert(v.front() == 42); }
 
-    std::cout << "front " << GREEN << "OK" << RESET << std::endl;
+    log("front()");
 }
 
 template <typename Vector>
@@ -442,7 +455,7 @@ void back_test()
     { const Vector v(10); assert(v.back() == typename Vector::value_type()); }
     { const Vector v(10, 42); assert(v.back() == 42); }
 
-    std::cout << "back " << GREEN << "OK" << RESET << std::endl;
+    log("back()");
 }
 
 template <typename Vector>
@@ -478,7 +491,7 @@ void operator_bracket_test()
         for (typename Vector::size_type i = 0; i < 10; i++)
             assert(v[i] == 42);
     }
-    std::cout << "operator[] " << GREEN << "OK" << RESET << std::endl;
+    log("operator[]");
 }
 
 template <typename T>
@@ -528,7 +541,7 @@ void clear_test()
         assert(v.size() == 0);
         assert(v.capacity() == 42);
     }
-    std::cout << "clear " << GREEN << "OK" << RESET << std::endl;
+    log("clear()");
 }
 
 /// @todo try with different values (fill with push back)
@@ -617,7 +630,7 @@ void erase_test()
         for (std::vector<int>::size_type i = 0; i < b.size(); i++)
         { assert(a.at(i) == b.at(i)); }
     }
-    std::cout << "erase " << GREEN << "OK" << RESET << std::endl;
+    log("erase()");
 }
 
 /// @todo add tests with reallocations
@@ -642,7 +655,7 @@ void insert_test()
             b.insert(b.end(), 21);
             assert(b == c);
         }
-        std::cout << "insert single element (1) " << GREEN << "OK" << RESET << std::endl;
+        log("insert single element (1)");
     }
     // fill (2)
     {
@@ -675,7 +688,7 @@ void insert_test()
             a.insert(a.begin(), 0, 21);
             assert(a == a);
         }
-        std::cout << "insert by fill (2) " << GREEN << "OK" << RESET << std::endl;
+        log("insert by fill (2)");
     }
     // range (3)
     {
@@ -718,7 +731,7 @@ void insert_test()
             assert(*(a.begin() + 2) == 42);
             assert(*(a.begin() + 3) == 21);
         }
-        std::cout << "insert by range (3) " << GREEN << "OK" << RESET << std::endl;
+        log("insert by range (3)");
     }
 }
 
@@ -750,7 +763,7 @@ void push_back_test()
         assert(v.size() == 2);
         assert(v.at(1) == 21);
     }
-    std::cout << "push_back() " << GREEN << "OK" << RESET << std::endl;
+    log("push_back()");
 }
 
 /// @todo (?) add more tests
@@ -769,7 +782,7 @@ void pop_back_test()
         v.pop_back();
         assert(v.size() == 9);
     }
-    std::cout << "pop_back() " << GREEN << "OK" << RESET << std::endl;
+    log("pop_back()");
 }
 
 template <typename Vector>
@@ -863,7 +876,7 @@ void resize_test()
             { assert(v.at(i) == 42); }
         }
     }
-    std::cout << "resize() " << GREEN << "OK" << RESET << std::endl;
+    log("resize()");
 }
 
 template <typename Vector>
@@ -904,7 +917,7 @@ void swap_test()
         assert(*(ita + 1) == 42);
         assert(*(itb + 1) == 21);
     }
-    std::cout << "swap() " << GREEN << "OK" << RESET << std::endl;
+    log("swap()");
 }
 
 template <typename Vector>
@@ -985,7 +998,7 @@ void assign_test()
             assert(a.capacity() == 10);
         }
     }
-    std::cout << "assign() " << GREEN << "OK" << RESET << std::endl;
+    log("assign()");
 }
 
 template <typename T>
@@ -1032,7 +1045,7 @@ void equal_test()
     // non-empty with specified values
     { assert(Vector(10, 21) == Vector(10, 21)); }
 
-    std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
+    log("operator==");
 }
 
 template <typename Vector>
@@ -1042,7 +1055,7 @@ void not_equal_test()
     assert(Vector(10) != Vector(10, 21));
     assert(Vector(10, 21) != Vector(10, 42));
 
-    std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
+    log("operator!=");
 }
 
 template <typename Vector>
@@ -1093,7 +1106,7 @@ void vector_assignation_test()
         a = b;
         assert(a == b);
     }
-    std::cout << "operator= " << GREEN << "OK" << RESET << std::endl;
+    log("operator=");
 }
 
 template <typename Vector>
@@ -1108,7 +1121,7 @@ void less_than_test()
         // with different values
         assert(Vector(1, 21) < Vector(1, 42));
     }
-    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+    log("operator<");
 }
 
 template <typename Vector>
@@ -1123,7 +1136,7 @@ void greater_than_test()
         // with different values
         assert(Vector(1, 42) > Vector(1, 21));
     }
-    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+    log("operator>");
 }
 
 template <typename Vector>
@@ -1143,7 +1156,7 @@ void less_than_equal_test()
         assert(Vector(1, 21) <= Vector(1, 42));
         assert(Vector(1, 21) <= Vector(2, 21));
     }
-    std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
+    log("operator<=");
 }
 
 template <typename Vector>
@@ -1163,7 +1176,7 @@ void greater_than_equal_test()
         assert(Vector(1, 42) >= Vector(1, 21));
         assert(Vector(2, 21) >= Vector(1, 21));
     }
-    std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
+    log("operator>=");
 }
 
 template <typename T>
@@ -1225,7 +1238,7 @@ void begin_test()
         assert(*it == 21);
         it++;
     }
-    std::cout << "begin " << GREEN << "OK" << RESET << std::endl;
+    log("begin()");
 }
 
 template <typename Vector>
@@ -1255,7 +1268,7 @@ void end_test()
         typename Vector::const_iterator it = v.end();
         it--;
     }
-    std::cout << "end " << GREEN << "OK" << RESET << std::endl;
+    log("end()");
 }
 
 /// @todo base iterator comparison fails
@@ -1296,7 +1309,7 @@ void rbegin_test()
         it++;
         assert(*it == 21);
     }
-    std::cout << "rbegin " << GREEN << "OK" << RESET << std::endl;
+    log("rbegin()");
 }
 
 /// @todo base iterator comparison fails
@@ -1337,7 +1350,7 @@ void rend_test()
         assert(*it == 21);
         //assert(it.base() == v.begin());
     }
-    std::cout << "rend " << GREEN << "OK" << RESET << std::endl;
+    log("rend()");
 }
 
 template <typename T>
@@ -1379,11 +1392,9 @@ void vector_test()
 
 int main()
 {
-    vector_test<int>();
-    vector_test<double>();
-
-    /// @todo bug
-//    vector_test<A>();
+//    vector_test<int>();
+//    vector_test<double>();
+    vector_test<A>();
 
 //    std::vector<const std::pair<int,int>>::const_iterator a;
 //     ft::vector<const  ft::pair<int,int>>::const_iterator b;

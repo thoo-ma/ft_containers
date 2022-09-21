@@ -1,13 +1,10 @@
 #include <stack>
 #include <vector>
 #include <cassert>
-#include <iostream> // move to log
 
 #include "ft_stack.hpp"
-#include "ft_vector.hpp"
-#include "../utils/colors.hpp" // move to log
+#include "../utils/colors.hpp" // log.hpp
 
-/// @todo add log()
 /// @todo add test with custom datatype
 
 /****** Constructor test ******************************************************/
@@ -26,7 +23,7 @@ void stack_constructor_test()
     assert(Stack(Container(10, Value())).size() == 10);
     assert(Stack(Container(10, Value())).empty() == false);
 
-    std::cout << "constructor " << GREEN << "OK" << RESET << std::endl;
+    log("constructor");
 }
 
 /****** Functions test ********************************************************/
@@ -43,7 +40,7 @@ void stack_empty_test()
     // underlying container constructed with size > 0
     assert(Stack(Container(10)).empty() == false);
 
-    std::cout << "empty " << GREEN << "OK" << RESET << std::endl;
+    log("empty()");
 }
 
 template <typename Stack, typename Container, typename Value, typename Size>
@@ -66,7 +63,7 @@ void stack_size_test()
         stack.pop();
     }
 
-    std::cout << "size " << GREEN << "OK" << RESET << std::endl;
+    log("size()");
 }
 
 template <typename Stack, typename Container, typename Value, typename Size>
@@ -86,7 +83,7 @@ void stack_top_test()
         stack.pop();
     }
 
-    std::cout << "top " << GREEN << "OK" << RESET << std::endl;
+    log("top()");
 }
 
 template <typename Stack, typename Container, typename Value, typename Size>
@@ -102,11 +99,11 @@ void stack_pop_test()
 
     assert(stack.empty() == true);
 
-    // If we pop again, std::stack won't remain empty whereas ft::stack will.
+    /// @note If we pop again, std::stack won't remain empty whereas ft::stack will
     // stack.pop();
     // assert(stack.empty() == true);
 
-    std::cout << "pop " << GREEN << "OK" << RESET << std::endl;
+    log("pop()");
 }
 
 template <typename Stack, typename Container, typename Value, typename Size>
@@ -121,7 +118,7 @@ void stack_push_test()
         assert(stack.top() == Value(i));
     }
 
-    std::cout << "push " << GREEN << "OK" << RESET << std::endl;
+    log("push()");
 }
 
 template <typename Stack>
@@ -148,7 +145,7 @@ void stack_equal_test()
     assert(Stack(Container(10)) == Stack(Container(10)));
     assert(Stack(Container(10,21)) == Stack(Container(10,21)));
 
-    std::cout << "operator== " << GREEN << "OK" << RESET << std::endl;
+    log("operator==");
 }
 
 template <typename Stack, typename Container>
@@ -162,7 +159,7 @@ void stack_not_equal_test()
     // with different values
     assert(Stack(Container(4,21)) != Stack(Container(4,42)));
 
-    std::cout << "operator!= " << GREEN << "OK" << RESET << std::endl;
+    log("operator!=");
 }
 
 template <typename Stack, typename Container>
@@ -176,7 +173,7 @@ void stack_less_than_test()
     // with different values
     assert(Stack(Container(1, 21)) < Stack(Container(1, 42)));
 
-    std::cout << "operator< " << GREEN << "OK" << RESET << std::endl;
+    log("operator<");
 }
 
 template <typename Stack, typename Container>
@@ -190,7 +187,7 @@ void stack_greater_than_test()
     // with different values
     assert(Stack(Container(1, 42)) > Stack(Container(1, 21)));
 
-    std::cout << "operator> " << GREEN << "OK" << RESET << std::endl;
+    log("operator>");
 }
 
 template <typename Stack, typename Container>
@@ -209,7 +206,7 @@ void stack_less_than_equal_test()
     assert(Stack(Container(1, 21)) <= Stack(Container(1, 42)));
     assert(Stack(Container(1, 21)) <= Stack(Container(2, 21)));
 
-    std::cout << "operator<= " << GREEN << "OK" << RESET << std::endl;
+    log("operator<=");
 }
 
 template <typename Stack, typename Container>
@@ -228,7 +225,7 @@ void stack_greater_than_equal_test()
     assert(Stack(Container(1, 42)) >= Stack(Container(1, 21)));
     assert(Stack(Container(2, 21)) >= Stack(Container(1, 21)));
 
-    std::cout << "operator>= " << GREEN << "OK" << RESET << std::endl;
+    log("operator>=");
 }
 
 template <typename Stack>

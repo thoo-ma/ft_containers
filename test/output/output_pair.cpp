@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "ft_pair.hpp"
-#include "../utils/colors.hpp"
+#include "../utils/colors.hpp" // log.hpp
 
 //#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 
@@ -45,7 +45,7 @@ void test_pair_constructed_by_default()
     compare_pairs(std::pair<foo,foo>(), ft::pair<foo,foo>());
     compare_pairs(std::pair<Foo,Foo>(), ft::pair<Foo,Foo>());
 
-    std::cout << "constructor by default " << GREEN << "OK" << RESET << std::endl;
+    log("constructor by default");
 }
 
 /****** pair() by copy ********************************************************/
@@ -100,7 +100,7 @@ void test_pair_constructed_by_copy()
     // compare_pairs(std::pair<int,char>(std::pair<int,double>(1,421.42)),
     //                ft::pair<int,char>(ft::pair<int,double>(1,421.42)));
 
-    std::cout << "constructor by copy " << GREEN << "OK" << RESET << std::endl;
+    log("constructor by copy");
 }
 
 /****** pair() by init ********************************************************/
@@ -120,7 +120,7 @@ void test_pair_constructed_by_init()
     Foo foo;
     compare_pairs(std::pair<float,Foo>(f,foo), ft::pair<float,Foo>(f,foo));
 
-    std::cout << "constructor by init " << GREEN << "OK" << RESET << std::endl;
+    log("constructor by init");
 }
 
 /****** operator= *************************************************************/
@@ -146,7 +146,7 @@ void test_pair_assignation()
         b = a;
         assert(a == b);
     }
-    std::cout << "operator= " << GREEN << "OK" << RESET << std::endl;
+    log("operator=");
 }
 
 /****** make_pair() ***********************************************************/
@@ -156,7 +156,7 @@ void test_make_pair()
     compare_pairs(std::pair<int,int>(42,42), ft::make_pair<int,int>(42,42));
     compare_pairs(std::pair<int,char>(42,'z'), ft::make_pair<int,char>(42,'z'));
 
-    std::cout << "make_pair() " << GREEN << "OK" << RESET << std::endl;
+    log("make_pair()");
 }
 
 /****** main ******************************************************************/
