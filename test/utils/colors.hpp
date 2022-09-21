@@ -1,7 +1,7 @@
 #ifndef FT_COLORS_HPP
 #define FT_COLORS_HPP 1
 
-#include <iostream> // put into log
+#include <iostream>
 
 #define RESET       "\033[0m"
 #define BLACK       "\033[30m"          /* Black */

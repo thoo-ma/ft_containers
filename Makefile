@@ -6,7 +6,7 @@ CXXFLAGS		=	-std=c++11 -Wall -Wextra -Wconversion# -fpermissive
 
 ################### DIRECTORIES ################################################
 
-SRC_DIR 		= 	src
+TEST_DIR 		= 	test
 OBJ_DIR 		= 	obj
 BIN_DIR 		= 	bin
 INC_DIR			=	include
@@ -50,7 +50,7 @@ NAME			=   a.out
 
 ################### TRAITS TARGETS  ############################################
 
-obj/traits/%.o:		src/traits/%.cpp $(HEADERS) | obj/traits
+obj/traits/%.o:		test/traits/%.cpp $(HEADERS) | obj/traits
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 bin/traits/%.out:	obj/traits/%.o | bin/traits
@@ -58,7 +58,7 @@ bin/traits/%.out:	obj/traits/%.o | bin/traits
 
 ################### TIMING TARGETS  ############################################
 
-obj/timing/%.o:		src/timing/%.cpp $(HEADERS) | obj/timing
+obj/timing/%.o:		test/timing/%.cpp $(HEADERS) | obj/timing
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 bin/timing/%.out:	obj/timing/%.o | bin/timing
@@ -66,7 +66,7 @@ bin/timing/%.out:	obj/timing/%.o | bin/timing
 
 ################### OUTPUT TARGETS #############################################
 
-obj/output/%.o:		src/output/%.cpp $(HEADERS) | obj/output
+obj/output/%.o:		test/output/%.cpp $(HEADERS) | obj/output
 					$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 bin/output/%.out:	obj/output/%.o | bin/output
