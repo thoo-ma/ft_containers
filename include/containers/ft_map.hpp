@@ -10,6 +10,7 @@
 
 namespace ft {
 
+/// @note Allocator won't be used. This map uses rb_tree allocator.
 template <typename Key, typename T, typename Compare = std::less<Key>,
           typename Allocator = std::allocator<pair<typename ft::add_const<Key>::type, T>>
           //typename Allocator = std::allocator<std::pair<typename ft::add_const<Key>::type, T>>
@@ -30,7 +31,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     typedef pair<Key const, T>	value_type;
     typedef Compare	            key_compare;
     //typedef key_compare  value_compare;
-    typedef Allocator           allocator_type;
+    typedef Allocator           allocator_type; // not used
     typedef size_t              size_type;
     typedef ptrdiff_t           difference_type;
     typedef value_type &        reference;
@@ -67,9 +68,11 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     private:
 
-    allocator_type	    _alloc;
+    //allocator_type	    _alloc; // this is not used
+    typename btree_type::allocator_type	    _alloc;
     key_compare	        _comp;
     rb_tree<value_type>	_tree;
+    //size_type           _max_size; // remove
 
     /**************************************************************************/
     /*                                                                        */
@@ -108,6 +111,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 //    mapped_type & at (key_type const & k);
 //    mapped_type const & at (key_type const & k) const;
 
+    /// @todo
     mapped_type & operator[] (const key_type & key)
     {
 
@@ -123,7 +127,9 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     { return _tree.size(); }
 
     /// @todo
-    //  size_type max_size () const;
+    size_type max_size () const
+    //{ return _max_size; }
+    { return _tree.get_allocator().max_size(); }
 
     /****** Modifiers *********************************************************/
 
@@ -296,7 +302,8 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /****** Miscellaneous *****************************************************/
 
     allocator_type get_allocator () const
-    { return _alloc; }
+    //{ return _alloc; }
+    { return _tree.get_allocator(); }
 
     map & operator= (const map & m)
     { _tree = m._tree; return *this; }
@@ -334,6 +341,29 @@ template <typename Key, typename T, typename Comp, typename Alloc>
 bool operator!= (map<Key, T, Comp, Alloc> const & lhs,
                  map<Key, T, Comp, Alloc> const & rhs)
 { return !(lhs == rhs); }
+
+template <typename Key, typename T, typename Comp, typename Alloc>
+bool operator< (map<Key, T, Comp, Alloc> const & lhs,
+                map<Key, T, Comp, Alloc> const & rhs)
+{
+    return
+    lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template <typename Key, typename T, typename Comp, typename Alloc>
+bool operator> (map<Key, T, Comp, Alloc> const & lhs,
+                map<Key, T, Comp, Alloc> const & rhs)
+{ return rhs < lhs; }
+
+template <typename Key, typename T, typename Comp, typename Alloc>
+bool operator<= (map<Key, T, Comp, Alloc> const & lhs,
+                 map<Key, T, Comp, Alloc> const & rhs)
+{ return !(rhs < lhs); }
+
+template <typename Key, typename T, typename Comp, typename Alloc>
+bool operator>= (map<Key, T, Comp, Alloc> const & lhs,
+                 map<Key, T, Comp, Alloc> const & rhs)
+{ return !(lhs < rhs); }
 
 } // namespace
 

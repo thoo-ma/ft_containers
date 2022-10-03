@@ -254,6 +254,7 @@ class rb_tree
 
     pointer         _root;
     size_type       _size;
+    //size_type       _max_size; // just to be inherited by map
     value_type      _sentinel;
     allocator_type  _alloc;
 
@@ -552,7 +553,7 @@ class rb_tree
 
     /// @brief Constructor by default (1)
     explicit rb_tree ()
-    : _root(&_sentinel), _size(0)
+    : _root(&_sentinel), _size(0)//, _max_size(_alloc.max_size())
     {
         _sentinel.left = _root;
         _sentinel.right = _root;
@@ -563,7 +564,7 @@ class rb_tree
     /// @todo those three assignations not needed if constructor by default is
     ///       called before function execution. need to check this. (delete ?)
     rb_tree (rb_tree const & tree)
-    : _root(&_sentinel)
+    : _root(&_sentinel)//, _max_size(tree.max_size())
     {
         *this = tree;
     //    _sentinel.left = _root;
@@ -573,7 +574,7 @@ class rb_tree
 
     /// @brief Constructor by iterator range (3)
     rb_tree (iterator first, iterator last)
-    : _root(&_sentinel), _size(0)
+    : _root(&_sentinel), _size(0)//, _max_size(_alloc.max_size())
     {
         _sentinel.left = _root;
         _sentinel.right = _root;
@@ -798,8 +799,15 @@ class rb_tree
     size_type size () const
     { return _size; }
 
+    size_type max_size () const
+    //{ return _max_size; }
+    { return _alloc.max_size(); }
+
     bool empty () const
     { return _size == 0; }
+
+    allocator_type get_allocator () const
+    { return _alloc; }
 
     pointer root () const
     { return _root; }
@@ -872,6 +880,7 @@ class rb_tree
 
 };
 
+/// @note those operators useless since not used by map
 template <typename T>
 bool operator== (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 {
@@ -887,6 +896,15 @@ bool operator== (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 template <typename T>
 bool operator!= (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 { return !(lhs == rhs); }
+
+/*
+template <typename T>
+bool operator< (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
+{
+    return
+    lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+*/
 
 } // namespace
 

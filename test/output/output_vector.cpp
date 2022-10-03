@@ -2,7 +2,8 @@
 #include <cassert>
 #include <stdexcept> // ??
 #include <type_traits> // std::is_same
-#include <cmath> // std::pow
+#include <list>
+#include <deque>
 
 #include "ft_vector.hpp"
 #include "output_iterator.hpp"
@@ -47,15 +48,12 @@ bool operator>= (A const & lhs, A const & rhs)
 template <typename Vector>
 void constructor_by_default_test()
 {
-    typedef typename Vector::size_type  size;
-    typedef typename Vector::value_type value;
-
     Vector a;
 
     assert(a.empty());
     assert(a.size() == 0);
     assert(a.capacity() == 0);
-    assert(a.max_size() == static_cast<size>(std::pow(2, 64)/sizeof(value))-1);
+    assert(a.max_size() == a.get_allocator().max_size());
 
     log("constructor by default (1)");
 }
@@ -63,15 +61,13 @@ void constructor_by_default_test()
 template <typename Vector>
 void constructor_by_fill_test()
 {
-    typedef typename Vector::size_type  size;
-    typedef typename Vector::value_type value;
     {
         // without value
         Vector a(10);
 
         assert(a.size() == 10);
         assert(a.capacity() == 10);
-        assert(a.max_size() == static_cast<size>(std::pow(2, 64)/sizeof(value))-1);
+        assert(a.max_size() == a.get_allocator().max_size());
     }
     {
         // with value
@@ -79,27 +75,122 @@ void constructor_by_fill_test()
 
         assert(a.size() == 10);
         assert(a.capacity() == 10);
-        assert(a.max_size() == static_cast<size>(std::pow(2, 64)/sizeof(value))-1);
+        assert(a.max_size() == a.get_allocator().max_size());
     }
     log("constructor by fill (2)");
 }
 
-template <typename Vector>
+/// @todo InputIterator
+template <typename Vector, typename Value>
 void constructor_by_iterator_range_test()
 {
-    {
-        // empty range
-        Vector a;
-        Vector b(a.begin(), a.end());
+    Value i(1);
+    Value j(2);
+    Value k(3);
 
-        assert(a == b);
+    {
+        // vector(vector)
+        {
+            // empty range
+            Vector a;
+            Vector b(a.begin(), a.end());
+            assert(a == b);
+        }
+        {
+            // non-empty range
+            Vector a;
+            a.insert(a.begin(), k);
+            a.insert(a.begin(), i);
+            a.insert(a.begin(), j);
+            Vector b(a.begin(), a.end());
+            assert(a == b);
+        }
     }
     {
-        // non-empty range
-        Vector a(10, typename Vector::value_type());
-        Vector b(a.begin(), a.end());
+        // vector(const vector)
+        {
+            // empty range
+            Vector const a;
+            Vector b(a.begin(), a.end());
+            assert(a == b);
+        }
+        {
+            // non-empty range
+            Vector a;
+            a.insert(a.begin(), k);
+            a.insert(a.begin(), i);
+            a.insert(a.begin(), j);
+            Vector const b(a.begin(), a.end()); // yes, we need this first ...
+            Vector c(b.begin(), b.end()); // ... to finally test this !
+            assert(c == b);
+        }
+    }
+    {
+        // const vector(vector)
+        {
+            // empty range
+            Vector a;
+            Vector const b(a.begin(), a.end());
+            assert(a == b);
+        }
+        {
+            // non-empty range
+            Vector a;
+            a.insert(a.begin(), k);
+            a.insert(a.begin(), i);
+            a.insert(a.begin(), j);
+            Vector const b(a.begin(), a.end());
+            assert(a == b);
+        }
+    }
+    {
+        // const vector(const vector)
+        {
+            // empty range
+            Vector const a;
+            Vector const b(a.begin(), a.end());
+            assert(a == b);
+        }
+        {
+            // non-empty range
+            Vector a;
+            a.insert(a.begin(), k);
+            a.insert(a.begin(), i);
+            a.insert(a.begin(), j);
+            Vector const b(a.begin(), a.end()); // yes, we need this first ...
+            Vector const c(b.begin(), b.end()); // ... to finally test this !
+            assert(c == b);
+        }
+    }
+    {
+        // From bidirectionnal iterators.
+        // Could also be (multi)set, but not (multi)map.
+        std::list<Value> l;
+        l.insert(l.begin(), i);
+        l.insert(l.begin(), j);
+        l.insert(l.begin(), k);
 
-        assert(a == b);
+        Vector v;
+        v.insert(v.begin(), i);
+        v.insert(v.begin(), j);
+        v.insert(v.begin(), k);
+
+        assert(Vector(l.begin(), l.end()) == v);
+    }
+    {
+        // From random access iterators.
+        // Other than vector itself, only stands deque.
+        std::deque<Value> d;
+        d.insert(d.begin(), i);
+        d.insert(d.begin(), j);
+        d.insert(d.begin(), k);
+
+        Vector v;
+        v.insert(v.begin(), i);
+        v.insert(v.begin(), j);
+        v.insert(v.begin(), k);
+
+        assert(Vector(d.begin(), d.end()) == v);
     }
     log("constructor by iterator range (3)");
 }
@@ -127,6 +218,9 @@ void constructor_by_copy_test()
 template <typename T>
 void constructors_tests()
 {
+    typedef typename std::vector<T>::value_type std_value;
+    typedef typename  ft::vector<T>::value_type  ft_value;
+
     constructor_by_default_test<std::vector<T>>();
     constructor_by_default_test< ft::vector<T>>();
 
@@ -136,8 +230,8 @@ void constructors_tests()
     constructor_by_copy_test<std::vector<T>>();
     constructor_by_copy_test< ft::vector<T>>();
 
-    constructor_by_iterator_range_test<std::vector<T>>();
-    constructor_by_iterator_range_test< ft::vector<T>>();
+    constructor_by_iterator_range_test<std::vector<T>,std_value>();
+    constructor_by_iterator_range_test< ft::vector<T>, ft_value>();
 }
 
 /****** Allocator test ********************************************************/
@@ -216,32 +310,47 @@ void size_test()
     log("size()");
 }
 
+/// @todo
 template <typename Vector>
 void max_size_test()
 {
-    typedef typename Vector::size_type  size;
-    typedef typename Vector::value_type value;
-
-    size max_size = static_cast<size>(std::pow(2,64)/sizeof(value))-1;
+//    typedef typename Vector::size_type  size;
+//    typedef typename Vector::value_type value;
+//
+//    size max_size = static_cast<size>(std::pow(2,64)/sizeof(value))-1;
 
     {
         // constructed by default
-        assert(Vector().max_size() == max_size);
+        Vector v;
+    //    assert(v.max_size() == max_size);
+        assert(v.max_size() == v.get_allocator().max_size());
     }
     {
         // constructed by fill (without value)
-        assert(Vector(99).max_size() == max_size);
+        Vector v(99);
+    //    assert(v.max_size() == max_size);
+        assert(v.max_size() == v.get_allocator().max_size());
     }
     {
         // constructed by fill (with value)
-        assert(Vector(99,value()).max_size() == max_size);
+    //    Vector v(99,value());
+    //    assert(v.max_size() == max_size);
+    //    assert(v.max_size() == v.get_allocator().max_size());
     }
     {
         // constructed by copy
         Vector a;
         Vector b(10);
-        assert(Vector(a).max_size() == a.max_size());
-        assert(Vector(b).max_size() == b.max_size());
+        {
+            Vector v(a);
+            assert(v.max_size() == a.max_size());
+        //    assert(v.max_size() == a.get_allocator().max_size());
+        }
+        {
+            Vector v(b);
+            assert(v.max_size() == a.max_size());
+        //    assert(v.max_size() == a.get_allocator().max_size());
+        }
     }
     log("max_size()");
 }
@@ -636,7 +745,7 @@ void erase_test()
 /// @todo add tests with reallocations
 /// @todo add tests like nested or invalid intervals
 /// @todo add tests with differents values with push back
-template <typename Vector>
+template <typename Vector, typename Value>
 void insert_test()
 {
     // single element (1)
@@ -730,6 +839,42 @@ void insert_test()
             assert(*(a.begin() + 1) == 42);
             assert(*(a.begin() + 2) == 42);
             assert(*(a.begin() + 3) == 21);
+        }
+        {
+            // From bidirectionnal iterators.
+            // Could also be (multi)set, but not (multi)map.
+            std::list<Value> l;
+            l.insert(l.begin(), Value(1));
+            l.insert(l.begin(), Value(3));
+            l.insert(l.begin(), Value(2));
+
+            // just to compare
+            Vector v;
+            v.insert(v.begin(), Value(1));
+            v.insert(v.begin(), Value(3));
+            v.insert(v.begin(), Value(2));
+
+            Vector a;
+            a.insert(a.begin(), l.begin(), l.end());
+            assert(a == v);
+        }
+        {
+            // From random access iterators.
+            // Other than vector itself, only stands deque.
+            std::deque<Value> d;
+            d.insert(d.begin(), Value(2));
+            d.insert(d.begin(), Value(1));
+            d.insert(d.begin(), Value(3));
+
+            // just to compare
+            Vector v;
+            v.insert(v.begin(), Value(2));
+            v.insert(v.begin(), Value(1));
+            v.insert(v.begin(), Value(3));
+
+            Vector a;
+            a.insert(a.begin(), d.begin(), d.end());
+            assert(a == v);
         }
         log("insert by range (3)");
     }
@@ -920,10 +1065,85 @@ void swap_test()
     log("swap()");
 }
 
-template <typename Vector>
+template <typename Vector, typename Value>
 void assign_test()
 {
-    // by fill
+    // by range (1)
+    {
+        {
+            // assign to empty vector
+            Vector a;
+            Vector b(10, 42);
+
+            a.assign(b.begin(), b.end());
+            assert(a == b);
+        }
+        {
+            // assign to non-empty vector
+            Vector a(42, 21);
+            Vector b(10, 42);
+
+            a.assign(b.begin(), b.end());
+            assert(a == b);
+        }
+        {
+            // assign no elements to empty vector
+            Vector a;
+            Vector b;
+
+            a.assign(b.begin(), b.end());
+            assert(a == b);
+        }
+        {
+            // assign no elements to non-empty vector
+            Vector a(10, 42);
+            Vector b;
+
+            // FAIL (?)
+            a.assign(b.begin(), b.end());
+
+            assert(a.size() == 0);
+            assert(a.capacity() == 10);
+        }
+        {
+            // From bidirectionnal iterators.
+            // Could also be (multi)set, but not (multi)map.
+            std::list<Value> l;
+            l.insert(l.begin(), Value(1));
+            l.insert(l.begin(), Value(3));
+            l.insert(l.begin(), Value(2));
+
+            // just to compare
+            Vector v;
+            v.insert(v.begin(), Value(1));
+            v.insert(v.begin(), Value(3));
+            v.insert(v.begin(), Value(2));
+
+            Vector a;
+            a.assign(l.begin(), l.end());
+            assert(a == v);
+        }
+        {
+            // From random access iterators.
+            // Other than vector itself, only stands deque.
+            std::deque<Value> d;
+            d.insert(d.begin(), Value(2));
+            d.insert(d.begin(), Value(1));
+            d.insert(d.begin(), Value(3));
+
+            // just to compare
+            Vector v;
+            v.insert(v.begin(), Value(2));
+            v.insert(v.begin(), Value(1));
+            v.insert(v.begin(), Value(3));
+
+            Vector a;
+            a.assign(d.begin(), d.end());
+            assert(a == v);
+        }
+        log("assign by range (1)");
+    }
+    // by fill (2)
     {
         {
             // assign to empty vector
@@ -959,52 +1179,18 @@ void assign_test()
             assert(a.size() == 0);
             assert(a.capacity() == 10);
         }
+        log("assign by fill (2)");
     }
-    // by range
-    {
-        {
-            // assign to empty vector
-            Vector a;
-            Vector b(10, 42);
-
-            a.assign(b.begin(), b.end());
-            assert(a == b);
-        }
-        {
-            // assign to non-empty vector
-            Vector a(42, 21);
-            Vector b(10, 42);
-
-            a.assign(b.begin(), b.end());
-            assert(a == b);
-        }
-        {
-            // assign no elements to empty vector
-            Vector a;
-            Vector b;
-
-            a.assign(b.begin(), b.end());
-            assert(a == b);
-        }
-        {
-            // assign no elements to non-empty vector
-            Vector a(10, 42);
-            Vector b;
-
-            // FAIL (?)
-            a.assign(b.begin(), b.end());
-
-            assert(a.size() == 0);
-            assert(a.capacity() == 10);
-        }
-    }
-    log("assign()");
 }
 
+/// @todo tempate all possible tests with value_type
 template <typename T>
 void modifiers_tests()
 {
     std::cout << "== Modifiers ==" << std::endl;
+
+    typedef typename std::vector<T>::value_type std_value;
+    typedef typename  ft::vector<T>::value_type  ft_value;
 
     clear_test<std::vector<T>>();
     clear_test< ft::vector<T>>();
@@ -1012,8 +1198,8 @@ void modifiers_tests()
     erase_test<std::vector<T>>();
     erase_test< ft::vector<T>>();
 
-    insert_test<std::vector<T>>();
-    insert_test< ft::vector<T>>();
+    insert_test<std::vector<T>,std_value>();
+    insert_test< ft::vector<T>, ft_value>();
 
     push_back_test<std::vector<T>>();
     push_back_test< ft::vector<T>>();
@@ -1027,8 +1213,8 @@ void modifiers_tests()
     swap_test<std::vector<T>>();
     swap_test< ft::vector<T>>();
 
-    assign_test<std::vector<T>>();
-    assign_test< ft::vector<T>>();
+    assign_test<std::vector<T>,std_value>();
+    assign_test< ft::vector<T>, ft_value>();
 }
 
 /****** Operators tests *******************************************************/
@@ -1179,6 +1365,7 @@ void greater_than_equal_test()
     log("operator>=");
 }
 
+/// @todo tempate all possible tests with value_type
 template <typename T>
 void operators_tests()
 {

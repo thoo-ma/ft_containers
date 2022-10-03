@@ -80,8 +80,9 @@ class vector {
 
     private:
 
-    template <typename U = T>
-    class vector_iterator : public iterator<random_access_iterator_tag, U>
+    template <typename U>
+    //class vector_iterator : public iterator<random_access_iterator_tag, U>
+    class vector_iterator : public iterator<std::random_access_iterator_tag, U>
     {
         /****** Member types **************************************************/
 
@@ -272,14 +273,15 @@ class vector {
     }
 
     /// @brief Constructor by iterator range (3)
-    // template <class InputIterator>
-    // vector (InputIterator first, InputIterator last,
-    // const allocator_type & alloc = allocator_type())
-    vector ( iterator first, iterator last,
-        const allocator_type & alloc = allocator_type()
-    ) : _alloc(alloc)//, _max_size(alloc.max_size()) // why? cf. -Wreorder
+    template <class InputIterator>
+    vector (InputIterator first, InputIterator last,
+    const allocator_type & alloc = allocator_type(),
+    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0
+    ) : _alloc(alloc)
     {
-        _size = last - first;
+        _size = 0;
+        for (InputIterator it = first; it != last; it++)
+            _size++;
         _size ? _data = _alloc.allocate(_size) : _data = NULL;
         for (size_type i = 0; i < _size; i++)
             _alloc.construct(&_data[i], *(first++));
@@ -334,7 +336,6 @@ class vector {
     size_type   size ()      const    { return _size;                 }
     size_type   max_size ()  const    { return _max_size;             }
     size_type   capacity ()  const    { return _capacity;             }
-
 
     /// @note stl version
     // void reserve (size_type n)
@@ -407,25 +408,55 @@ class vector {
             reserve((_size + n) * 2); // remove *2 and we have terrible perfs
             position = begin() + offset;
         }
+
+        // move what is after inserted range at the end
+        for (size_type i = end() - position, j = n; i > 0; i--, j--)
+            _data[_size - 1 + j] = _data[_size - 1 + j - n];
+
         // insert
-        for (size_type i = 0; i < n; i++)
-        {
-            _alloc.construct(&_data[_size++], _data[position - begin() + i]);
-            _data[position - begin() + i] = val;
-        }
+        for (size_type i = 0; i < n; i++, position++, _size++)
+            _data[position - begin()] = val;
     }
 
     /// @brief Insert by range (3)
-    //template <class InputIterator>
-    //insert (iterator position, InputIterator first, InputIterator last)
-    void insert (iterator position, iterator first, iterator last)
+   // void insert (iterator position, iterator first, iterator last)
+   // {
+   //     // reallocate
+   //     if (_capacity - _size < static_cast<size_type>(last - first))
+   //     {
+   //         // because of reallocation, position need to be reset
+   //         size_type pos = position - begin();
+   //         reserve(_size + (last - first));
+   //         position = begin() + pos;
+   //     }
+   //     // insert
+   //     while (first != last)
+   //     {
+   //         _data[_size] = *position;
+   //         _data[position - begin()] = *first;
+   //         first++;
+   //         position++;
+   //         _size++;
+   //     }
+   // }
+
+    /// @todo why `type*` instead of `type` for enable_if unless constructor (3)
+    /// @brief Insert by range (3)
+    template <class InputIterator>
+    void insert (iterator position, InputIterator first, InputIterator last,
+    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
     {
-        // reallocate
-        if (_capacity - _size < static_cast<size_type>(last - first))
+        // get range distance
+        size_type n = 0;
+        InputIterator it = first;
+        while (it++ != last) n++;
+
+        // reallocate if needed
+        if (n > _capacity - _size)
         {
             // because of reallocation, position need to be reset
             size_type pos = position - begin();
-            reserve(_size + (last - first));
+            reserve(_size + n);
             position = begin() + pos;
         }
         // insert
@@ -540,16 +571,17 @@ class vector {
         v._capacity = capacity;
     }
 
-    /// @brief Assign by range
-//    template <typename InputIterator>
-//    void assign(InputIterator first, InputIterator last)
-    void assign (iterator first, iterator last)
+    /// @todo why `type*` instead of `type` for enable_if unless constructor (3)
+    /// @brief Assign by range (1)
+    template <typename InputIterator>
+    void assign(InputIterator first, InputIterator last,
+    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
     {
         erase(begin(), end());
         insert(begin(), first, last);
     }
 
-    /// @brief Assign by fill
+    /// @brief Assign by fill (2)
     void assign (size_type n, const value_type & value)
     {
         erase(begin(), end());
@@ -624,7 +656,7 @@ class vector {
 /*                                                                            */
 /******************************************************************************/
 
-/// @todo add constness to lhs and rhs
+/// @todo
 template <class T, class Alloc>
 bool operator== (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 {
@@ -639,12 +671,10 @@ bool operator== (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 //    lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
-/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator!= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return !(lhs == rhs); }
 
-/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator< (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 {
@@ -652,17 +682,14 @@ bool operator< (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
     lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator> (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return rhs < lhs; }
 
-/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator<= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return !(lhs > rhs); }
 
-/// @todo add constness to lhs and rhs
 template <class T, class Alloc>
 bool operator>= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 { return !(lhs < rhs); }
