@@ -23,6 +23,7 @@ class A
     A () : data(int()) { }
     A (int const & i) : data(i) { }
     A (A const & a) : data(a.data) { }
+    A & operator =(A const & a) { data = a.data; return *this; }
 };
 
 bool operator==(A const & lhs, A const & rhs)
@@ -516,14 +517,14 @@ void at_test()
             {
                 // mutable vector
                 ft::vector<int> v(10, 42);
-                try { v.at(v.end() - v.begin()); }
+                try { v.at(static_cast<typename ft::vector<int>::size_type>(v.end() - v.begin())); }
                 catch (std::out_of_range & oor) { success = false; }
                 assert(!success);
             }
             {
                 // const vector
                 const ft::vector<int> v(10, 42);
-                try { v.at(v.end() - v.begin()); }
+                try { v.at(static_cast<typename ft::vector<int>::size_type>(v.end() - v.begin())); }
                 catch (std::out_of_range & oor) { success = false; }
                 assert(!success);
             }
@@ -1563,6 +1564,55 @@ void iterators_tests()
 
 /****** Vector tests **********************************************************/
 
+template <typename Vector1D, typename Vector2D>
+void exception_constructor_by_fill()
+{
+    try { Vector2D v(1000000000, Vector1D(1000000000,42)); }
+    catch (std::exception & e) { std::cout << e.what() << std::endl; }
+}
+
+/// @note mystery: doesn't throw anything (both std and ft)
+template <typename Vector1D, typename Vector2D>
+void exception_constructor_by_range()
+{
+    Vector1D a(100000, 42);
+    try { Vector2D b(100000, Vector1D(a.begin(), a.end())); }
+    catch (std::exception & e) { std::cout << e.what() << std::endl; }
+}
+
+template <typename Vector1D, typename Vector2D>
+void exception_reserve()
+{
+    // bad_alloc
+    try
+    {
+        Vector2D v(10);
+        for (int i = 0; i < 10; i++)
+            v.at(i).reserve(v.at(i).max_size() - 100000);
+    }
+    catch (std::exception & e) { std::cout << e.what() << std::endl; }
+
+    // lenght_error
+    Vector1D v;
+    try { v.reserve(v.max_size() + 1); }
+    catch (std::length_error & e) { std::cout << e.what() << std::endl; }
+}
+
+template <typename T>
+void exceptions_tests()
+{
+    exception_constructor_by_fill<std::vector<T>, std::vector<std::vector<T>>>();
+    exception_constructor_by_fill< ft::vector<T>,  ft::vector< ft::vector<T>>>();
+
+//    exception_constructor_by_range<std::vector<T>, std::vector<std::vector<T>>>();
+//    exception_constructor_by_range< ft::vector<T>,  ft::vector< ft::vector<T>>>();
+
+    exception_reserve<std::vector<T>, std::vector<std::vector<T>>>();
+    exception_reserve< ft::vector<T>,  ft::vector< ft::vector<T>>>();
+
+    /// @note at() exception not tested here
+}
+
 template <typename T>
 void vector_test()
 {
@@ -1573,15 +1623,16 @@ void vector_test()
     modifiers_tests<T>();
     operators_tests<T>();
     iterators_tests<T>();
+//    exceptions_tests<T>();
 }
 
 /****** All tests *************************************************************/
 
 int main()
 {
-//    vector_test<int>();
+    vector_test<int>();
 //    vector_test<double>();
-    vector_test<A>();
+//    vector_test<A>();
 
 //    std::vector<const std::pair<int,int>>::const_iterator a;
 //     ft::vector<const  ft::pair<int,int>>::const_iterator b;

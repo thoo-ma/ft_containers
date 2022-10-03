@@ -112,10 +112,10 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 //    mapped_type const & at (key_type const & k) const;
 
     /// @todo
-    mapped_type & operator[] (const key_type & key)
-    {
+    //mapped_type & operator[] (const key_type & key)
+    //{
 
-    }
+    //}
     //{ return (*(insert(make_pair(key, mapped_type())).first)).second; }
 
     /****** Capacity **********************************************************/

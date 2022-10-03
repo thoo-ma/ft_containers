@@ -16,6 +16,7 @@ todo
 14. Faire un namespace test ou mettre tous les typedef, toutes les instances de
     types utiles et les fonctions de log
 15. Put custom datatype for output tests in one specific file
+16. check compilation flags into makefile
 ________
 
 maybe

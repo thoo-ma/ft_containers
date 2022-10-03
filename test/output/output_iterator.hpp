@@ -61,10 +61,10 @@ value_type (int x) { return typename Container::value_type(x,x); }
 template <typename Container>
 void iterator_constructor_by_default_test()
 {
-    { typename Container::iterator		          it; }
-    { typename Container::const_iterator	      it; }
-    { typename Container::reverse_iterator        it; }
-    { typename Container::const_reverse_iterator  it; }
+    { typename Container::iterator		          it; (void)it; }
+    { typename Container::const_iterator	      it; (void)it; }
+    { typename Container::reverse_iterator        it; (void)it; }
+    { typename Container::const_reverse_iterator  it; (void)it; }
 
     log("constructor by default");
 }

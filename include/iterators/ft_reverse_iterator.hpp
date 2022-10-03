@@ -28,12 +28,16 @@ class reverse_iterator {
 
     public:
 
-    reverse_iterator() { }
+    reverse_iterator() : _base() { }
 
     reverse_iterator(const iterator_type & it) : _base(it) { }
 
     template <typename Iter>
     reverse_iterator(const reverse_iterator<Iter> & rit) : _base(rit.base()) { }
+
+    /****** Destructor ****************************************************/
+
+    virtual ~reverse_iterator() { }
 
     /****** Member functions **********************************************/
 

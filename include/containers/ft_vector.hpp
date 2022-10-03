@@ -1,41 +1,24 @@
 #ifndef FT_VECTOR_H
 #define FT_VECTOR_H 1
 
-#include <iostream> // remove
-#include <cstring> // std::memmove (cf. erase)
 #include <memory> // std::allocator
-#include <stdexcept> // std::out_of_range --> rewrite it for namespace ft ?
-#include <algorithm> // std:max
+#include <stdexcept> // std::out_of_range
+#include <cstring> // std::memmove (cf. erase)
 
 #include "ft_type_traits.hpp"
 #include "ft_iterator_base_types.hpp"
-#include "ft_lexicographical_compare.hpp"
 #include "ft_reverse_iterator.hpp"
+#include "ft_lexicographical_compare.hpp"
 
-///
-/// \file ft_vector.hpp
-///
-
-/// @todo bien templater les iterateurs en arguments de certaines fonctions
-///       (assert, assign, etc.)
-/// @todo ne jamais set _capacity ou _size avant d'avoir appele allocate()
-/// @todo bien gerer les allocations et les exceptions
-/// @todo prendre en compte `size_max` pour jeter les exceptions appropriees
-/// @todo private: _allocate_and_copy() pour eviter les redites
-/// @todo (?) add some private functions like STL (like internal primitives for
-///       public methods). ex: _reallocate_and_copy(position, n, first, last)
-///       def: reallocate n * sizeof(T) at position and copy there values
-///            inside [first,last)
+/// @todo template iterator arguments (assert, assign, etc.)
+/// @todo throw appropriate exception (out_of_bound) when `size_max` reached
+/// @todo (?) add some private functions like stl: _(re)allocate_and_copy, etc.
 /// @todo (?) use `_first` and `_finish` instead of `_size`
 /// @todo (?) why can we write `vector` instead of `vector<value_type>`
 /// @todo (?) why can we access private variable of vector passed as arguments
-/// @todo (?) `val` vs `value`
+/// @todo (?) do not set _capacity nor _size before calling allocate()
 
 namespace ft {
-
-///
-/// \brief vector class
-///
 
 template <class T, class Allocator = std::allocator<T> >
 class vector {
@@ -57,9 +40,9 @@ class vector {
     typedef size_t      size_type;
     typedef ptrdiff_t   difference_type;
     typedef T &         reference;
-    typedef const T &   const_reference;
+    typedef T const &   const_reference;
     typedef T *         pointer;
-    typedef const T *   const_pointer;
+    typedef T const *   const_pointer;
 
     /**************************************************************************/
     /*                                                                        */
@@ -67,19 +50,15 @@ class vector {
     /*                                                                        */
     /**************************************************************************/
 
-    ///	@todo We need 2 more requirements:
-    ///
-    ///  1. Don't allow such: ft::vector<T>::vector_iterator    it;
-    ///  2. Don't allow such: ft::vector<T>::vector_iterator<U> it;
-    ///
-    ///     The best solution seems to label `vector_iterator` with `private`
-    ///     attribute. However, templated nested classes don't support
-    ///     `private` nor `protected` attributes. This is a compiler bug.
-    ///     Check the following link for further informations about it.
-    ///     https://stackoverflow.com/questions/3784652
+    /// @note The following `private` attribute is not well supported by all
+    ///       compilers. At 42 Paris, we currently use clang++ 12 that _does_ 
+    ///       _support_ private templated nested classes. Further informations
+    ///       about this widely spreaded compiler bug at the following this link
+    ///       https://stackoverflow.com/questions/3784652
 
     private:
 
+    /// @todo put std iterator flags into 'ft_iterator_base_types.hpp'
     template <typename U>
     //class vector_iterator : public iterator<random_access_iterator_tag, U>
     class vector_iterator : public iterator<std::random_access_iterator_tag, U>
@@ -107,15 +86,15 @@ class vector {
 
         explicit vector_iterator (pointer data) : _data(data) { }
 
-        vector_iterator (const vector_iterator<T> & it) : _data(&(*it))
+        vector_iterator (vector_iterator<T> const & it) : _data(&(*it))
         { }
 
-        vector_iterator (const vector_iterator<const T> & it) : _data(&(*it))
+        vector_iterator (vector_iterator<T const> const & it) : _data(&(*it))
         { }
 
         /****** Operators *****************************************************/
 
-        vector_iterator & operator= (const vector_iterator & it)
+        vector_iterator & operator= (vector_iterator const & it)
         { _data = it._data; return *this; }
 
         reference operator* () const
@@ -124,22 +103,16 @@ class vector {
         pointer operator-> () const
         { return _data; }
 
-        bool operator== (const vector_iterator<T> & it) const
-        {
-       //     std::cout << "ici" << std::endl;
-            return _data == &(*it);
-        }
+        bool operator== (vector_iterator<T> const & it) const
+        { return _data == &(*it); }
 
-        bool operator== (const vector_iterator<const T> & it) const
-        {
-        //    std::cout << "ici" << std::endl;
-            return _data == &(*it);
-        }
+        bool operator== (vector_iterator<T const> const & it) const
+        { return _data == &(*it); }
 
-        bool operator!= (const vector_iterator<T> & it) const
+        bool operator!= (vector_iterator<T> const & it) const
         { return _data != &(*it); }
 
-        bool operator!= (const vector_iterator<const T> & it) const
+        bool operator!= (vector_iterator<T const> const & it) const
         { return _data != &(*it); }
 
         /// @note prefix
@@ -158,7 +131,7 @@ class vector {
         vector_iterator operator-- (int)
         { vector_iterator tmp(*this); operator--(); return tmp; }
 
-        vector_iterator & operator+= (const difference_type n)
+        vector_iterator & operator+= (difference_type const n)
         {
             /// @todo Why not delete `const` attribute to `n` ? Hence `m` would
             /// be useless (this also apply upon following operators)
@@ -168,48 +141,48 @@ class vector {
             return *this;
         }
 
-        vector_iterator & operator-= (const difference_type & n)
+        vector_iterator & operator-= (difference_type const & n)
         { return operator+=(-n); }
 
-        vector_iterator operator+ (const difference_type & n) const
+        vector_iterator operator+ (difference_type const & n) const
         { return vector_iterator(this->_data + n); }
 
-        vector_iterator operator- (const difference_type & n) const
+        vector_iterator operator- (difference_type const & n) const
         { return operator+(-n); }
 
-        difference_type operator- (const vector_iterator<T> & rhs) const
+        difference_type operator- (vector_iterator<T> const & rhs) const
         { return _data > &(*rhs) ? _data - &(*rhs) : -(&(*rhs) - _data); }
        // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
 
-        difference_type operator- (const vector_iterator<const T> & rhs) const
+        difference_type operator- (vector_iterator<T const> const & rhs) const
         { return _data > &(*rhs) ? _data - &(*rhs) : -(&(*rhs) - _data); }
        // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
 
-        value_type & operator[] (const difference_type n) const
+        value_type & operator[] (difference_type const n) const
         { return this->_data[n]; }
 
-        bool operator< (const vector_iterator<T> & rhs) const
+        bool operator< (vector_iterator<T> const & rhs) const
         { return *this - rhs < 0; }
 
-        bool operator< (const vector_iterator<const T> & rhs) const
+        bool operator< (vector_iterator<T const> const & rhs) const
         { return *this - rhs < 0; }
 
-        bool operator> (const vector_iterator<T> & rhs) const
+        bool operator> (vector_iterator<T> const & rhs) const
         { return rhs < *this; }
 
-        bool operator> (const vector_iterator<const T> & rhs) const
+        bool operator> (vector_iterator<T const> const & rhs) const
         { return rhs < *this; }
 
-        bool operator<= (const vector_iterator<T> & rhs) const
+        bool operator<= (vector_iterator<T> const & rhs) const
         { return !(*this > rhs); }
 
-        bool operator<= (const vector_iterator<const T> & rhs) const
+        bool operator<= (vector_iterator<T const> const & rhs) const
         { return !(*this > rhs); }
 
-        bool operator>= (const vector_iterator<T> & rhs) const
+        bool operator>= (vector_iterator<T> const & rhs) const
         { return !(*this < rhs); }
 
-        bool operator>= (const vector_iterator<const T> & rhs) const
+        bool operator>= (vector_iterator<T const> const & rhs) const
         { return !(*this < rhs); }
 
     };
@@ -219,7 +192,7 @@ class vector {
     typedef vector_iterator<value_type>	        iterator;
     typedef vector_iterator<value_type const>	const_iterator;
 
-    // namespace below is mandatory since typedef operands share the same name
+    /// @note namespace mandatory since typedef operands share the same name
     typedef ft::reverse_iterator<iterator>          reverse_iterator;
     typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
@@ -249,33 +222,30 @@ class vector {
 
     /// @brief Constructor by default (1)
     /// @todo  add 'explicit' qualifier ?
-    vector (const allocator_type & alloc = allocator_type())
+    vector (allocator_type const & alloc = allocator_type())
     : _data(NULL), _size(0), _capacity(0), _max_size(alloc.max_size()),
         _alloc(alloc) { }
 
     /// @brief Constructor by fill (2)
     /// @todo  add 'explicit' qualifier ?
-    vector ( size_type n, const value_type & val = value_type(),
-        const allocator_type & alloc = allocator_type()
+    vector (size_type n, value_type const & val = value_type(),
+        allocator_type const & alloc = allocator_type()
     ) : _size(n), _capacity(n), _max_size(alloc.max_size()), _alloc(alloc)
     {
         if (n)
         {
-            try {
-                _data = _alloc.allocate(_size);
-                for (size_type i = 0; i < _size; i++)
-                    _alloc.construct(&_data[i], val); // assign
-            }
-            /// @todo log ?
-            catch (std::bad_alloc & ba) { std::cout << ba.what() << std::endl; }
+            _data = _alloc.allocate(_size);
+            for (size_type i = 0; i < _size; i++)
+                _alloc.construct(&_data[i], val);
         }
         else { _data = NULL; }
     }
 
     /// @brief Constructor by iterator range (3)
+    /// @todo bad_alloc not well thrown and catched (same for std)
     template <class InputIterator>
     vector (InputIterator first, InputIterator last,
-    const allocator_type & alloc = allocator_type(),
+    allocator_type const & alloc = allocator_type(),
     typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0
     ) : _alloc(alloc)
     {
@@ -289,7 +259,7 @@ class vector {
     }
 
     /// @brief Constructor by copy (4)
-    vector (const vector<value_type, allocator_type> & v)
+    vector (vector<value_type, allocator_type> const & v)
     : _size(0), _capacity(0), _max_size(v.max_size()), _alloc(v._alloc)
     //: _size(v.size()), _capacity(v.capacity()), _max_size(v.max_size()), _alloc(v._alloc)
     { *this = v; }
@@ -306,7 +276,6 @@ class vector {
 
     reference at (size_type n)
     { if (n < _size) return _data[n]; else throw std::out_of_range(""); }
-    //{ return n < _size ? _data[n] : throw std::out_of_range(""); }
 
     const_reference at (size_type n) const
     { if (n < _size) return _data[n]; else throw std::out_of_range(""); }
@@ -390,7 +359,7 @@ class vector {
     //{ for (size_type i = 0; i < _size; i++) { _alloc.destroy(_data + i); } _size = 0; } // x2000
 
     /// @brief Insert by single element (1)
-    iterator insert (iterator position, const value_type & val)
+    iterator insert (iterator position, value_type const & val)
     {
         size_type offset = position - begin();
         insert(position, 1, val);
@@ -398,7 +367,7 @@ class vector {
     }
 
     /// @brief Insert by fill (2)
-    void insert (iterator position, size_type n, const value_type & val)
+    void insert (iterator position, size_type n, value_type const & val)
     {
         // reallocate
         if (_size + n > _capacity)
@@ -541,7 +510,7 @@ class vector {
    //     return first;
    // }
 
-    void push_back (const value_type & value)
+    void push_back (value_type const & value)
     { insert(end(), value); }
 
     void pop_back ()
@@ -571,7 +540,7 @@ class vector {
         v._capacity = capacity;
     }
 
-    /// @todo why `type*` instead of `type` for enable_if unless constructor (3)
+    /// @todo why `type*` instead of `type`
     /// @brief Assign by range (1)
     template <typename InputIterator>
     void assign(InputIterator first, InputIterator last,
@@ -582,7 +551,7 @@ class vector {
     }
 
     /// @brief Assign by fill (2)
-    void assign (size_type n, const value_type & value)
+    void assign (size_type n, value_type const & value)
     {
         erase(begin(), end());
         insert(begin(), n, value);
@@ -617,7 +586,7 @@ class vector {
     /****** Operators *********************************************************/
 
     vector<value_type, allocator_type> &
-    operator= (const vector<value_type, allocator_type> & v)
+    operator= (vector<value_type, allocator_type> const & v)
     {
         if (*this != v)
         {
@@ -658,7 +627,7 @@ class vector {
 
 /// @todo
 template <class T, class Alloc>
-bool operator== (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
+bool operator== (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -672,26 +641,26 @@ bool operator== (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
 }
 
 template <class T, class Alloc>
-bool operator!= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
+bool operator!= (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 { return !(lhs == rhs); }
 
 template <class T, class Alloc>
-bool operator< (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
+bool operator< (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 {
     return
     lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template <class T, class Alloc>
-bool operator> (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
+bool operator> (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 { return rhs < lhs; }
 
 template <class T, class Alloc>
-bool operator<= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
+bool operator<= (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 { return !(lhs > rhs); }
 
 template <class T, class Alloc>
-bool operator>= (const vector<T, Alloc> & lhs, const vector<T, Alloc> & rhs)
+bool operator>= (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 { return !(lhs < rhs); }
 
 } // namespace ft

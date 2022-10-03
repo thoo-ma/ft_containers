@@ -2,7 +2,7 @@
 
 CXX				=	c++ -g
 
-CXXFLAGS		=	-std=c++11 -Wall -Wextra -Wconversion# -fpermissive
+CXXFLAGS		=	-std=c++11 -Wall -Wextra# -Wconversion# -fpermissive
 
 ################### DIRECTORIES ################################################
 
@@ -33,9 +33,8 @@ CONTAINERS 		= 	$(CONTAINERS_DIR)/ft_vector.hpp \
 
 ALGORITHMS 		= 	$(ALGORITHMS_DIR)/ft_lexicographical_compare.hpp
 
-ITERATORS 		= 	$(ITERATORS_DIR)/ft_bidirectional_iterator.hpp \
-					$(ITERATORS_DIR)/ft_random_access_iterator.hpp \
-					$(ITERATORS_DIR)/ft_iterator_base_types.hpp
+ITERATORS 		= 	$(ITERATORS_DIR)/ft_iterator_base_types.hpp \
+					$(ITERATORS_DIR)/ft_reverse_iterator.hpp
 
 UTILITY			=	$(UTILITY_DIR)/ft_pair.hpp \
 					$(UTILITY_DIR)/rb_tree.hpp
