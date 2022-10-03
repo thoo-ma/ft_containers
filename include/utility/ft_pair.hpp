@@ -25,7 +25,7 @@ struct pair
 
     /// @brief Constructor by copy (2) with different types
     template <typename U1, typename U2>
-    pair(const pair<U1,U2> & pair) : first(pair.first), second(pair.second) { }
+    pair(pair<U1,U2> const & pair) : first(pair.first), second(pair.second) { }
 
     /// @brief constructor by copy (2) with same type
     ///
@@ -39,23 +39,12 @@ struct pair
     /// Then, it will be `operator=` that will be called for such construct.
     /// But if we construct a pair with const values (as we must have for map),
     /// then we cannot assign, we must list-initialize: this is what will be done here.
-    pair(const pair<T1,T2> & pair) : first(pair.first), second(pair.second) { }
+    pair(pair<T1,T2> const & pair) : first(pair.first), second(pair.second) { }
 
     /// @brief Constructor by initialization (3)
-    pair(const first_type & a, const second_type & b) : first(a), second(b) { }
+    pair(first_type const & a, second_type const & b) : first(a), second(b) { }
 
-    /// @todo add ?
-    //  pair(pair<T1,T2> & pair) : first(pair.first), second(pair.second) { }
-
-    /// @todo add ?
-    //  pair & operator=(pair & pair)
-    //  {
-    //      first = pair.first;
-    //      second = pair.second;
-    //      return *this;
-    //  }
-
-    pair & operator=(const pair & pair)
+    pair & operator=(pair const & pair)
     {
         first = pair.first;
         second = pair.second;
@@ -67,15 +56,15 @@ struct pair
 /****** Non-member functions overload *****************************************/
 
 template <typename T1, typename T2>
-bool operator==(const pair<T1,T2> & lhs, const pair<T1,T2> & rhs)
+bool operator==(pair<T1,T2> const & lhs, pair<T1,T2> const & rhs)
 { return lhs.first == rhs.first && lhs.second == rhs.second; }
 
 template <typename T1, typename T2>
-bool operator!=(const pair<T1,T2> & lhs, const pair<T1,T2> & rhs)
+bool operator!=(pair<T1,T2> const & lhs, pair<T1,T2> const & rhs)
 { return !(lhs == rhs); }
 
 template <typename T1, typename T2>
-bool operator<(const pair<T1,T2> & lhs, const pair<T1,T2> & rhs)
+bool operator<(pair<T1,T2> const & lhs, pair<T1,T2> const & rhs)
 {
     return
     (lhs.first < rhs.first) ||
@@ -83,19 +72,20 @@ bool operator<(const pair<T1,T2> & lhs, const pair<T1,T2> & rhs)
 }
 
 template <typename T1, typename T2>
-bool operator<=(const pair<T1,T2> & lhs, const pair<T1,T2> & rhs)
+bool operator<=(pair<T1,T2> const & lhs, pair<T1,T2> const & rhs)
 { return !(rhs < lhs); }
 
 template <typename T1, typename T2>
-bool operator>(const pair<T1,T2>& lhs, const pair<T1,T2> & rhs)
+bool operator>(pair<T1,T2> const & lhs, pair<T1,T2> const & rhs)
 { return rhs < lhs; }
 
 template <typename T1, typename T2>
-bool operator>=(const pair<T1,T2> & lhs, const pair<T1,T2>& rhs)
+bool operator>=(pair<T1,T2> const & lhs, pair<T1,T2> const & rhs)
 { return !(lhs < rhs); }
 
 /****** make_pair() ***********************************************************/
 
+/// @todo (?) add constness to `a` and `b`
 template <typename T1, typename T2>
 pair<T1,T2> make_pair(T1 a, T2 b)
 { return pair<T1,T2>(a, b); }

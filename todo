@@ -17,6 +17,7 @@ todo
     types utiles et les fonctions de log
 15. Put custom datatype for output tests in one specific file
 16. check compilation flags into makefile
+17. 'ft_map.hpp': east const instead of west const
 ________
 
 maybe
@@ -27,7 +28,6 @@ maybe
 - `make all` re-mkdir output folders but not timing ones...
 - keep our iterator_traits but forget abour our iterator struct
 --> this way, we can use stl algorithms act upon our containers
-- east const instead of west const
 - make sure that const_iterator = begin() calls the begin() method that returns
 const_iterator
 --> and not begin() returning iterator then construct const_iterator from it
