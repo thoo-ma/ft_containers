@@ -1546,23 +1546,23 @@ void iterators_tests()
 {
     std::cout << "== Iterators ==" << std::endl;
 
-    begin_test<std::vector<T>>();
-    begin_test< ft::vector<T>>();
-
-    end_test<std::vector<T>>();
-    end_test< ft::vector<T>>();
-
-    rbegin_test<std::vector<T>>();
-    rbegin_test< ft::vector<T>>();
-
-    rend_test<std::vector<T>>();
-    rend_test< ft::vector<T>>();
+//    begin_test<std::vector<T>>();
+//    begin_test< ft::vector<T>>();
+//
+//    end_test<std::vector<T>>();
+//    end_test< ft::vector<T>>();
+//
+//    rbegin_test<std::vector<T>>();
+//    rbegin_test< ft::vector<T>>();
+//
+//    rend_test<std::vector<T>>();
+//    rend_test< ft::vector<T>>();
 
     iterator_test<std::vector<T>>();
     iterator_test< ft::vector<T>>();
 }
 
-/****** Vector tests **********************************************************/
+/****** Exceptions tests ******************************************************/
 
 template <typename Vector1D, typename Vector2D>
 void exception_constructor_by_fill()
@@ -1613,15 +1613,17 @@ void exceptions_tests()
     /// @note at() exception not tested here
 }
 
+/****** Vector tests **********************************************************/
+
 template <typename T>
 void vector_test()
 {
-    constructors_tests<T>();
-    allocator_tests<T>();
-    capacity_tests<T>();
-    accessors_tests<T>();
-    modifiers_tests<T>();
-    operators_tests<T>();
+//    constructors_tests<T>();
+//    allocator_tests<T>();
+//    capacity_tests<T>();
+//    accessors_tests<T>();
+//    modifiers_tests<T>();
+//    operators_tests<T>();
     iterators_tests<T>();
 //    exceptions_tests<T>();
 }

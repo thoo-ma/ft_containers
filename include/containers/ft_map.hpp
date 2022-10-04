@@ -8,6 +8,8 @@
 #include "rb_tree.hpp"
 #include "ft_type_traits.hpp" // ??
 
+/// @todo struct value_compare
+
 namespace ft {
 
 /// @note Allocator won't be used. This map uses rb_tree allocator.
@@ -40,17 +42,18 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     typedef const value_type *  const_pointer;
 
     /// @note just to shorten typedefs below
-    private: typedef rb_tree<value_type> btree_type;
+    //private: typedef rb_tree<value_type> btree_type;
+    private: typedef rb_tree<value_type, key_compare> btree_type;
 
     public:
 
-    /// @note same semantic than tree for `operator *`
+    /// @note same semantic than rbtree for `operator*` and `operator->`
     typedef typename btree_type::iterator	            iterator;
     typedef typename btree_type::const_iterator         const_iterator;
     typedef typename btree_type::reverse_iterator       reverse_iterator;
     typedef typename btree_type::const_reverse_iterator const_reverse_iterator;
 
-    /// @note different semantic than tree for `operator *`
+    /// @note same semantic than rbtree for `operator*` and `operator->`
 //    class iterator : public rb_tree<value_type>::iterator
 //    { public: Key const & operator* () { return operator*()->key; } };
 //
@@ -66,12 +69,13 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /*                                                                        */
     /**************************************************************************/
 
-    private:
+    //private:
 
     //allocator_type	    _alloc; // this is not used
     typename btree_type::allocator_type	    _alloc;
     key_compare	        _comp;
-    rb_tree<value_type>	_tree;
+    //rb_tree<value_type>	_tree;
+    rb_tree<value_type, key_compare>	_tree;
     //size_type           _max_size; // remove
 
     /**************************************************************************/
@@ -111,12 +115,8 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 //    mapped_type & at (key_type const & k);
 //    mapped_type const & at (key_type const & k) const;
 
-    /// @todo
-    //mapped_type & operator[] (const key_type & key)
-    //{
-
-    //}
-    //{ return (*(insert(make_pair(key, mapped_type())).first)).second; }
+    mapped_type & operator[] (key_type const & key)
+    { return (insert(make_pair(key, mapped_type())).first)->second; }
 
     /****** Capacity **********************************************************/
 
@@ -128,7 +128,6 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /// @todo
     size_type max_size () const
-    //{ return _max_size; }
     { return _tree.get_allocator().max_size(); }
 
     /****** Modifiers *********************************************************/
@@ -257,7 +256,8 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         iterator it = begin();
         iterator ite = end();
 
-        while (it != ite && _comp(it->key.first, key)) it++;
+        //while (it != ite && _comp(it->key.first, key)) it++;
+        while (it != ite && _comp(it->first, key)) it++;
         return it;
     }
 
@@ -267,7 +267,8 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         const_iterator it = begin();
         const_iterator ite = end();
 
-        while (it != ite && _comp(it->key.first, key)) it++;
+        //while (it != ite && _comp(it->key.first, key)) it++;
+        while (it != ite && _comp(it->first, key)) it++;
         return it;
     }
 
@@ -277,7 +278,8 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         iterator it = begin();
         iterator ite = end();
 
-        while (it != ite && !_comp(key, it->key.first)) it++;
+        //while (it != ite && !_comp(key, it->key.first)) it++;
+        while (it != ite && !_comp(key, it->first)) it++;
         return it;
     }
 
@@ -287,7 +289,8 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         const_iterator it = begin();
         const_iterator ite = end();
 
-        while (it != ite && !_comp(key, it->key.first)) it++;
+        //while (it != ite && !_comp(key, it->key.first)) it++;
+        while (it != ite && !_comp(key, it->first)) it++;
         return it;
     }
 
@@ -302,7 +305,6 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /****** Miscellaneous *****************************************************/
 
     allocator_type get_allocator () const
-    //{ return _alloc; }
     { return _tree.get_allocator(); }
 
     map & operator= (const map & m)

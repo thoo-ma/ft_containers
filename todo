@@ -18,6 +18,7 @@ todo
 15. Put custom datatype for output tests in one specific file
 16. check compilation flags into makefile
 17. 'ft_map.hpp': east const instead of west const
+18. compile everything well with c++98
 ________
 
 maybe
@@ -48,6 +49,7 @@ it would do with the template solution.)
 - say some about the vague subject and why some tests here may be overkill
 - explain why map.end() dereferencing segfault: no sentinel node
 - make note that insert with hint is just a regular insert
+- say some about iterator and reverse iterator relationship
 ________
 
 iterators

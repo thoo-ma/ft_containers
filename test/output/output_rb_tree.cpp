@@ -445,25 +445,24 @@ template <typename T>
 void tree_test()
 {
     constructors_tests<ft::rb_tree<T>>();
-//    capacity_tests<ft::rb_tree<T>>();
-//    accessors_tests<ft::rb_tree<T>>();
-//    modifiers_tests<ft::rb_tree<T>>();
-//    operators_tests<ft::rb_tree<T>>();
+    capacity_tests<ft::rb_tree<T>>();
+    accessors_tests<ft::rb_tree<T>>();
+    modifiers_tests<ft::rb_tree<T>>();
+    operators_tests<ft::rb_tree<T>>();
 
     /// @todo
     // allocator_tests<ft::rb_tree<T>>();
 
-//    std::cout << "== Iterators ==" << std::endl;
-//    iterator_test<ft::rb_tree<T>>();
+    /// @note delete
+    // iterator_test<ft::rb_tree<T>>();
 }
 
 /****** Main ******************************************************************/
 
+#include <map>
 int main()
 {
-
 //    debug();
-
 //    min_test();
 //    max_test();
 

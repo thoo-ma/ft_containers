@@ -10,7 +10,7 @@
 #include "ft_iterator_base_types.hpp"
 #include "ft_reverse_iterator.hpp"
 
-/// @todo benchmark destructors execution time (prefer recursive one if possible)
+/// @todo benchmark destructors execution time (keep recursive one if possible)
 /// @todo handle allocator failure
 /// @todo unsupport duplicate nodes
 /// @todo (?) use comp
@@ -18,7 +18,7 @@
 
 namespace ft {
 
-template <typename T>
+template <typename T, typename Compare = std::less<T>>
 class rb_tree
 {
     /****** Types *************************************************************/
@@ -28,6 +28,7 @@ class rb_tree
     public:
 
     typedef T                           key_type;
+    typedef Compare                     compare_type;
     typedef size_t                      size_type;
     typedef struct node                 value_type;
     typedef struct node *               pointer;
@@ -61,15 +62,24 @@ class rb_tree
             return *this;
         }
 
+        /// @todo add
+        bool operator <(struct node const & rhs)
+        {
+            std::cout << "comp" << std::endl;
+            return compare(key, rhs.key);
+        }
+
         bool operator== (struct node const & rhs) const
         { return this->key == rhs.key; }
 
+        Compare compare;
     };
 
     /****** Iterator **********************************************************/
 
     private:
 
+    /// @todo iterator tag from std
     template <typename U>
     class rb_tree_iterator : public iterator<bidirectional_iterator_tag, U>
     {
@@ -103,26 +113,27 @@ class rb_tree
         : _data(it.data()), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
         { }
 
+        /// @note yes, those casts are nasty but seems necessary...
         rb_tree_iterator (rb_tree_iterator<rb_tree::value_type const> const & it)
-        : _data(it.data()), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
+        : _data(const_cast<pointer>(it.data())), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
         { }
 
         rb_tree_iterator operator= (rb_tree_iterator const & it)
         { _data = it.data(); _sentinel_ptr = it.sentinel_ptr(); return *this; }
 
-//        /// @todo
+        /// @todo
         key_type const & operator* () const
         { return _data->key; }
 
-//        /// @todo
+        /// @todo
         key_type * operator-> () const
         { return &_data->key; }
 
-//        value_type & operator* () const
-//        { return *_data; }
-//
-//        pointer operator-> () const
-//        { return _data; }
+        //value_type & operator* () const
+        //{ return *_data; }
+
+        //pointer operator-> () const
+        //{ return _data; }
 
         bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
         {
@@ -143,8 +154,8 @@ class rb_tree
         { return !(*this == it); }
 
         /// @note prefix
-        /// @pre into rb_tree : _sentinel.right == _root
-        /// @note maybe can improve case 3
+        /// @note might improve case 3
+        /// @pre  _sentinel.right == _root
         rb_tree_iterator & operator++ ()
         {
             // case 1: next node is min(_data->right)
@@ -177,14 +188,13 @@ class rb_tree
         }
 
         /// @note prefix
-        /// @pre into rb_tree : _sentinel.right == _root
-        /// @note maybe can improve case 3
+        /// @note might improve case 3
+        /// @pre  _sentinel.right == _root
         rb_tree_iterator & operator-- ()
         {
             // case 0: previous node is max(root)
             if (_data == _sentinel_ptr)
             {
-                //std::cout << "case 0" << std::endl;
                 _data = _data->right;
                 while (_data != _sentinel_ptr && _data->right != _sentinel_ptr)
                     _data = _data->right;
@@ -194,7 +204,6 @@ class rb_tree
             // case 1: previous node is max(_data->left)
             if (_data->left != _sentinel_ptr)
             {
-                //std::cout << "case 1" << std::endl;
                 _data = _data->left;
                 while (_data != _sentinel_ptr && _data->right != _sentinel_ptr)
                     _data = _data->right;
@@ -204,13 +213,11 @@ class rb_tree
             // case 2: previous node is parent
             if (_data->parent != _sentinel_ptr && _data == _data->parent->right)
             {
-                //std::cout << "case 2" << std::endl;
                 _data = _data->parent;
                 return *this;
             }
 
             // case 3: previous node is further parent or not at all
-            //std::cout << "case 3" << std::endl;
             _data = _data->parent;
             while (_data != _sentinel_ptr
                 && _data->parent != _sentinel_ptr
@@ -257,11 +264,9 @@ class rb_tree
     //size_type       _max_size; // just to be inherited by map
     value_type      _sentinel;
     allocator_type  _alloc;
+    compare_type    _comp { };
 
     /****** Internals *********************************************************/
-
-    //inline bool _is_leaf(pointer x) { return x == &_sentinel; }
-    //bool is_sentinel() const ();
 
     /**
      *  @pre 'x' right child is not the sentinel node
@@ -625,6 +630,7 @@ class rb_tree
         while (x != &_sentinel)
         {
             y = x;
+            //if (z < x)
             if (z->key < x->key)
                 x = x->left;
             else
@@ -639,6 +645,7 @@ class rb_tree
 
         }
         else if (z->key < y->key)
+        //else if (_comp(z->key, y->key))
             y->left = z;
         else
             y->right = z;
@@ -757,6 +764,7 @@ class rb_tree
     {
         while (x != &_sentinel && x->key != key)
             key < x->key ? x = x->left : x = x->right;
+            //_comp(key, x->key) ? x = x->left : x = x->right;
         return x != &_sentinel ? x : NULL;
     }
 
@@ -799,6 +807,7 @@ class rb_tree
     size_type size () const
     { return _size; }
 
+    /// @todo
     size_type max_size () const
     //{ return _max_size; }
     { return _alloc.max_size(); }
@@ -814,10 +823,6 @@ class rb_tree
 
     pointer sentinel () const
     { return const_cast<pointer>(&_sentinel); }
-
-//    size_type black_height (pointer x) const;
-//    pointer pred (pointer x);
-//    pointer next (pointer x);
 
     /****** Iterator **********************************************************/
 
@@ -854,33 +859,53 @@ class rb_tree
         file << "graph TD;" << std::endl;
         file << "style sentinel fill:black" << std::endl;
         if (_size)
-            _draw_graph(file, _root);
+            //_draw_graph(file, _root);
+            _draw_graph_pair(file, _root);
         file << "```" << std::endl;
         file.close();
     }
 
-    private: void _draw_graph (std::ofstream & file, pointer node) const
+//    private: void _draw_graph (std::ofstream & file, pointer node) const
+//    {
+//        file << node->key << "; style " << node->key << " fill:";
+//        node->color == Red ? file << "red" : file << "black";
+//        file << std::endl;
+//
+//        if (node->left != &_sentinel)
+//        {
+//            file << node->key << " --- " << node->left->key << std::endl;
+//            _draw_graph(file, node->left);
+//        } else file << node->key << " --- sentinel" << std::endl;
+//
+//        if (node->right != &_sentinel)
+//        {
+//            file << node->key << " --- " << node->right->key << std::endl;
+//            _draw_graph(file, node->right);
+//        } else file << node->key << " --- sentinel" << std::endl;
+//    }
+
+    private: void _draw_graph_pair (std::ofstream & file, pointer node) const
     {
-        file << node->key << "; style " << node->key << " fill:";
+        file << node->key.first << "; style " << node->key.first << " fill:";
         node->color == Red ? file << "red" : file << "black";
         file << std::endl;
 
         if (node->left != &_sentinel)
         {
-            file << node->key << " --- " << node->left->key << std::endl;
-            _draw_graph(file, node->left);
-        } else file << node->key << " --- sentinel" << std::endl;
+            file << (node->key).first << " --- " << node->left->key.first << std::endl;
+            _draw_graph_pair(file, node->left);
+        } else file << (node->key).first << " --- sentinel" << std::endl;
 
         if (node->right != &_sentinel)
         {
-            file << node->key << " --- " << node->right->key << std::endl;
-            _draw_graph(file, node->right);
-        } else file << node->key << " --- sentinel" << std::endl;
+            file << (node->key).first << " --- " << node->right->key.first << std::endl;
+            _draw_graph_pair(file, node->right);
+        } else file << (node->key).first << " --- sentinel" << std::endl;
     }
 
 };
 
-/// @note those operators useless since not used by map
+/// @note not used by map
 template <typename T>
 bool operator== (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 {
@@ -893,18 +918,10 @@ bool operator== (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
     return (lit == lite && rit == rite);
 }
 
+/// @note not used by map
 template <typename T>
 bool operator!= (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 { return !(lhs == rhs); }
-
-/*
-template <typename T>
-bool operator< (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
-{
-    return
-    lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-}
-*/
 
 } // namespace
 

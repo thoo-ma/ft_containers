@@ -41,8 +41,8 @@ class reverse_iterator {
 
     /****** Member functions **********************************************/
 
-    /// @todo why cannot return a reference ?
-    iterator_type base() const { return _base; }
+    iterator_type base() const
+    { iterator_type tmp = _base; return ++tmp; }
 
     /****** Operators *****************************************************/
 
@@ -50,10 +50,10 @@ class reverse_iterator {
     { _base = it.base(); return *this; }
 
     reference operator*() const
-    { return _base.operator*(); }
+    { iterator_type tmp = _base; return (--tmp).operator*(); }
 
     pointer operator->() const
-    { return _base.operator->(); }
+    { iterator_type tmp = _base; return (--tmp).operator->(); }
 
     template <typename Iter>
     bool operator==(reverse_iterator<Iter> const & it) const
