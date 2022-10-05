@@ -51,7 +51,7 @@ class vector {
     /**************************************************************************/
 
     /// @note The following `private` attribute is not well supported by all
-    ///       compilers. At 42 Paris, we currently use clang++ 12 that _does_ 
+    ///       compilers. At 42 Paris, we currently use clang++ 12 that _does_
     ///       _support_ private templated nested classes. Further informations
     ///       about this widely spreaded compiler bug at the following this link
     ///       https://stackoverflow.com/questions/3784652
@@ -86,11 +86,9 @@ class vector {
 
         explicit vector_iterator (pointer data) : _data(data) { }
 
-        vector_iterator (vector_iterator<T> const & it) : _data(&(*it))
-        { }
+        vector_iterator (vector_iterator<T> const & it) : _data(&(*it)) { }
 
-        vector_iterator (vector_iterator<T const> const & it) : _data(&(*it))
-        { }
+        vector_iterator (vector_iterator<T const> const & it) : _data(&(*it)) { }
 
         /****** Operators *****************************************************/
 
@@ -572,16 +570,16 @@ class vector {
     { return const_iterator(&_data[_size]); }
 
 	reverse_iterator rbegin ()
-    { return reverse_iterator(--end()); }
+    { return reverse_iterator(end()); }
 
 	const_reverse_iterator rbegin () const
-    { return const_reverse_iterator(--end()); }
+    { return const_reverse_iterator(end()); }
 
 	reverse_iterator rend ()
-    { return reverse_iterator(--begin()); }
+    { return reverse_iterator(begin()); }
 
 	const_reverse_iterator rend () const
-    { return const_reverse_iterator(--begin()); }
+    { return const_reverse_iterator(begin()); }
 
     /****** Operators *********************************************************/
 

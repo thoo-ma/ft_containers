@@ -126,8 +126,8 @@ iterator_constructor_by_pointer_test()
     { typename Container::iterator	        it(p); }
     { typename Container::const_iterator    it(p); }
 
-    // The following should not compile. We get this behavior by adding
-    // `explicit` qualifier to iterator_base constructor by pointer.
+    /// @note the following should not compile. We get this behavior by adding
+    ///       `explicit` qualifier to iterator_base constructor by pointer.
 
     // { typename Container::reverse_iterator	        it(p); }
     // { typename Container::const_reverse_iterator     it(p); }
@@ -335,12 +335,17 @@ void reverse_iterator_base_test()
     assert(c.rbegin().base() == c.end());
     assert(c.rend().base() == c.begin());
 
+    typename Container::iterator it(c.begin());
+    typename Container::reverse_iterator rit(it);
+
+    assert(rit.base() == it);
+    assert(&*(rit.base() - 1) == &*rit);
+
     log("base()");
 }
 
 /****** Input iterator test ***************************************************/
 
-/// @todo add reverse iterators
 template <typename Container>
 void iterator_equal_test_constructed_by_default()
 {
@@ -365,9 +370,29 @@ void iterator_equal_test_constructed_by_default()
         assert(a == b);
         assert(b == a);
     }
+    {
+        // rev_it = rev_it
+        typename Container::reverse_iterator a;
+        typename Container::reverse_iterator b;
+        assert(a == b);
+        assert(b == a);
+    }
+    {
+        // rev_it == const_rev_it && const_rev_it == rev_it
+        typename Container::reverse_iterator	     a;
+        typename Container::const_reverse_iterator   b;
+        assert(a == b);
+        assert(b == a);
+    }
+    {
+        // const_rev_it == const_rev_it
+        typename Container::const_reverse_iterator   a;
+        typename Container::const_reverse_iterator   b;
+        assert(a == b);
+        assert(b == a);
+    }
 }
 
-/// @todo add reverse iterators
 template <typename Container>
 void iterator_non_equal_test_constructed_by_default()
 {
@@ -379,8 +404,7 @@ void iterator_non_equal_test_constructed_by_default()
         assert(!(b != a));
     }
     {
-        // it != const_it
-        // const_it != it
+        // it != const_it && const_it != it
         typename Container::iterator	     a;
         typename Container::const_iterator   b;
         assert(!(a != b));
@@ -390,6 +414,27 @@ void iterator_non_equal_test_constructed_by_default()
         // const_it != const_it
         typename Container::const_iterator   a;
         typename Container::const_iterator   b;
+        assert(!(a != b));
+        assert(!(b != a));
+    }
+    {
+        // rev_it != rev_it
+        typename Container::reverse_iterator a;
+        typename Container::reverse_iterator b;
+        assert(!(a != b));
+        assert(!(b != a));
+    }
+    {
+        // rev_it != const_rev_it && const_rev_it != rev_it
+        typename Container::reverse_iterator	     a;
+        typename Container::const_reverse_iterator   b;
+        assert(!(a != b));
+        assert(!(b != a));
+    }
+    {
+        // const_rev_it != const_rev_it
+        typename Container::const_reverse_iterator   a;
+        typename Container::const_reverse_iterator   b;
         assert(!(a != b));
         assert(!(b != a));
     }
@@ -471,7 +516,6 @@ typename std::enable_if<is_map<Container>::value, void>::type
 iterator_non_equal_test_constructed_by_pointer()
 { }
 
-/// @todo add reverse iterators
 template <typename Container>
 void iterator_equal_test_constructed_by_copy()
 {
@@ -483,22 +527,37 @@ void iterator_equal_test_constructed_by_copy()
     c.insert(c.begin(), j);
     c.insert(c.begin(), i);
 
-    typename Container::iterator a = c.begin();
-    typename Container::iterator b(a);
+    // it
+    {
+        typename Container::iterator a = c.begin();
+        typename Container::iterator b(a);
 
-    assert(a == b);
-    assert(b == a);
-    assert(a == c.begin());
-    assert(b == c.begin());
-    assert(c.begin() == c.begin());
-    assert(c.end() == c.end());
+        assert(a == b);
+        assert(b == a);
+        assert(a == c.begin());
+        assert(b == c.begin());
+        assert(c.begin() == c.begin());
+        assert(c.end() == c.end());
+    }
+
+    // rev_it
+    {
+        typename Container::reverse_iterator a = c.rend();
+        typename Container::reverse_iterator b(a);
+
+        assert(a == b);
+        assert(b == a);
+        assert(a.base() == c.begin());
+        assert(b.base() == c.begin());
+        assert(a.base() == a.base());
+        assert(b.base() == b.base());
+        assert(c.rbegin().base() == c.end());
+    }
 
     (void)i;
     (void)j;
 }
 
-/// @todo add reverse iterators
-/// @todo last `assert` fails
 template <typename Container>
 void iterator_non_equal_test_constructed_by_copy()
 {
@@ -514,14 +573,30 @@ void iterator_non_equal_test_constructed_by_copy()
     c2.insert(c2.begin(), j);
     c2.insert(c2.begin(), i);
 
-    typename Container::iterator a = c1.begin();
-    typename Container::iterator b = c2.begin();
+    // it
+    {
+        typename Container::iterator a = c1.begin();
+        typename Container::iterator b = c2.begin();
 
-    assert(a != b);
-    assert(a != c2.begin());
-    assert(b != c1.begin());
-    assert(c1.begin() != c2.begin());
-    //assert(c1.end() != c2.end());
+        assert(a != b);
+        assert(a != c2.begin());
+        assert(b != c1.begin());
+        assert(c1.begin() != c2.begin());
+        assert(c1.end() != c2.end());
+    }
+
+    // rev_it
+    {
+        typename Container::reverse_iterator a = c1.rend();
+        typename Container::reverse_iterator b = c2.rend();
+
+        assert(a != b);
+        assert(a != c2.rend());
+        assert(b != c1.rend());
+        assert(c1.rbegin() != c2.rbegin());
+        assert(c1.rend() != c2.rend());
+        assert(a.base() != b.base());
+    }
 }
 
 /// @todo clear distinction between:
