@@ -4,6 +4,8 @@
 #include <utility> // std::pair
 #include <type_traits> // std::is_same std::is_const (c++11)
 #include <limits> // delete ?
+#include <list>
+#include <deque>
 
 #include "ft_map.hpp"
 #include "output_iterator.hpp"
@@ -147,7 +149,6 @@ void constructor_by_copy_test()
     log("constructor by copy");
 }
 
-/// @todo
 template <typename Map, typename Value>
 void constructor_by_iterator_range_test()
 {
@@ -182,31 +183,66 @@ void constructor_by_iterator_range_test()
         }
         {
             // from non empty
+            Map a;
+            a.insert(i);
+            a.insert(j);
+            a.insert(k);
+            Map const m(a);
+            Map b(m.begin(), m.end());
+            assert(a == b);
         }
     }
     {
         // const map(map)
         {
             // from empty
-        //    Map a;
-        //    Map const b(a.begin(), a.end());
-        //    assert(a == b);
+            Map a;
+            Map const b(a.begin(), a.end());
+            assert(a == b);
         }
         {
             // from non empty
+            Map a;
+            a.insert(i);
+            a.insert(j);
+            a.insert(k);
+            Map const b(a.begin(), a.end());
+            assert(a == b);
         }
     }
     {
         // const map(const map)
         {
             // from empty
-          //  Map const a;
-          //  Map const b(a.begin(), a.end());
-           // assert(a == b);
+            Map const a;
+            Map const b(a.begin(), a.end());
+            assert(a == b);
         }
         {
             // from non empty
+            Map a;
+            a.insert(i);
+            a.insert(j);
+            a.insert(k);
+            Map const m(a);
+            Map const b(m.begin(), m.end());
+            assert(a == b);
         }
+    }
+    {
+        // From bidirectionnal iterators.
+        // Other than (multi)map itself, would also be (multi)set.
+        std::list<Value> l;
+        l.insert(l.begin(), i);
+        l.insert(l.begin(), j);
+        l.insert(l.begin(), k);
+
+        Map m;
+        m.insert(m.begin(), i);
+        m.insert(m.begin(), j);
+        m.insert(m.begin(), k);
+
+        assert(Map(l.begin(), l.end()) == m);
     }
     log("constructor by iterator range");
 }
@@ -663,15 +699,26 @@ void find_test()
     typename Map::value_type k(42, 42);
     typename Map::value_type l(21, 21);
 
-    Map m;
+    // mutable
+    {
+        Map m;
 
-    assert(m.find(k.first) == m.end());
-    m.insert(k);
-    assert(m.find(k.first) != m.end());
+        assert(m.find(k.first) == m.end());
+        m.insert(k);
+        assert(m.find(k.first) != m.end());
 
-    assert(m.find(l.first) == m.end());
-    m.insert(l);
-    assert(m.find(l.first) != m.end());
+        assert(m.find(l.first) == m.end());
+        m.insert(l);
+        assert(m.find(l.first) != m.end());
+    }
+
+    // const
+    {
+        Map const m;
+
+        assert(m.find(k.first) == m.end());
+        assert(m.find(l.first) == m.end());
+    }
 
     log("find()");
 }
@@ -715,29 +762,59 @@ void count_test()
 template <typename Map>
 void lower_bound_test()
 {
-    Map m;
-
     typename Map::value_type k(42, 42);
     typename Map::value_type l(21, 21);
 
-    assert(m.lower_bound(0)  == m.end());
-    assert(m.lower_bound(21) == m.end());
-    assert(m.lower_bound(42) == m.end());
-    assert(m.lower_bound(55) == m.end());
+    // mutable
+    {
+        Map m;
 
-    m.insert(l);
+        assert(m.lower_bound(0)  == m.end());
+        assert(m.lower_bound(21) == m.end());
+        assert(m.lower_bound(42) == m.end());
+        assert(m.lower_bound(55) == m.end());
 
-    assert(m.lower_bound(0)  == m.begin());
-    assert(m.lower_bound(21) == m.begin());
-    assert(m.lower_bound(42) == m.end());
-    assert(m.lower_bound(55) == m.end());
+        m.insert(l);
 
-    m.insert(k);
+        assert(m.lower_bound(0)  == m.begin());
+        assert(m.lower_bound(21) == m.begin());
+        assert(m.lower_bound(42) == m.end());
+        assert(m.lower_bound(55) == m.end());
 
-    assert(m.lower_bound(0)  == m.begin());
-    assert(m.lower_bound(21) == m.begin());
-    assert(m.lower_bound(42) == ++m.begin());
-    assert(m.lower_bound(55) == m.end());
+        m.insert(k);
+
+        assert(m.lower_bound(0)  == m.begin());
+        assert(m.lower_bound(21) == m.begin());
+        assert(m.lower_bound(42) == ++m.begin());
+        assert(m.lower_bound(55) == m.end());
+    }
+
+    // mutable
+    {
+        Map m;
+
+        Map const a(m);
+        assert(a.lower_bound(0)  == a.end());
+        assert(a.lower_bound(21) == a.end());
+        assert(a.lower_bound(42) == a.end());
+        assert(a.lower_bound(55) == a.end());
+
+        m.insert(l);
+
+        Map const b(m);
+        assert(b.lower_bound(0)  == b.begin());
+        assert(b.lower_bound(21) == b.begin());
+        assert(b.lower_bound(42) == b.end());
+        assert(b.lower_bound(55) == b.end());
+
+        m.insert(k);
+
+        Map const c(m);
+        assert(c.lower_bound(0)  == c.begin());
+        assert(c.lower_bound(21) == c.begin());
+        assert(c.lower_bound(42) == ++c.begin());
+        assert(c.lower_bound(55) == c.end());
+    }
 
     log("lower_bound()");
 }
@@ -745,69 +822,131 @@ void lower_bound_test()
 template <typename Map>
 void upper_bound_test()
 {
-    Map m;
-
     typename Map::value_type k(42, 42);
     typename Map::value_type l(21, 21);
 
-    assert(m.upper_bound(0)  == m.begin());
-    assert(m.upper_bound(21) == m.begin());
-    assert(m.upper_bound(42) == m.begin());
-    assert(m.upper_bound(55) == m.begin());
+    // mutable
+    {
+        Map m;
 
-    m.insert(l);
+        assert(m.upper_bound(0)  == m.begin());
+        assert(m.upper_bound(21) == m.begin());
+        assert(m.upper_bound(42) == m.begin());
+        assert(m.upper_bound(55) == m.begin());
 
-    assert(m.upper_bound(0)  == m.begin());
-    assert(m.upper_bound(21) == m.end());
-    assert(m.upper_bound(42) == m.end());
-    assert(m.upper_bound(55) == m.end());
+        m.insert(l);
 
-    m.insert(k);
+        assert(m.upper_bound(0)  == m.begin());
+        assert(m.upper_bound(21) == m.end());
+        assert(m.upper_bound(42) == m.end());
+        assert(m.upper_bound(55) == m.end());
 
-    assert(m.upper_bound(0)  == m.begin());
-    assert(m.upper_bound(21) == ++m.begin());
-    assert(m.upper_bound(42) == m.end());
-    assert(m.upper_bound(55) == m.end());
+        m.insert(k);
+
+        assert(m.upper_bound(0)  == m.begin());
+        assert(m.upper_bound(21) == ++m.begin());
+        assert(m.upper_bound(42) == m.end());
+        assert(m.upper_bound(55) == m.end());
+    }
+
+    // const
+    {
+        Map m;
+
+        Map const a(m);
+        assert(a.upper_bound(0)  == a.begin());
+        assert(a.upper_bound(21) == a.begin());
+        assert(a.upper_bound(42) == a.begin());
+        assert(a.upper_bound(55) == a.begin());
+
+        m.insert(l);
+
+        Map const b(m);
+        assert(b.upper_bound(0)  == b.begin());
+        assert(b.upper_bound(21) == b.end());
+        assert(b.upper_bound(42) == b.end());
+        assert(b.upper_bound(55) == b.end());
+
+        m.insert(k);
+
+        Map const c(m);
+        assert(c.upper_bound(0)  == c.begin());
+        assert(c.upper_bound(21) == ++c.begin());
+        assert(c.upper_bound(42) == c.end());
+        assert(c.upper_bound(55) == c.end());
+    }
 
     log("upper_bound()");
 }
 
 /// @todo last `assert` fails for `ft` but not for `std`
-template <typename Map, typename IteratorPair>
+template <typename Map, typename IteratorPair, typename ConstIteratorPair>
 void equal_range_test()
 {
-    Map m;
-
     typename Map::value_type i(21, 21);
     typename Map::value_type j(42, 42);
     typename Map::value_type k(55, 55);
 
-    assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
-    assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
+    // mutable
+    {
+        Map m;
 
-    m.insert(i);
+        assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
+        assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
 
-    assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
-    assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
-    assert((m.equal_range(21) == IteratorPair(m.begin(),m.end())));
-    assert((m.equal_range(22) == IteratorPair(m.end(),m.end())));
+        m.insert(i);
 
-    m.insert(j);
-    m.insert(k);
+        assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
+        assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
+        assert((m.equal_range(21) == IteratorPair(m.begin(),m.end())));
+        assert((m.equal_range(22) == IteratorPair(m.end(),m.end())));
 
-    assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
-    assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
-    assert((m.equal_range(21) == IteratorPair(m.begin(),++m.begin())));
-    assert((m.equal_range(22) == IteratorPair(++m.begin(),++m.begin())));
-    assert((m.equal_range(42) == IteratorPair(++m.begin(),++(++m.begin()))));
-    assert((m.equal_range(45) == IteratorPair(++(++m.begin()),++(++m.begin()))));
-    assert((m.equal_range(55) == IteratorPair(++(++m.begin()),m.end())));
-    //assert((m.equal_range(55) == IteratorPair(--m.end(),m.end())));
+        m.insert(j);
+        m.insert(k);
+
+        assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
+        assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
+        assert((m.equal_range(21) == IteratorPair(m.begin(),++m.begin())));
+        assert((m.equal_range(22) == IteratorPair(++m.begin(),++m.begin())));
+        assert((m.equal_range(42) == IteratorPair(++m.begin(),++(++m.begin()))));
+        assert((m.equal_range(45) == IteratorPair(++(++m.begin()),++(++m.begin()))));
+        assert((m.equal_range(55) == IteratorPair(++(++m.begin()),m.end())));
+        //assert((m.equal_range(55) == IteratorPair(--m.end(),m.end())));
+    }
+
+    // const
+    {
+        Map m;
+
+        Map const a(m);
+        assert((a.equal_range(0) == ConstIteratorPair(a.begin(),a.begin())));
+        assert((a.equal_range(5) == ConstIteratorPair(a.begin(),a.begin())));
+
+        m.insert(i);
+
+        Map const b(m);
+        assert((b.equal_range(0) == ConstIteratorPair(b.begin(),b.begin())));
+        assert((b.equal_range(5) == ConstIteratorPair(b.begin(),b.begin())));
+        assert((b.equal_range(21) == ConstIteratorPair(b.begin(),b.end())));
+        assert((b.equal_range(22) == ConstIteratorPair(b.end(),b.end())));
+
+        m.insert(j);
+        m.insert(k);
+
+        Map const c(m);
+        assert((c.equal_range(0) == ConstIteratorPair(c.begin(),c.begin())));
+        assert((c.equal_range(5) == ConstIteratorPair(c.begin(),c.begin())));
+        assert((c.equal_range(21) == ConstIteratorPair(c.begin(),++c.begin())));
+        assert((c.equal_range(22) == ConstIteratorPair(++c.begin(),++c.begin())));
+        assert((c.equal_range(42) == ConstIteratorPair(++c.begin(),++(++c.begin()))));
+        assert((c.equal_range(45) == ConstIteratorPair(++(++c.begin()),++(++c.begin()))));
+        assert((c.equal_range(55) == ConstIteratorPair(++(++c.begin()),c.end())));
+        //assert((c.equal_range(55) == ConstIteratorPair(--c.end(),c.end())));
+    }
 
     log("equal_range()");
 }
 
-/// @todo test const version of each method (but how...)
 template <typename T, typename U>
 void operations_tests()
 {
@@ -827,9 +966,14 @@ void operations_tests()
 
     typedef typename std::map<T,U>::iterator std_iterator;
     typedef typename  ft::map<T,U>::iterator  ft_iterator;
+    typedef typename std::map<T,U>::const_iterator std_const_iterator;
+    typedef typename  ft::map<T,U>::const_iterator  ft_const_iterator;
 
-    equal_range_test<std::map<T,U>,std::pair<std_iterator,std_iterator>>();
-    equal_range_test< ft::map<T,U>, ft::pair< ft_iterator, ft_iterator>>();
+    equal_range_test<std::map<T,U>, std::pair<std_iterator,std_iterator>,
+                     std::pair<std_const_iterator,std_const_iterator>>();
+
+    equal_range_test<ft::map<T,U>, ft::pair<ft_iterator,ft_iterator>,
+                     ft::pair<ft_const_iterator,ft_const_iterator>>();
 }
 
 /****** Operators tests *******************************************************/
@@ -1294,7 +1438,7 @@ void rbegin_test()
         reverse_iterator it = m.rbegin();
         assert(it.base() == m.end());
         it++;
-   //     assert(*it == p);
+    //    assert(*it == p);
     }
     {
         // const_reverse_iterator from mutable map
@@ -1390,13 +1534,13 @@ void iterators_tests()
 //    end_test< ft::map<T,U>>();
 
 //    rbegin_test<std::map<T,U>>();
-    rbegin_test< ft::map<T,U>>();
+//    rbegin_test< ft::map<T,U>>();
 
 //    rend_test<std::map<T,U>>();
 //    rend_test< ft::map<T,U>>();
 
-//    iterator_test<std::map<T,U>>();
-//    iterator_test< ft::map<T,U>>();
+    iterator_test<std::map<T,U>>();
+    iterator_test< ft::map<T,U>>();
 }
 
 /****** Map tests *************************************************************/
@@ -1405,15 +1549,15 @@ void iterators_tests()
 template <typename T, typename U>
 void map_test()
 {
-    constructors_tests<T,U>();
-    allocator_tests<T,U>();
-    observers_tests<T,U>();
-    capacity_tests<T,U>();
-    accessors_tests<T,U>();
-    modifiers_tests<T,U>();
-    operations_tests<T,U>();
-    operators_tests<T,U>();
-//    iterators_tests<T,U>();
+//    constructors_tests<T,U>();
+//    allocator_tests<T,U>();
+//    observers_tests<T,U>();
+//    capacity_tests<T,U>();
+//    accessors_tests<T,U>();
+//    modifiers_tests<T,U>();
+//    operations_tests<T,U>();
+//    operators_tests<T,U>();
+    iterators_tests<T,U>();
 }
 
 /****** All tests *************************************************************/

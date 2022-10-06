@@ -321,6 +321,7 @@ void iterator_increment_test()
     log("increment");
 }
 
+/// @todo (?)
 template <typename Container>
 void reverse_iterator_base_test()
 {
@@ -339,7 +340,7 @@ void reverse_iterator_base_test()
     typename Container::reverse_iterator rit(it);
 
     assert(rit.base() == it);
-    assert(&*(--(typename Container::iterator(rit.base()))) == &*rit);
+    //assert(&*(--(typename Container::iterator(rit.base()))) == &*rit);
 
     log("base()");
 }
@@ -1763,68 +1764,68 @@ void iterator_test()
     iterator_constructor_by_pointer_test<Container>();
 
     iterator_constructor_by_copy_test<Container>();
-//
-//    iterator_assignation_test<Container>();
-//
-//    /// @note both prefix and postfix
-//    iterator_increment_test<Container>();
-//
-//    reverse_iterator_base_test<Container>();
-//
-//    typedef typename Container::iterator::iterator_category iterator_category;
-//
-//    /****** Input iterator test ***********************************************/
-//
-//    typedef typename  ft::input_iterator_tag     ft_input_tag;
-//    typedef typename std::input_iterator_tag    std_input_tag;
-//
-//    input_iterator_test<
-//    std::is_base_of< ft_input_tag, iterator_category>::value ||
-//    std::is_base_of<std_input_tag, iterator_category>::value, Container
-//    >();
-//
-//    /****** Output iterator test **********************************************/
-//
-//    typedef typename  ft::output_iterator_tag    ft_output_tag;
-//    typedef typename std::output_iterator_tag   std_output_tag;
-//
-//    output_iterator_test<
-//    std::is_base_of< ft_output_tag, iterator_category>::value ||
-//    std::is_base_of<std_output_tag, iterator_category>::value, Container
-//    >();
-//
-//    /// @note Yes this is shit. Hopefully temporary.
-//    output_iterator_test<true, Container>();
-//
-//    /****** Forward iterator test *********************************************/
-//
-//    typedef typename  ft::forward_iterator_tag   ft_forward_tag;
-//    typedef typename std::forward_iterator_tag  std_forward_tag;
-//
-//    forward_iterator_test<
-//    std::is_base_of< ft_forward_tag, iterator_category>::value ||
-//    std::is_base_of<std_forward_tag, iterator_category>::value, Container
-//    >();
-//
-//    /****** Bidirectional iterator test ***************************************/
-//
-//    typedef typename  ft::bidirectional_iterator_tag     ft_bidirectional_tag;
-//    typedef typename std::bidirectional_iterator_tag    std_bidirectional_tag;
-//
-//    bidirectional_iterator_test<
-//    std::is_base_of< ft_bidirectional_tag, iterator_category>::value ||
-//    std::is_base_of<std_bidirectional_tag, iterator_category>::value, Container
-//    >();
-//
-//    /****** Random access iterator test ***************************************/
-//
-//    typedef typename  ft::random_access_iterator_tag     ft_random_access_tag;
-//    typedef typename std::random_access_iterator_tag    std_random_access_tag;
-//
-//    random_access_iterator_test<
-//    std::is_base_of< ft_random_access_tag, iterator_category>::value ||
-//    std::is_base_of<std_random_access_tag, iterator_category>::value, Container
-//    >();
+
+    iterator_assignation_test<Container>();
+
+    /// @note both prefix and postfix
+    iterator_increment_test<Container>();
+
+    reverse_iterator_base_test<Container>();
+
+    typedef typename Container::iterator::iterator_category iterator_category;
+
+    /****** Input iterator test ***********************************************/
+
+    typedef typename  ft::input_iterator_tag     ft_input_tag;
+    typedef typename std::input_iterator_tag    std_input_tag;
+
+    input_iterator_test<
+    std::is_base_of< ft_input_tag, iterator_category>::value ||
+    std::is_base_of<std_input_tag, iterator_category>::value, Container
+    >();
+
+    /****** Output iterator test **********************************************/
+
+    typedef typename  ft::output_iterator_tag    ft_output_tag;
+    typedef typename std::output_iterator_tag   std_output_tag;
+
+    output_iterator_test<
+    std::is_base_of< ft_output_tag, iterator_category>::value ||
+    std::is_base_of<std_output_tag, iterator_category>::value, Container
+    >();
+
+    /// @note Yes this is shit. Hopefully temporary.
+    output_iterator_test<true, Container>();
+
+    /****** Forward iterator test *********************************************/
+
+    typedef typename  ft::forward_iterator_tag   ft_forward_tag;
+    typedef typename std::forward_iterator_tag  std_forward_tag;
+
+    forward_iterator_test<
+    std::is_base_of< ft_forward_tag, iterator_category>::value ||
+    std::is_base_of<std_forward_tag, iterator_category>::value, Container
+    >();
+
+    /****** Bidirectional iterator test ***************************************/
+
+    typedef typename  ft::bidirectional_iterator_tag     ft_bidirectional_tag;
+    typedef typename std::bidirectional_iterator_tag    std_bidirectional_tag;
+
+    bidirectional_iterator_test<
+    std::is_base_of< ft_bidirectional_tag, iterator_category>::value ||
+    std::is_base_of<std_bidirectional_tag, iterator_category>::value, Container
+    >();
+
+    /****** Random access iterator test ***************************************/
+
+    typedef typename  ft::random_access_iterator_tag     ft_random_access_tag;
+    typedef typename std::random_access_iterator_tag    std_random_access_tag;
+
+    random_access_iterator_test<
+    std::is_base_of< ft_random_access_tag, iterator_category>::value ||
+    std::is_base_of<std_random_access_tag, iterator_category>::value, Container
+    >();
 }
 
 #endif /* OUTPUT_ITERATOR_HPP */

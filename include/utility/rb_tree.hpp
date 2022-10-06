@@ -9,11 +9,11 @@
 
 #include "ft_iterator_base_types.hpp"
 #include "ft_reverse_iterator.hpp"
+#include "ft_type_traits.hpp"
 
 /// @todo benchmark destructors execution time (keep recursive one if possible)
 /// @todo handle allocator failure
 /// @todo unsupport duplicate nodes
-/// @todo (?) use comp
 /// @todo (?) inline function or macro to replace ternaries
 
 namespace ft {
@@ -62,17 +62,18 @@ class rb_tree
             return *this;
         }
 
-        /// @todo add
-        bool operator <(struct node const & rhs)
-        {
-            std::cout << "comp" << std::endl;
-            return compare(key, rhs.key);
-        }
+        /// @todo (?)
+    //    bool operator <(struct node const & rhs)
+    //    {
+    //        std::cout << "comp" << std::endl;
+    //        return compare(key, rhs.key);
+    //    }
 
         bool operator== (struct node const & rhs) const
         { return this->key == rhs.key; }
 
-        Compare compare;
+        /// @todo (?)
+    //    Compare compare;
     };
 
     /****** Iterator **********************************************************/
@@ -264,7 +265,7 @@ class rb_tree
     //size_type       _max_size; // just to be inherited by map
     value_type      _sentinel;
     allocator_type  _alloc;
-    compare_type    _comp { };
+    compare_type    _comp;
 
     /****** Internals *********************************************************/
 
@@ -630,8 +631,8 @@ class rb_tree
         while (x != &_sentinel)
         {
             y = x;
-            //if (z < x)
-            if (z->key < x->key)
+            //if (z->key < x->key)
+            if (_comp(z->key, x->key))
                 x = x->left;
             else
                 x = x->right;
@@ -644,8 +645,8 @@ class rb_tree
             _sentinel.right = _root;
 
         }
-        else if (z->key < y->key)
-        //else if (_comp(z->key, y->key))
+        //else if (z->key < y->key)
+        else if (_comp(z->key, y->key))
             y->left = z;
         else
             y->right = z;
@@ -685,7 +686,9 @@ class rb_tree
     { (void)position; return insert(val); }
 
     /// @brief Insert by iterator range (3)
-    void insert (iterator first, iterator last)
+    template <class InputIterator>
+    void insert (InputIterator first, InputIterator last,
+    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
     {
         while (first != last)
         {
@@ -763,8 +766,8 @@ class rb_tree
     pointer find (pointer x, key_type const & key) const
     {
         while (x != &_sentinel && x->key != key)
-            key < x->key ? x = x->left : x = x->right;
-            //_comp(key, x->key) ? x = x->left : x = x->right;
+            //key < x->key ? x = x->left : x = x->right;
+            _comp(key, x->key) ? x = x->left : x = x->right;
         return x != &_sentinel ? x : NULL;
     }
 
@@ -839,12 +842,12 @@ class rb_tree
     { return const_iterator(&_sentinel, &_sentinel); }
 
     reverse_iterator rbegin()
-    //{ return reverse_iterator(--end()); }
-    { return reverse_iterator(end()); }
+    { return reverse_iterator(--end()); }
+    //{ return reverse_iterator(end()); }
 
     const_reverse_iterator rbegin() const
-    //{ return const_reverse_iterator(--end()); }
-    { return const_reverse_iterator(end()); }
+    { return const_reverse_iterator(--end()); }
+    //{ return const_reverse_iterator(end()); }
 
     reverse_iterator rend()
     { return reverse_iterator(end()); }

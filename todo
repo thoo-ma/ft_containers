@@ -1,21 +1,22 @@
 todo
 1. test timing stack, map, iterators
-3. test lexicographical_compare
-4. test type_traits
-5. test _everyting_ with -Wconversion and valgrind
-6. is_constructible and co. (cf. type_traits) for pair conversions
---> need by -Wconversion
-7. iterators operators: member or non-member functions ?
-8. rb_tree: use _comp to compare keys (otherwise remove it)
-9. handle error when _any_ allocate() fails (gotta catch bad_alloc)
-10. debug iso_stardard script
-11. output_iterator.hpp to .cpp
-12. bien penser a tester les valeurs de retour des methodes des containers
-12. Faire un namespace test ou mettre tous les typedef, toutes les instances de
+2. test lexicographical_compare
+3. test type_traits
+4. test _everyting_ with -Wconversion and valgrind
+5. is_constructible and co. (cf. type_traits) for pair conversions
+   (needed by -Wconversion)
+6. iterators operators: member or non-member functions ?
+7. handle error when _any_ allocate() fails (gotta catch bad_alloc)
+8. debug iso_stardard script
+9. output_iterator.hpp to .cpp
+10. bien penser a tester les valeurs de retour des methodes des containers
+11. Faire un namespace test ou mettre tous les typedef, toutes les instances de
     types utiles et les fonctions de log
-14. Put custom datatype for output tests in one specific file
-15. check compilation flags into makefile
-16. compile everything well with c++98
+12. Put custom datatype for output tests in one specific file
+13. check compilation flags into makefile
+14. compile everything well with c++98
+15. add tests with different `Compare` objects
+    (e.g. `compare maped_type` instead of `key_type`)
 ________
 
 maybe
@@ -46,6 +47,7 @@ it would do with the template solution.)
 - make note that insert with hint is just a regular insert
 - say some about iterator and reverse iterator relationship
 - say some about doubling `assert` parenthesis
+- say some about our use of `enable_if`
 ________
 
 iterators

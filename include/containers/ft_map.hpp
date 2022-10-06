@@ -6,9 +6,7 @@
 
 #include "ft_pair.hpp"
 #include "rb_tree.hpp"
-#include "ft_type_traits.hpp" // ??
-
-/// @todo struct value_compare
+#include "ft_type_traits.hpp"
 
 namespace ft {
 
@@ -28,10 +26,13 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     public:
 
+    class value_compare; // forward declaration
+
     typedef Key	                key_type;
     typedef T	                mapped_type;
     typedef pair<Key const, T>	value_type;
     typedef Compare	            key_compare;
+    typedef value_compare       value_compare;
     typedef Allocator           allocator_type; // not used
     typedef size_t              size_type;
     typedef ptrdiff_t           difference_type;
@@ -41,8 +42,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     typedef value_type const *  const_pointer;
 
     /// @note just to shorten typedefs below
-    //private: typedef rb_tree<value_type> btree_type;
-    private: typedef rb_tree<value_type, key_compare> btree_type;
+    private: typedef rb_tree<value_type, value_compare> btree_type;
 
     public:
 
@@ -75,6 +75,9 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
         public:
 
+        /// @note we shoudn't have this
+        value_compare () { }
+
         typedef bool        result_type;
         typedef value_type  first_argument_type;
         typedef value_type  second_argument_type;
@@ -92,12 +95,12 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     private:
 
+    typename btree_type::allocator_type	    _alloc; // (?) remove
     key_compare	            _key_comp;
     value_compare	        _value_comp;
-    rb_tree<value_type, key_compare>	_tree;
+    btree_type              _tree;
     //size_type           _max_size; // remove
     //allocator_type	    _alloc; // this is not used
-    typename btree_type::allocator_type	    _alloc; // (?) remove
 
     /**************************************************************************/
     /*                                                                        */
@@ -115,12 +118,11 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     : _alloc(alloc), _key_comp(comp), _value_comp(comp) { }
 
     /// @brief Constructor by range (2)
-    /// @todo
-    //template <class InputIterator>
-    //map (InputIterator first, InputIterator last,
-    map (iterator first, iterator last,
+    template <class InputIterator>
+    map (InputIterator first, InputIterator last,
         key_compare const & comp = key_compare(),
-        allocator_type const & alloc = allocator_type())
+        allocator_type const & alloc = allocator_type(),
+        typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
     : _alloc(alloc), _key_comp(comp), _value_comp(comp) { insert(first, last); }
 
     /// @brief Constructor by copy (3)
@@ -182,9 +184,9 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     { (void)position; insert(val); return find(val.first); }
 
     /// @brief Insert by iterator range (3)
-    //template <class InputIterator>
-    //void insert (InputIterator first, InputIterator last);
-    void insert (iterator first, iterator last)
+    template <class InputIterator>
+    void insert (InputIterator first, InputIterator last,
+    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
     { return _tree.insert(first, last); }
 
     /// @brief erase by iterator position (1)
@@ -249,22 +251,29 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /// @todo update following `operator*` and `operator->` iterator semantic
     iterator find (key_type const & key)
     {
+    //    std::cout << "find mutable" << std::endl;
+    //    return _tree.find(key);
+
         iterator it = begin();
         iterator ite = end();
 
         //while (it != ite && it->key.first != key) it++;
-        while (it != ite && it->first != key) it++;
+        //while (it != ite && it->first != key) it++;
+        while (it != ite && (*it).first != key) it++;
         return it;
     }
 
     /// @todo update following `operator*` and `operator->` iterator semantic
     const_iterator find (key_type const & key) const
     {
+        // std::cout << "find const" << std::endl;
+
         const_iterator it = begin();
         const_iterator ite = end();
 
         //while (it != ite && it->key.first != key) it++;
-        while (it != ite && it->first != key) it++;
+        //while (it != ite && it->first != key) it++;
+        while (it != ite && (*it).first != key) it++;
         return it;
     }
 
@@ -274,40 +283,52 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /// @todo update following `operator*` and `operator->` iterator semantic
     iterator lower_bound (key_type const & key)
     {
+    //    std::cout << "lower mutable" << std::endl;
+
         iterator it = begin();
         iterator ite = end();
 
-        while (it != ite && _key_comp(it->first, key)) it++;
+        //while (it != ite && _key_comp(it->first, key)) it++;
+        while (it != ite && _key_comp((*it).first, key)) it++;
         return it;
     }
 
     /// @todo update following `operator*` and `operator->` iterator semantic
     const_iterator lower_bound (key_type const & key) const
     {
+    //    std::cout << "lower const" << std::endl;
+
         const_iterator it = begin();
         const_iterator ite = end();
 
-        while (it != ite && _key_comp(it->first, key)) it++;
+        //while (it != ite && _key_comp(it->first, key)) it++;
+        while (it != ite && _key_comp((*it).first, key)) it++;
         return it;
     }
 
     /// @todo update following `operator*` and `operator->` iterator semantic
     iterator upper_bound (key_type const & key)
     {
+    //    std::cout << "upper mutable" << std::endl;
+
         iterator it = begin();
         iterator ite = end();
 
-        while (it != ite && !_key_comp(key, it->first)) it++;
+        //while (it != ite && !_key_comp(key, it->first)) it++;
+        while (it != ite && !_key_comp(key, (*it).first)) it++;
         return it;
     }
 
     /// @todo update following `operator*` and `operator->` iterator semantic
     const_iterator upper_bound (key_type const & key) const
     {
+    //    std::cout << "upper const" << std::endl;
+
         const_iterator it = begin();
         const_iterator ite = end();
 
-        while (it != ite && !_key_comp(key, it->first)) it++;
+        //while (it != ite && !_key_comp(key, it->first)) it++;
+        while (it != ite && !_key_comp(key, (*it).first)) it++;
         return it;
     }
 

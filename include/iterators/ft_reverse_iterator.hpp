@@ -31,11 +31,13 @@ class reverse_iterator {
     reverse_iterator() : _base() { }
 
     reverse_iterator(iterator_type const & it)
-    : _base(--iterator_type(it)) { }
+    //: _base(--iterator_type(it)) { }
+    : _base(iterator_type(it)) { }
 
     template <typename Iter>
     reverse_iterator(reverse_iterator<Iter> const & rit)
-    : _base(--iterator_type(rit.base())) { }
+    //: _base(--iterator_type(rit.base())) { }
+    : _base(iterator_type(rit.base())) { }
 
     /****** Destructor ****************************************************/
 
@@ -44,7 +46,8 @@ class reverse_iterator {
     /****** Member functions **********************************************/
 
     iterator_type base() const
-    { iterator_type tmp = _base; return ++tmp; }
+    //{ iterator_type tmp = _base; return ++tmp; }
+    { return _base; }
 
     /****** Operators *****************************************************/
 
@@ -52,10 +55,12 @@ class reverse_iterator {
     { iterator_type tmp = it.base(); _base = --tmp; return *this; }
 
     reference operator*() const
-    { return _base.operator*(); }
+    //{ return _base.operator*(); }
+    { iterator_type tmp = _base; return (++tmp).operator*(); }
 
     pointer operator->() const
-    { return _base.operator->(); }
+    //{ return _base.operator->(); }
+    { iterator_type tmp = _base; return (++tmp).operator*(); }
 
     template <typename Iter>
     bool operator==(reverse_iterator<Iter> const & it) const
