@@ -129,11 +129,11 @@ class rb_tree
         key_type * operator-> () const
         { return &_data->key; }
 
-        //value_type & operator* () const
-        //{ return *_data; }
+    //    value_type & operator* () const
+    //    { return *_data; }
 
-        //pointer operator-> () const
-        //{ return _data; }
+    //    pointer operator-> () const
+    //    { return _data; }
 
         bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
         {
@@ -839,10 +839,12 @@ class rb_tree
     { return const_iterator(&_sentinel, &_sentinel); }
 
     reverse_iterator rbegin()
-    { return reverse_iterator(--end()); }
+    //{ return reverse_iterator(--end()); }
+    { return reverse_iterator(end()); }
 
     const_reverse_iterator rbegin() const
-    { return const_reverse_iterator(--end()); }
+    //{ return const_reverse_iterator(--end()); }
+    { return const_reverse_iterator(end()); }
 
     reverse_iterator rend()
     { return reverse_iterator(end()); }

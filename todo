@@ -1,6 +1,5 @@
 todo
-1. test timing stack
-2. test timing iterators
+1. test timing stack, map, iterators
 3. test lexicographical_compare
 4. test type_traits
 5. test _everyting_ with -Wconversion and valgrind
@@ -10,15 +9,13 @@ todo
 8. rb_tree: use _comp to compare keys (otherwise remove it)
 9. handle error when _any_ allocate() fails (gotta catch bad_alloc)
 10. debug iso_stardard script
-11. base_iterator: iterator traits typedefs + comparison operators
-12. output_iterator.hpp to .cpp
-13. bien penser a tester les valeurs de retour des methodes des containers
-14. Faire un namespace test ou mettre tous les typedef, toutes les instances de
+11. output_iterator.hpp to .cpp
+12. bien penser a tester les valeurs de retour des methodes des containers
+12. Faire un namespace test ou mettre tous les typedef, toutes les instances de
     types utiles et les fonctions de log
-15. Put custom datatype for output tests in one specific file
-16. check compilation flags into makefile
-17. 'ft_map.hpp': east const instead of west const
-18. compile everything well with c++98
+14. Put custom datatype for output tests in one specific file
+15. check compilation flags into makefile
+16. compile everything well with c++98
 ________
 
 maybe
@@ -33,12 +30,10 @@ maybe
 const_iterator
 --> and not begin() returning iterator then construct const_iterator from it
 - add default destructors to be coplien compliant
-- say some about when we need or don't need typename after typedef
---> ex: iterators typedefs vs containers typedefs
 ________
 
 readme
-- explain why constructors are explicit
+- explain why some constructors are explicit
 - explain why east const instead of west const
 --> the only consistent way to write const (got to read from right-to-left)
 - explain the difference between const and non-const begin() and end()
@@ -50,6 +45,7 @@ it would do with the template solution.)
 - explain why map.end() dereferencing segfault: no sentinel node
 - make note that insert with hint is just a regular insert
 - say some about iterator and reverse iterator relationship
+- say some about doubling `assert` parenthesis
 ________
 
 iterators

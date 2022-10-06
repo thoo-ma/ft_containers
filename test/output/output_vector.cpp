@@ -1,6 +1,5 @@
 #include <vector>
 #include <cassert>
-#include <stdexcept> // ??
 #include <type_traits> // std::is_same
 #include <list>
 #include <deque>
@@ -219,6 +218,8 @@ void constructor_by_copy_test()
 template <typename T>
 void constructors_tests()
 {
+    std::cout << "== Constructors ==" << std::endl;
+
     typedef typename std::vector<T>::value_type std_value;
     typedef typename  ft::vector<T>::value_type  ft_value;
 
@@ -237,7 +238,7 @@ void constructors_tests()
 
 /****** Allocator test ********************************************************/
 
-/// @todo
+/// @todo (?)
 template <typename Vector>
 void get_allocator_test()
 {
@@ -261,6 +262,8 @@ void get_allocator_test()
 template <typename T>
 void allocator_tests()
 {
+    std::cout << "== Allocator ==" << std::endl;
+
     get_allocator_test<std::vector<T>>();
     get_allocator_test< ft::vector<T>>();
 }
@@ -311,32 +314,23 @@ void size_test()
     log("size()");
 }
 
-/// @todo
 template <typename Vector>
 void max_size_test()
 {
-//    typedef typename Vector::size_type  size;
-//    typedef typename Vector::value_type value;
-//
-//    size max_size = static_cast<size>(std::pow(2,64)/sizeof(value))-1;
-
     {
         // constructed by default
         Vector v;
-    //    assert(v.max_size() == max_size);
         assert(v.max_size() == v.get_allocator().max_size());
     }
     {
         // constructed by fill (without value)
         Vector v(99);
-    //    assert(v.max_size() == max_size);
         assert(v.max_size() == v.get_allocator().max_size());
     }
     {
         // constructed by fill (with value)
-    //    Vector v(99,value());
-    //    assert(v.max_size() == max_size);
-    //    assert(v.max_size() == v.get_allocator().max_size());
+        Vector v(99, typename Vector::value_type());
+        assert(v.max_size() == v.get_allocator().max_size());
     }
     {
         // constructed by copy
@@ -345,12 +339,12 @@ void max_size_test()
         {
             Vector v(a);
             assert(v.max_size() == a.max_size());
-        //    assert(v.max_size() == a.get_allocator().max_size());
+            assert(v.max_size() == a.get_allocator().max_size());
         }
         {
             Vector v(b);
             assert(v.max_size() == a.max_size());
-        //    assert(v.max_size() == a.get_allocator().max_size());
+            assert(v.max_size() == a.get_allocator().max_size());
         }
     }
     log("max_size()");
@@ -381,7 +375,7 @@ void capacity_test()
     log("capacity()");
 }
 
-/// @todo
+/// @todo (?)
 template <typename Vector>
 void reserve_test()
 {
@@ -420,6 +414,8 @@ void reserve_test()
 template <typename T>
 void capacity_tests()
 {
+    std::cout << "== Capacity ==" << std::endl;
+
     empty_test<std::vector<T>>();
     empty_test< ft::vector<T>>();
 
@@ -1459,9 +1455,6 @@ void end_test()
     log("end()");
 }
 
-/// @todo base iterator comparison fails
-///       could be linked to vector internal structure
-///       (_first and _last instead of _size)
 template <typename Vector>
 void rbegin_test()
 {
@@ -1469,7 +1462,7 @@ void rbegin_test()
         // reverse_iterator from mutable vector
         Vector v(10, 21);
         typename Vector::reverse_iterator it = v.rbegin();
-        //assert(it.base() == v.end());
+        assert(it.base() == v.end());
         it++;
         assert(*it == 21);
     }
@@ -1477,7 +1470,7 @@ void rbegin_test()
         // const_reverse_iterator from mutable vector
         Vector v(10, 21);
         typename Vector::const_reverse_iterator it = v.rbegin();
-        //assert(it.base() == v.end());
+        assert(it.base() == v.end());
         it++;
         assert(*it == 21);
     }
@@ -1493,16 +1486,13 @@ void rbegin_test()
         // const_reverse_iterator from const vector
         const Vector v(10, 21);
         typename Vector::const_reverse_iterator it = v.rbegin();
-    //    assert(it.base() == v.end());
+        assert(it.base() == v.end());
         it++;
         assert(*it == 21);
     }
     log("rbegin()");
 }
 
-/// @todo base iterator comparison fails
-///       could be linked to vector internal structure
-///       (_first and _last instead of _size)
 template <typename Vector>
 void rend_test()
 {
@@ -1510,17 +1500,17 @@ void rend_test()
         // reverse_iterator from mutable vector
         Vector v(10, 21);
         typename Vector::reverse_iterator it = v.rend();
+        assert(it.base() == v.begin());
         it--;
         assert(*it == 21);
-        //assert(it.base() == v.begin());
     }
     {
         // const_reverse_iterator from mutable vector
         Vector v(10, 21);
         typename Vector::const_reverse_iterator it = v.rend();
+        assert(it.base() == v.begin());
         it--;
         assert(*it == 21);
-        //assert(it.base() == v.begin());
     }
     {
         // reverse_iterator from const vector -- should not compile
@@ -1534,9 +1524,9 @@ void rend_test()
         // const_reverse_iterator from const vector
         const Vector v(10, 21);
         typename Vector::const_reverse_iterator it = v.rend();
+        assert(it.base() == v.begin());
         it--;
         assert(*it == 21);
-        //assert(it.base() == v.begin());
     }
     log("rend()");
 }
@@ -1598,9 +1588,12 @@ void exception_reserve()
     catch (std::length_error & e) { std::cout << e.what() << std::endl; }
 }
 
+/// @todo (?)
 template <typename T>
 void exceptions_tests()
 {
+    std::cout << "== Exceptions ==" << std::endl;
+
     exception_constructor_by_fill<std::vector<T>, std::vector<std::vector<T>>>();
     exception_constructor_by_fill< ft::vector<T>,  ft::vector< ft::vector<T>>>();
 
@@ -1636,8 +1629,9 @@ int main()
 //    vector_test<double>();
 //    vector_test<A>();
 
-//    std::vector<const std::pair<int,int>>::const_iterator a;
-//     ft::vector<const  ft::pair<int,int>>::const_iterator b;
+    /// @note fun fact: this doesn't compile (but not for the same reason...)
+    // { std::vector<const int> v; }
+    // {  ft::vector<const int> v; }
 
     return 0;
 }

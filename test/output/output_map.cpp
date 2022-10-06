@@ -593,25 +593,52 @@ void modifiers_tests()
 
 /****** Observers tests *******************************************************/
 
-/// @todo
 template <typename Map>
 void key_comp_test()
 {
-//    // move to type tests
-//    assert((std::is_same<
-//        typename Map::key_compare,
-//        std::less<typename Map::key_type>
-//    >::value));
+    typedef typename Map::key_type key_type;
+    typedef typename Map::key_compare key_compare;
 
-//    assert((Map().key_comp() == std::less<typename Map::key_type>));
+    /// @todo (?) move to type tests
+    assert((std::is_same<key_compare, std::less<key_type>>::value));
+
+    key_type i(21);
+    key_type j(42);
+
+    assert(std::less<int>()(i,j));
+    assert(Map().key_comp()(i,j));
+    assert(key_compare()(i,j));
 
     log("key_comp()");
 }
 
-/// @todo
 template <typename Map>
 void value_comp_test()
 {
+    typedef typename Map::value_type value_type;
+    typedef typename Map::value_compare::first_argument_type first;
+    typedef typename Map::value_compare::second_argument_type second;
+    typedef typename Map::value_compare::result_type result;
+
+    /// @todo (?) move to type tests
+    assert((std::is_same<result, bool>::value));
+    assert((std::is_same<first,  value_type>::value));
+    assert((std::is_same<second, value_type>::value));
+
+    /// @note should not compile
+    // typename Map::value_compare x;
+    // typename Map().value_compare x;
+
+    value_type i(21, 21);
+    value_type j(21, 42);
+    value_type k(42, 21);
+
+    // same key
+    assert(!Map().value_comp()(i,j));
+
+    // different key
+    assert(Map().value_comp()(i,k));
+
     log("value_comp()");
 }
 
@@ -1252,12 +1279,12 @@ void end_test()
     log("end");
 }
 
-/// @todo base() bug: same into `output_vector.cpp`
+/// @todo bug
 template <typename Map>
 void rbegin_test()
 {
     typedef typename Map::reverse_iterator          reverse_iterator;
-    typedef typename Map::const_reverse_iterator    const_reverse_iterator;
+//    typedef typename Map::const_reverse_iterator    const_reverse_iterator;
 
     typename Map::value_type p(21,42);
     {
@@ -1265,9 +1292,9 @@ void rbegin_test()
         Map m;
         m.insert(p);
         reverse_iterator it = m.rbegin();
-        //assert(it.base() == m.end());
+        assert(it.base() == m.end());
         it++;
-        assert(*it == p);
+   //     assert(*it == p);
     }
     {
         // const_reverse_iterator from mutable map
@@ -1301,7 +1328,7 @@ void rbegin_test()
     log("rbegin");
 }
 
-/// @todo base() bug: same into `output_vector.cpp`
+/// @todo bug
 template <typename Map>
 void rend_test()
 {
@@ -1362,7 +1389,7 @@ void iterators_tests()
 //    end_test<std::map<T,U>>();
 //    end_test< ft::map<T,U>>();
 
-    rbegin_test<std::map<T,U>>();
+//    rbegin_test<std::map<T,U>>();
     rbegin_test< ft::map<T,U>>();
 
 //    rend_test<std::map<T,U>>();
@@ -1374,23 +1401,19 @@ void iterators_tests()
 
 /****** Map tests *************************************************************/
 
+/// @note test exceptions like we did for vector
 template <typename T, typename U>
 void map_test()
 {
-//    constructors_tests<T,U>();
-//    allocator_tests<T,U>();
-//    observers_tests<T,U>();
-//    capacity_tests<T,U>();
-//    accessors_tests<T,U>();
-//    modifiers_tests<T,U>();
-//    operations_tests<T,U>();
-
-    iterators_tests<T,U>();
-
-//    iterator_test<std::map<T,U>>();
-//    iterator_test< ft::map<T,U>>();
-
-//    operators_tests<T,U>();
+    constructors_tests<T,U>();
+    allocator_tests<T,U>();
+    observers_tests<T,U>();
+    capacity_tests<T,U>();
+    accessors_tests<T,U>();
+    modifiers_tests<T,U>();
+    operations_tests<T,U>();
+    operators_tests<T,U>();
+//    iterators_tests<T,U>();
 }
 
 /****** All tests *************************************************************/
