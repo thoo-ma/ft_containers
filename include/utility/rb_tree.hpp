@@ -123,29 +123,31 @@ class rb_tree
         { _data = it.data(); _sentinel_ptr = it.sentinel_ptr(); return *this; }
 
         /// @todo
-        key_type const & operator* () const
-        { return _data->key; }
+    //    key_type const & operator* () const
+    //    { return _data->key; }
 
         /// @todo
         key_type * operator-> () const
         { return &_data->key; }
 
-    //    value_type & operator* () const
-    //    { return *_data; }
+        value_type & operator* () const
+        { return *_data; }
 
     //    pointer operator-> () const
     //    { return _data; }
 
         bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
         {
-            return (_data == it.data()
-                || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
+            return _data == it.data();
+           // return (_data == it.data()
+           //     || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
         }
 
         bool operator== (rb_tree_iterator<rb_tree::value_type const> const & it) const
         {
-            return (_data == it.data()
-                || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
+            return _data == it.data();
+            //return (_data == it.data()
+            //    || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
         }
 
         bool operator!= (rb_tree_iterator<rb_tree::value_type> const & it) const
@@ -662,7 +664,9 @@ class rb_tree
     void insert (key_type const & key)
     {
         // do not insert duplicated key
-        if (find(_root, key))
+        //if (find(_root, key))
+        //if (find(_root, key) == end())
+        if (find(key) == end())
             return;
 
         // alloc and construct
@@ -745,10 +749,17 @@ class rb_tree
     { return erase(position.data()); }
 
     /// @brief Erase by key (2)
+//    void erase (key_type const & key)
+//    {
+//        pointer x = find(_root, key);
+//        if (x) erase(x);
+//    }
+
+    /// @brief Erase by key (2)
     void erase (key_type const & key)
     {
-        pointer x = find(_root, key);
-        if (x) erase(x);
+        iterator it = find(_root, key);
+        if (it != end()) erase(it);
     }
 
     /// @brief Erase by iterator range (3)
@@ -763,15 +774,25 @@ class rb_tree
         }
     }
 
-    pointer find (pointer x, key_type const & key) const
+//    pointer find (pointer x, key_type const & key) const
+//    {
+//        while (x != &_sentinel && x->key != key)
+//            _comp(key, x->key) ? x = x->left : x = x->right;
+//        return x != &_sentinel ? x : NULL;
+//    }
+
+    iterator find (pointer x, key_type const & key) const
     {
         while (x != &_sentinel && x->key != key)
-            //key < x->key ? x = x->left : x = x->right;
             _comp(key, x->key) ? x = x->left : x = x->right;
-        return x != &_sentinel ? x : NULL;
+        return x != &_sentinel ? iterator(x, &_sentinel) : end();
+        //return x != &_sentinel ? iterator(x, sentinel()) : end();
     }
 
-    pointer find (key_type const & key) const
+//    pointer find (key_type const & key) const
+//    { return find(_root, key); }
+
+    iterator find (key_type const & key) const
     { return find(_root, key); }
 
     /// @note is it very useful ?...
@@ -842,18 +863,20 @@ class rb_tree
     { return const_iterator(&_sentinel, &_sentinel); }
 
     reverse_iterator rbegin()
-    { return reverse_iterator(--end()); }
-    //{ return reverse_iterator(end()); }
-
-    const_reverse_iterator rbegin() const
-    { return const_reverse_iterator(--end()); }
-    //{ return const_reverse_iterator(end()); }
-
-    reverse_iterator rend()
+    //{ return reverse_iterator(--end()); }
     { return reverse_iterator(end()); }
 
-    const_reverse_iterator rend() const
+    const_reverse_iterator rbegin() const
+    //{ return const_reverse_iterator(--end()); }
     { return const_reverse_iterator(end()); }
+
+    reverse_iterator rend()
+    //{ return reverse_iterator(end()); }
+    { return reverse_iterator(begin()); }
+
+    const_reverse_iterator rend() const
+    //{ return const_reverse_iterator(end()); }
+    { return const_reverse_iterator(begin()); }
 
     /****** Debug *************************************************************/
 

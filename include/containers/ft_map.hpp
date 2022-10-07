@@ -251,30 +251,41 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /// @todo update following `operator*` and `operator->` iterator semantic
     iterator find (key_type const & key)
     {
-    //    std::cout << "find mutable" << std::endl;
-    //    return _tree.find(key);
+        std::cout << "find mutable" << std::endl;
+        return _tree.find(value_type(key, mapped_type()));
 
-        iterator it = begin();
-        iterator ite = end();
+    /// @note iterator not constructible from pointer to rbree node
+    //    typename btree_type::pointer p = _tree.find(value_type(key, mapped_type()));
+    //    return p ? iterator(p->key) : end();
 
+    //    iterator it = begin();
+    //    iterator ite = end();
+
+        //while (it != ite && (*it)key.first != key) it++;
         //while (it != ite && it->key.first != key) it++;
         //while (it != ite && it->first != key) it++;
-        while (it != ite && (*it).first != key) it++;
-        return it;
+    //    while (it != ite && (*it).first != key) it++;
+    //    return it;
     }
 
     /// @todo update following `operator*` and `operator->` iterator semantic
     const_iterator find (key_type const & key) const
     {
-        // std::cout << "find const" << std::endl;
+        std::cout << "find const" << std::endl;
+        return _tree.find(value_type(key, mapped_type()));
 
-        const_iterator it = begin();
-        const_iterator ite = end();
+    /// @note iterator not constructible from pointer to rbree node
+    //    typename btree_type::pointer p = _tree.find(value_type(key, mapped_type()));
+    //    return p ? iterator(p->key) : end();
 
+    //    const_iterator it = begin();
+    //    const_iterator ite = end();
+
+        //while (it != ite && (*it)key.first != key) it++;
         //while (it != ite && it->key.first != key) it++;
         //while (it != ite && it->first != key) it++;
-        while (it != ite && (*it).first != key) it++;
-        return it;
+    //    while (it != ite && (*it).first != key) it++;
+    //    return it;
     }
 
     size_type count (key_type const & key)
