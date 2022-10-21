@@ -6,42 +6,12 @@
 
 #include "ft_vector.hpp"
 #include "output_iterator.hpp"
-#include "../utils/colors.hpp" // log.hpp
+
+/// @todo absolute path
+#include "../utils.hpp"
 
 /// @todo ft::vector<int> v(5, 42);
 ///       --> std::cout << std::distance(v.begin(), v.end()) << std::endl;
-
-/****** Custom datatype *******************************************************/
-
-/// @note depending on how your vector is implemented, custom datatypes might
-///       require specific operators and methods in order to perform all tests.
-class A
-{
-    public:
-    int data;
-    A () : data(int()) { }
-    A (int const & i) : data(i) { }
-    A (A const & a) : data(a.data) { }
-    A & operator =(A const & a) { data = a.data; return *this; }
-};
-
-bool operator==(A const & lhs, A const & rhs)
-{ return lhs.data == rhs.data; }
-
-bool operator!=(A const & lhs, A const & rhs)
-{ return lhs.data != rhs.data; }
-
-bool operator< (A const & lhs, A const & rhs)
-{ return lhs.data < rhs.data; }
-
-bool operator> (A const & lhs, A const & rhs)
-{ return lhs.data > rhs.data; }
-
-bool operator<= (A const & lhs, A const & rhs)
-{ return !(lhs > rhs); }
-
-bool operator>= (A const & lhs, A const & rhs)
-{ return !(lhs < rhs); }
 
 /****** Constructors test *****************************************************/
 
@@ -1625,9 +1595,11 @@ void vector_test()
 
 int main()
 {
+    vector_test<A>();
     vector_test<int>();
-//    vector_test<double>();
-//    vector_test<A>();
+
+    /// @todo
+    //vector_test<ft::pair<int,int>>();
 
     /// @note fun fact: this doesn't compile (but not for the same reason...)
     // { std::vector<const int> v; }

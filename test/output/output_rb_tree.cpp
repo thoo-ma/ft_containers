@@ -1,9 +1,11 @@
 #include <cassert>
 #include <iostream>
 
-#include "../utils/colors.hpp" // log.hpp
 #include "output_iterator.hpp"
+
+/// @todo absolute paths
 #include "../../include/utility/ft_pair.hpp"
+#include "../utils.hpp"
 
 // To use it, substitute `insert(tree.root(), i)' by 'insert(i)`
 //#include "../../old_rb_tree.hpp"
@@ -19,22 +21,6 @@
 ///      Since our map implementation heavily rely on our red black tree, the
 ///      utility of these 'tests' is to provide some basic insurance about the
 ///      latter before testing the first one.
-
-/****** Key type utilities ****************************************************/
-
-template <typename T>
-struct is_pair : public std::false_type { };
-
-template <typename T, typename U>
-struct is_pair<ft::pair<T, U>> : public std::true_type { };
-
-template <typename Tree>
-typename std::enable_if<is_pair<typename Tree::key_type>::value, typename Tree::key_type>::type
-key_type (int x) { return typename Tree::key_type(x,x); }
-
-template <typename Tree>
-typename std::enable_if<std::is_same<typename Tree::key_type, int>::value, typename Tree::key_type>::type
-key_type (int x) { return typename Tree::key_type(x); }
 
 /****** Node ******************************************************************/
 
@@ -467,31 +453,31 @@ void operators_tests()
 template <typename T>
 void tree_test()
 {
-    constructors_tests<ft::rb_tree<T>>();
-    capacity_tests<ft::rb_tree<T>>();
-    accessors_tests<ft::rb_tree<T>>();
-    modifiers_tests<ft::rb_tree<T>>();
-    operators_tests<ft::rb_tree<T>>();
+//    constructors_tests<ft::rb_tree<T>>();
+//    capacity_tests<ft::rb_tree<T>>();
+//    accessors_tests<ft::rb_tree<T>>();
+//    modifiers_tests<ft::rb_tree<T>>();
+//    operators_tests<ft::rb_tree<T>>();
 
-    /// @todo (?)
-    // allocator_tests<ft::rb_tree<T>>();
+    /// @note this won't compile since `operator*` doesn't return a `value_type`
+//    iterator_test<ft::rb_tree<T>>();
 
-    /// @todo (?) delete
-    // iterator_test<ft::rb_tree<T>>();
+//    /// @todo (?)
+//    // allocator_tests<ft::rb_tree<T>>();
 
-    min_test<ft::rb_tree<T>>();
-    max_test<ft::rb_tree<T>>();
+//    min_test<ft::rb_tree<T>>();
+//    max_test<ft::rb_tree<T>>();
 }
 
 /****** Main ******************************************************************/
 
-#include <map>
 int main()
 {
 //    debug();
 
+//    tree_test<A>();
     tree_test<int>();
-    tree_test<ft::pair<const int,int>>();
+//    tree_test<ft::pair<const int,int>>();
 
     // everything below segfault
 

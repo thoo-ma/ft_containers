@@ -41,26 +41,52 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     typedef value_type *        pointer;
     typedef value_type const *  const_pointer;
 
-    /// @note just to shorten typedefs below
-    private: typedef rb_tree<value_type, value_compare> btree_type;
+    private:
+
+    /// @note just some convenient typedefs
+    typedef rb_tree<value_type, value_compare>  btree_type;
+    typedef typename btree_type::iterator       btree_iterator;
+    typedef typename btree_type::const_iterator btree_const_iterator;
 
     public:
 
-    /// @note same semantic than rbtree for `operator*` and `operator->`
-    typedef typename btree_type::iterator	            iterator;
-    typedef typename btree_type::const_iterator         const_iterator;
-    typedef typename btree_type::reverse_iterator       reverse_iterator;
-    typedef typename btree_type::const_reverse_iterator const_reverse_iterator;
+    class iterator : public btree_iterator
+    {
+        public:
 
-    /// @note same semantic than rbtree for `operator*` and `operator->`
-//    class iterator : public rb_tree<value_type>::iterator
-//    { public: Key const & operator* () { return operator*()->key; } };
-//
-//    class const_iterator : public rb_tree<value_type>::const_iterator
-//    { public: Key const & operator* () { return operator*()->key; } };
-//
-//    typedef ft::reverse_iterator<iterator>          reverse_iterator;
-//    typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+        //iterator () { }
+        iterator () : btree_iterator() { }
+
+        iterator (btree_iterator it) : btree_iterator(it) { }
+
+        iterator (iterator const & it) : btree_iterator(it) { }
+
+        iterator operator= (iterator const & it)
+        { return btree_iterator::operator=(it); }
+
+    };
+
+    class const_iterator : public btree_const_iterator
+    {
+        public:
+
+        const_iterator () { }
+
+        const_iterator (btree_iterator it) : btree_const_iterator(it) { }
+
+        const_iterator (btree_const_iterator it) : btree_const_iterator(it) { }
+
+        const_iterator (iterator const & it) : btree_const_iterator(it) { }
+
+        const_iterator (const_iterator const & it) : btree_const_iterator(it) { }
+
+        const_iterator operator= (const_iterator const & it)
+        { return btree_const_iterator::operator=(it); }
+
+    };
+
+    typedef ft::reverse_iterator<iterator>          reverse_iterator;
+    typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
     class value_compare
     {
@@ -203,11 +229,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     { return _tree.erase(first, last); }
 
     void swap (map & m)
-    {
-        map tmp(m);
-        m = *this;
-        *this = tmp;
-    }
+    { map tmp(m); m = *this; *this = tmp; }
 
     void clear ()
     { erase(begin(), end()); }
@@ -248,50 +270,16 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /****** Operations ********************************************************/
 
-    /// @todo update following `operator*` and `operator->` iterator semantic
     iterator find (key_type const & key)
-    {
-        std::cout << "find mutable" << std::endl;
-        return _tree.find(value_type(key, mapped_type()));
+    { return iterator(_tree.find(value_type(key, mapped_type()))); }
 
-    /// @note iterator not constructible from pointer to rbree node
-    //    typename btree_type::pointer p = _tree.find(value_type(key, mapped_type()));
-    //    return p ? iterator(p->key) : end();
-
-    //    iterator it = begin();
-    //    iterator ite = end();
-
-        //while (it != ite && (*it)key.first != key) it++;
-        //while (it != ite && it->key.first != key) it++;
-        //while (it != ite && it->first != key) it++;
-    //    while (it != ite && (*it).first != key) it++;
-    //    return it;
-    }
-
-    /// @todo update following `operator*` and `operator->` iterator semantic
     const_iterator find (key_type const & key) const
-    {
-        std::cout << "find const" << std::endl;
-        return _tree.find(value_type(key, mapped_type()));
-
-    /// @note iterator not constructible from pointer to rbree node
-    //    typename btree_type::pointer p = _tree.find(value_type(key, mapped_type()));
-    //    return p ? iterator(p->key) : end();
-
-    //    const_iterator it = begin();
-    //    const_iterator ite = end();
-
-        //while (it != ite && (*it)key.first != key) it++;
-        //while (it != ite && it->key.first != key) it++;
-        //while (it != ite && it->first != key) it++;
-    //    while (it != ite && (*it).first != key) it++;
-    //    return it;
-    }
+    { return const_iterator(_tree.find(value_type(key, mapped_type()))); }
 
     size_type count (key_type const & key)
     { return find(key) == end() ? 0 : 1; }
 
-    /// @todo update following `operator*` and `operator->` iterator semantic
+    /// @todo
     iterator lower_bound (key_type const & key)
     {
     //    std::cout << "lower mutable" << std::endl;
@@ -304,7 +292,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         return it;
     }
 
-    /// @todo update following `operator*` and `operator->` iterator semantic
+    /// @todo
     const_iterator lower_bound (key_type const & key) const
     {
     //    std::cout << "lower const" << std::endl;
@@ -317,7 +305,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         return it;
     }
 
-    /// @todo update following `operator*` and `operator->` iterator semantic
+    /// @todo
     iterator upper_bound (key_type const & key)
     {
     //    std::cout << "upper mutable" << std::endl;
@@ -330,7 +318,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         return it;
     }
 
-    /// @todo update following `operator*` and `operator->` iterator semantic
+    /// @todo
     const_iterator upper_bound (key_type const & key) const
     {
     //    std::cout << "upper const" << std::endl;

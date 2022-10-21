@@ -37,10 +37,6 @@ class reverse_iterator {
     reverse_iterator(reverse_iterator<Iter> const & rit)
     : _base(rit.base()) { }
 
-    /****** Destructor ****************************************************/
-
-    virtual ~reverse_iterator() { }
-
     /****** Member functions **********************************************/
 
     iterator_type base() const
@@ -48,7 +44,8 @@ class reverse_iterator {
 
     /****** Operators *****************************************************/
 
-    reverse_iterator & operator=(reverse_iterator const & it)
+    template <typename Iter>
+    reverse_iterator & operator=(reverse_iterator<Iter> const & it)
     { _base = it.base(); return *this; }
 
     reference operator*() const

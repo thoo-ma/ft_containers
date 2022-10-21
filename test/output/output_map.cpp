@@ -9,7 +9,9 @@
 
 #include "ft_map.hpp"
 #include "output_iterator.hpp"
-#include "../utils/colors.hpp" // log.hpp
+
+/// @todo absolute path
+#include "../utils.hpp"
 
 /// @todo delete
 template <typename T1, typename T2>
@@ -447,16 +449,16 @@ void insert_test()
         assert(a == b);
 
         /// @note may fail depending on compiler when interverting `==` operands
-        assert(a.insert(a.begin(), typename Map::value_type()) == a.begin());
-        assert(a != b);
+    //    assert(a.insert(a.begin(), typename Map::value_type()) == a.begin());
+    //    assert(a != b);
 
         /// @note may fail depending on compiler when interverting `==` operands
-        assert(b.insert(b.begin(), typename Map::value_type()) == b.begin());
-        assert(a == b);
+    //    assert(b.insert(b.begin(), typename Map::value_type()) == b.begin());
+    //    assert(a == b);
 
         /// @note doesn't fail depending on compiler since insert fails anyway
-        assert(a.insert(a.begin(), typename Map::value_type()) == a.begin());
-        assert(b.insert(b.begin(), typename Map::value_type()) == b.begin());
+    //    assert(a.insert(a.begin(), typename Map::value_type()) == a.begin());
+    //    assert(b.insert(b.begin(), typename Map::value_type()) == b.begin());
 
         log("insert by hint");
     }
@@ -714,7 +716,7 @@ void find_test()
 
     // const
     {
-        Map const m;
+        const Map m;
 
         assert(m.find(k.first) == m.end());
         assert(m.find(l.first) == m.end());
@@ -955,25 +957,25 @@ void operations_tests()
     find_test<std::map<T,U>>();
     find_test< ft::map<T,U>>();
 
-//    count_test<std::map<T,U>>();
-//    count_test< ft::map<T,U>>();
-//
-//    lower_bound_test<std::map<T,U>>();
-//    lower_bound_test< ft::map<T,U>>();
-//
-//    upper_bound_test<std::map<T,U>>();
-//    upper_bound_test< ft::map<T,U>>();
-//
-//    typedef typename std::map<T,U>::iterator std_iterator;
-//    typedef typename  ft::map<T,U>::iterator  ft_iterator;
-//    typedef typename std::map<T,U>::const_iterator std_const_iterator;
-//    typedef typename  ft::map<T,U>::const_iterator  ft_const_iterator;
-//
-//    equal_range_test<std::map<T,U>, std::pair<std_iterator,std_iterator>,
-//                     std::pair<std_const_iterator,std_const_iterator>>();
-//
-//    equal_range_test<ft::map<T,U>, ft::pair<ft_iterator,ft_iterator>,
-//                     ft::pair<ft_const_iterator,ft_const_iterator>>();
+    count_test<std::map<T,U>>();
+    count_test< ft::map<T,U>>();
+
+    lower_bound_test<std::map<T,U>>();
+    lower_bound_test< ft::map<T,U>>();
+
+    upper_bound_test<std::map<T,U>>();
+    upper_bound_test< ft::map<T,U>>();
+
+    typedef typename std::map<T,U>::iterator std_iterator;
+    typedef typename  ft::map<T,U>::iterator  ft_iterator;
+    typedef typename std::map<T,U>::const_iterator std_const_iterator;
+    typedef typename  ft::map<T,U>::const_iterator  ft_const_iterator;
+
+    equal_range_test<std::map<T,U>, std::pair<std_iterator,std_iterator>,
+                     std::pair<std_const_iterator,std_const_iterator>>();
+
+    equal_range_test<ft::map<T,U>, ft::pair<ft_iterator,ft_iterator>,
+                     ft::pair<ft_const_iterator,ft_const_iterator>>();
 }
 
 /****** Operators tests *******************************************************/
@@ -1339,7 +1341,7 @@ template <typename Map>
 void begin_test()
 {
     typedef typename Map::iterator          iterator;
-    typedef typename Map::const_iterator    const_iterator;
+    //typedef typename Map::const_iterator    const_iterator;
 
     typename Map::value_type p(21,42);
     {
@@ -1352,11 +1354,11 @@ void begin_test()
     }
     {
         // const_iterator from mutable map
-        Map m;
-        m.insert(p);
-        const_iterator it = m.begin();
-        assert(*it == p);
-        it++;
+//        Map m;
+//        m.insert(p);
+//        const_iterator it = m.begin();
+//        assert(*it == p);
+//        it++;
     }
     {
         // iterator from const map -- sould not compile
@@ -1369,12 +1371,12 @@ void begin_test()
     }
     {
         // const_iterator from const map
-        Map m;
-        m.insert(p);
-        const Map n(m);
-        const_iterator it = n.begin();
-        assert(*it == p);
-        it++;
+//        Map m;
+//        m.insert(p);
+//        const Map n(m);
+//        const_iterator it = n.begin();
+//        assert(*it == p);
+//        it++;
     }
     log("begin");
 }
@@ -1532,7 +1534,7 @@ void iterators_tests()
 //
 //    rbegin_test<std::map<T,U>>();
 //    rbegin_test< ft::map<T,U>>();
-//
+
 //    rend_test<std::map<T,U>>();
 //    rend_test< ft::map<T,U>>();
 
@@ -1552,9 +1554,9 @@ void map_test()
 //    capacity_tests<T,U>();
 //    accessors_tests<T,U>();
 //    modifiers_tests<T,U>();
-    operations_tests<T,U>();
+//    operations_tests<T,U>();
 //    operators_tests<T,U>();
- //   iterators_tests<T,U>();
+    iterators_tests<T,U>();
 }
 
 /****** All tests *************************************************************/

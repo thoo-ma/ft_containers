@@ -108,7 +108,8 @@ class rb_tree
 
         /// @note explicit ?
         rb_tree_iterator (pointer data = NULL, pointer sentinel_ptr = NULL)
-        : _data(data), _sentinel_ptr(sentinel_ptr) { }
+        : _data(data), _sentinel_ptr(sentinel_ptr)
+        { }
 
         rb_tree_iterator (rb_tree_iterator<rb_tree::value_type> const & it)
         : _data(it.data()), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
@@ -122,18 +123,16 @@ class rb_tree
         rb_tree_iterator operator= (rb_tree_iterator const & it)
         { _data = it.data(); _sentinel_ptr = it.sentinel_ptr(); return *this; }
 
-        /// @todo
-    //    key_type const & operator* () const
-    //    { return _data->key; }
+        key_type operator* () const
+        { return _data->key; }
 
-        /// @todo
         key_type * operator-> () const
         { return &_data->key; }
 
-        value_type & operator* () const
-        { return *_data; }
+    //    virtual value_type & operator* () const
+    //    { return *_data; }
 
-    //    pointer operator-> () const
+    //    virtual pointer operator-> () const
     //    { return _data; }
 
         bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
@@ -666,7 +665,7 @@ class rb_tree
         // do not insert duplicated key
         //if (find(_root, key))
         //if (find(_root, key) == end())
-        if (find(key) == end())
+        if (find(key) != end())
             return;
 
         // alloc and construct
@@ -781,18 +780,69 @@ class rb_tree
 //        return x != &_sentinel ? x : NULL;
 //    }
 
-    iterator find (pointer x, key_type const & key) const
-    {
-        while (x != &_sentinel && x->key != key)
-            _comp(key, x->key) ? x = x->left : x = x->right;
-        return x != &_sentinel ? iterator(x, &_sentinel) : end();
-        //return x != &_sentinel ? iterator(x, sentinel()) : end();
-    }
-
 //    pointer find (key_type const & key) const
 //    { return find(_root, key); }
 
-    iterator find (key_type const & key) const
+    iterator find (pointer x, key_type const & key)
+    {
+    //    std::cout << "tree find mutable" << std::endl;
+
+    //    std::cout << "key: " << key.first << std::endl;
+    //    std::cout << "x.key: " << x->key.first << std::endl;
+
+    //    std::cout << "before loop" << std::endl;
+
+        while (x != &_sentinel && (_comp(key, x->key) || _comp(x->key, key)))
+        {
+        //    std::cout << "inside loop" << std::endl;
+
+        //    std::cout << "key: " << key.first << std::endl;
+        //    std::cout << "x.key: " << x->key.first << std::endl;
+
+        //    if (key.first < x->key.first)  { std::cout << "LT" << std::endl; }
+        //    if (key.first > x->key.first)  { std::cout << "GT" << std::endl; }
+        //    if (key.first == x->key.first) { std::cout << "EQ" << std::endl; }
+
+        //    std::cout << _comp(key, x->key) << std::endl;
+        //    std::cout << _comp(x->key, key) << std::endl;
+
+            _comp(key, x->key) ? x = x->left : x = x->right;
+        }
+
+    //    std::cout << sentinel() << std::endl;
+    //    std::cout << &_sentinel << std::endl;
+    //    std::cout << x << std::endl;
+
+        //return x != &_sentinel ? iterator(x, &_sentinel) : end();
+        return x == &_sentinel ? end() : iterator(x, &_sentinel);
+
+    //    if (x == &_sentinel)
+    //    {
+    //        std::cout << "didn't find" << std::endl;
+    //        iterator it = end();
+    //        std::cout << (*it).first << std::endl;
+    //        return it;
+    //    }
+    //    else
+    //    {
+    //        std::cout << "we found!" << std::endl;
+    //        iterator it = iterator(x, &_sentinel);
+    //        std::cout << it.data() << std::endl;
+    //        return it;
+    //    }
+    }
+
+    const_iterator find (pointer x, key_type const & key) const
+    {
+        while (x != &_sentinel && (_comp(key, x->key) || _comp(x->key, key)))
+            _comp(key, x->key) ? x = x->left : x = x->right;
+        return x == &_sentinel ? end() : const_iterator(x, &_sentinel);
+    }
+
+    iterator find (key_type const & key)
+    { return find(_root, key); }
+
+    const_iterator find (key_type const & key) const
     { return find(_root, key); }
 
     /// @note is it very useful ?...

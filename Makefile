@@ -2,7 +2,7 @@
 
 CXX				=	c++ -g
 
-CXXFLAGS		=	-std=c++11 -Wall -Wextra# -Wconversion# -fpermissive
+CXXFLAGS		=	-std=c++11 -Wall -Wextra# -Werror # -Wconversion# -fpermissive
 
 ################### DIRECTORIES ################################################
 

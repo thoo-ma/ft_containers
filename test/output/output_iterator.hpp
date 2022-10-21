@@ -8,39 +8,15 @@
 
 #include "ft_type_traits.hpp"
 #include "ft_iterator_base_types.hpp"
-#include "../utils/colors.hpp" // log.hpp
+
 #include "ft_map.hpp" // is_map
+#include "rb_tree.hpp" // is_rbtree
 #include "ft_vector.hpp" // is_vector
 
+/// @todo absolute path
+#include "../utils.hpp"
+
 /// @todo Add tests to increment and decrement out of container boundaries.
-
-/****** Value type utilities **************************************************/
-
-template <typename Container>
-struct is_vector : std::false_type { };
-
-template <typename T>
-struct is_vector<ft::vector<T> > : std::true_type { };
-
-template <typename T>
-struct is_vector<std::vector<T> > : std::true_type { };
-
-template <typename Container>
-struct is_map : std::false_type { };
-
-template <typename T, typename U>
-struct is_map<ft::map<T,U> > : std::true_type { };
-
-template <typename T, typename U>
-struct is_map<std::map<T,U> > : std::true_type { };
-
-template <typename Container>
-typename std::enable_if<is_vector<Container>::value, typename Container::value_type>::type
-value_type (int x) { return typename Container::value_type(x); }
-
-template <typename Container>
-typename std::enable_if<is_map<Container>::value, typename Container::value_type>::type
-value_type (int x) { return typename Container::value_type(x,x); }
 
 /****** Common iterator test **************************************************/
 
@@ -141,6 +117,12 @@ typename std::enable_if<is_map<Container>::value, void>::type
 iterator_constructor_by_pointer_test()
 { }
 
+/// @note rbtree case
+template <typename Container>
+typename std::enable_if<is_rbtree<Container>::value, void>::type
+iterator_constructor_by_pointer_test()
+{ }
+
 /// @note cf. `is_assignable` vs `is_copy_assignable`.
 /// Seems to be a c++11 thing (cf. also the  `= delete` functionnality).
 template <typename Container>
@@ -158,6 +140,7 @@ void iterator_assignation_test()
         a = b;
         assert(a == b);
     }
+
     {
         // const_it = const_it
         typename Container::const_iterator    a;
@@ -242,6 +225,7 @@ void iterator_assignation_test()
         c = b;
         assert(c == b);
     }
+
     log("assignation");
 }
 
@@ -477,6 +461,12 @@ typename std::enable_if<is_map<Container>::value, void>::type
 iterator_equal_test_constructed_by_pointer()
 { }
 
+/// @note rbtree case
+template <typename Container>
+typename std::enable_if<is_rbtree<Container>::value, void>::type
+iterator_equal_test_constructed_by_pointer()
+{ }
+
 /// @note vector case
 template <typename Container>
 typename std::enable_if<is_vector<Container>::value, void>::type
@@ -514,6 +504,12 @@ iterator_non_equal_test_constructed_by_pointer()
 /// @note map case
 template <typename Container>
 typename std::enable_if<is_map<Container>::value, void>::type
+iterator_non_equal_test_constructed_by_pointer()
+{ }
+
+/// @note rbtree case
+template <typename Container>
+typename std::enable_if<is_rbtree<Container>::value, void>::type
 iterator_non_equal_test_constructed_by_pointer()
 { }
 
@@ -675,6 +671,12 @@ typename std::enable_if<is_map<Container>::value, void>::type
 iterator_dereference_test_constructed_by_pointer()
 { }
 
+/// @note rbtree case
+template <typename Container>
+typename std::enable_if<is_rbtree<Container>::value, void>::type
+iterator_dereference_test_constructed_by_pointer()
+{ }
+
 template <typename Container>
 void iterator_dereference_test_constructed_by_container()
 {
@@ -755,6 +757,12 @@ iterator_dereference_pointer_test_constructed_by_pointer()
 /// @note map case
 template <typename Container>
 typename std::enable_if<is_map<Container>::value, void>::type
+iterator_dereference_pointer_test_constructed_by_pointer()
+{ }
+
+/// @note rbtree case
+template <typename Container>
+typename std::enable_if<is_rbtree<Container>::value, void>::type
 iterator_dereference_pointer_test_constructed_by_pointer()
 { }
 
@@ -1755,28 +1763,28 @@ void iterator_test()
 
     iterator_constructor_by_default_test<Container>();
 
-//    iterator_constructor_by_pointer_test<Container>();
-//
-//    iterator_constructor_by_copy_test<Container>();
-//
-//    iterator_assignation_test<Container>();
-//
-//    reverse_iterator_base_test<Container>();
+    iterator_constructor_by_pointer_test<Container>();
+
+    iterator_constructor_by_copy_test<Container>();
+
+    iterator_assignation_test<Container>();
+
+    reverse_iterator_base_test<Container>();
 
     /// @note both prefix and postfix
-//    iterator_increment_test<Container>();
-//
-//    typedef typename Container::iterator::iterator_category iterator_category;
+    iterator_increment_test<Container>();
+
+    typedef typename Container::iterator::iterator_category iterator_category;
 
     /****** Input iterator test ***********************************************/
 
-//    typedef typename  ft::input_iterator_tag     ft_input_tag;
-//    typedef typename std::input_iterator_tag    std_input_tag;
-//
-//    input_iterator_test<
-//    std::is_base_of< ft_input_tag, iterator_category>::value ||
-//    std::is_base_of<std_input_tag, iterator_category>::value, Container
-//    >();
+    typedef typename  ft::input_iterator_tag     ft_input_tag;
+    typedef typename std::input_iterator_tag    std_input_tag;
+
+    input_iterator_test<
+    std::is_base_of< ft_input_tag, iterator_category>::value ||
+    std::is_base_of<std_input_tag, iterator_category>::value, Container
+    >();
 
     /****** Output iterator test **********************************************/
 
@@ -1787,10 +1795,10 @@ void iterator_test()
 //    std::is_base_of< ft_output_tag, iterator_category>::value ||
 //    std::is_base_of<std_output_tag, iterator_category>::value, Container
 //    >();
-//
-//    /// @note Yes this is shit. Hopefully temporary.
-//    output_iterator_test<true, Container>();
-//
+
+    /// @note Yes this is shit. Hopefully temporary.
+    output_iterator_test<true, Container>();
+
 //    /****** Forward iterator test *********************************************/
 //
 //    typedef typename  ft::forward_iterator_tag   ft_forward_tag;

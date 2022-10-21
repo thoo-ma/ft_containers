@@ -3,7 +3,9 @@
 #include <cassert>
 
 #include "ft_stack.hpp"
-#include "../utils/colors.hpp" // log.hpp
+
+/// @todo absolute path
+#include "../utils.hpp"
 
 /// @todo add test with custom datatype
 
