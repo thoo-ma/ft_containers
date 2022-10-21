@@ -3,6 +3,7 @@
 
 #include "../utils/colors.hpp" // log.hpp
 #include "output_iterator.hpp"
+#include "../../include/utility/ft_pair.hpp"
 
 // To use it, substitute `insert(tree.root(), i)' by 'insert(i)`
 //#include "../../old_rb_tree.hpp"
@@ -18,6 +19,22 @@
 ///      Since our map implementation heavily rely on our red black tree, the
 ///      utility of these 'tests' is to provide some basic insurance about the
 ///      latter before testing the first one.
+
+/****** Key type utilities ****************************************************/
+
+template <typename T>
+struct is_pair : public std::false_type { };
+
+template <typename T, typename U>
+struct is_pair<ft::pair<T, U>> : public std::true_type { };
+
+template <typename Tree>
+typename std::enable_if<is_pair<typename Tree::key_type>::value, typename Tree::key_type>::type
+key_type (int x) { return typename Tree::key_type(x,x); }
+
+template <typename Tree>
+typename std::enable_if<std::is_same<typename Tree::key_type, int>::value, typename Tree::key_type>::type
+key_type (int x) { return typename Tree::key_type(x); }
 
 /****** Node ******************************************************************/
 
@@ -95,36 +112,38 @@ void debug()
 
 /****** Utility ***************************************************************/
 
+template <typename Tree>
 void min_test()
 {
-    ft::rb_tree<int> tree;
+    Tree tree;
 
     //assert(tree.min(tree.root()) == NULL);
     //assert(tree.min(tree.root()) == tree.sentinel());
 
     for (int i = 10; i > 0; i--)
     {
-        //tree.insert(tree.root(), i);
-        tree.insert(i);
-        assert(tree.min(tree.root()) && tree.min(tree.root())->key == i);
+        typename Tree::key_type key = key_type<Tree>(i);
+        tree.insert(key);
+        assert(tree.min(tree.root()) && tree.min(tree.root())->key == key);
     }
-
+    log("min");
 }
 
+template <typename Tree>
 void max_test()
 {
-    ft::rb_tree<int> tree;
+    Tree tree;
 
    // assert(tree.min(tree.root()) == NULL);
     //assert(tree.min(tree.root()) == tree.sentinel());
 
     for (int i = 0; i < 10; i++)
     {
-        //tree.insert(tree.root(), i);
-        tree.insert(i);
-        assert(tree.min(tree.root()) && tree.max(tree.root())->key == i);
+        typename Tree::key_type key = key_type<Tree>(i);
+        tree.insert(key);
+        assert(tree.min(tree.root()) && tree.max(tree.root())->key == key);
     }
-
+    log("max");
 }
 
 /****** Constructors test *****************************************************/
@@ -143,8 +162,8 @@ void constructor_by_default_test()
 template <typename Tree>
 void constructor_by_copy_test()
 {
-    typename Tree::value_type i(1);
-    typename Tree::value_type j(2);
+    typename Tree::value_type i(key_type<Tree>(1));
+    typename Tree::value_type j(key_type<Tree>(2));
     {
         // from empty
         Tree a;
@@ -165,8 +184,8 @@ void constructor_by_copy_test()
 template <typename Tree>
 void constructor_by_iterator_range_test()
 {
-    typename Tree::value_type i(1);
-    typename Tree::value_type j(2);
+    typename Tree::value_type i(key_type<Tree>(1));
+    typename Tree::value_type j(key_type<Tree>(2));
     {
         // empty range
         Tree a;
@@ -252,21 +271,24 @@ void capacity_tests()
 
 /****** Accessors test ********************************************************/
 
+/// @todo remove logs
 template <typename Tree>
 void find_test()
 {
     Tree t;
 
-    typename Tree::key_type k(42);
-    typename Tree::key_type l(21);
+    typename Tree::key_type k = key_type<Tree>(42);
+    typename Tree::key_type l = key_type<Tree>(21);
 
-    assert(t.find(k) == NULL);
+    assert(t.find(k) == t.end());
     t.insert(k);
-    assert(t.find(k) != NULL);
+   // std::cout << *t.find(k) << std::endl;
+   // std::cout << *t.end() << std::endl;
+    assert(t.find(k) != t.end());
 
-    assert(t.find(l) == NULL);
+    assert(t.find(l) == t.end());
     t.insert(l);
-    assert(t.find(l) != NULL);
+    assert(t.find(l) != t.end());
 
     log("find");
 }
@@ -284,8 +306,9 @@ void accessors_tests()
 template <typename Tree>
 void insert_test()
 {
-    typename Tree::key_type k(42);
-    typename Tree::key_type l(21);
+    typedef typename Tree::value_type value_type;
+    value_type k(key_type<Tree>(42));
+    value_type l(key_type<Tree>(21));
     {
         // single element (1)
         Tree t;
@@ -293,31 +316,31 @@ void insert_test()
         t.insert(l);
 
         Tree tree;
-        tree.insert(50);
-        tree.insert(79);
-        tree.insert(21);
-        tree.insert(88);
-        tree.insert(16);
-        tree.insert(67);
-        tree.insert(10);
-        tree.insert(19);
-        tree.insert(11);
-        tree.insert(42);
-        tree.insert(27);
-        tree.insert(90);
-        tree.insert(55);
+        tree.insert(value_type(key_type<Tree>(50)));
+        tree.insert(value_type(key_type<Tree>(79)));
+        tree.insert(value_type(key_type<Tree>(21)));
+        tree.insert(value_type(key_type<Tree>(88)));
+        tree.insert(value_type(key_type<Tree>(16)));
+        tree.insert(value_type(key_type<Tree>(67)));
+        tree.insert(value_type(key_type<Tree>(10)));
+        tree.insert(value_type(key_type<Tree>(19)));
+        tree.insert(value_type(key_type<Tree>(11)));
+        tree.insert(value_type(key_type<Tree>(42)));
+        tree.insert(value_type(key_type<Tree>(27)));
+        tree.insert(value_type(key_type<Tree>(90)));
+        tree.insert(value_type(key_type<Tree>(55)));
 
         // insert case 1: uncle is red
-        tree.insert(45);
+        tree.insert(value_type(key_type<Tree>(45)));
 
         // insert case 2: uncle is black and new node is a right child
-        tree.insert(70);
+        tree.insert(value_type(key_type<Tree>(70)));
 
         // insert case 3: uncle is black and new node is a left child
-        tree.insert(9);
+        tree.insert(value_type(key_type<Tree>(9)));
 
         // insert duplicate node
-        tree.insert(42);
+        tree.insert(value_type(key_type<Tree>(42)));
     }
     {
         // with hint (2)
@@ -393,8 +416,8 @@ void equal_test()
 
     {
         Tree a, b;
-        typename Tree::key_type k(42);
-        typename Tree::key_type l(21);
+        typename Tree::key_type k = key_type<Tree>(42);
+        typename Tree::key_type l = key_type<Tree>(21);
 
         assert(a == b);
 
@@ -415,8 +438,8 @@ void not_equal_test()
 {
     {
         Tree a, b;
-        typename Tree::key_type k(42);
-        typename Tree::key_type l(21);
+        typename Tree::key_type k = key_type<Tree>(42);
+        typename Tree::key_type l = key_type<Tree>(21);
 
         a.insert(k);
         assert(a != b);
@@ -450,11 +473,14 @@ void tree_test()
     modifiers_tests<ft::rb_tree<T>>();
     operators_tests<ft::rb_tree<T>>();
 
-    /// @todo
+    /// @todo (?)
     // allocator_tests<ft::rb_tree<T>>();
 
-    /// @note delete
+    /// @todo (?) delete
     // iterator_test<ft::rb_tree<T>>();
+
+    min_test<ft::rb_tree<T>>();
+    max_test<ft::rb_tree<T>>();
 }
 
 /****** Main ******************************************************************/
@@ -463,11 +489,9 @@ void tree_test()
 int main()
 {
 //    debug();
-//    min_test();
-//    max_test();
 
     tree_test<int>();
-    //tree_test<int const>();
+    tree_test<ft::pair<const int,int>>();
 
     // everything below segfault
 
