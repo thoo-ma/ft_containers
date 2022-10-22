@@ -303,7 +303,6 @@ void iterator_increment_test()
     log("increment");
 }
 
-/// @todo (?)
 template <typename Container>
 void reverse_iterator_base_test()
 {
@@ -322,7 +321,7 @@ void reverse_iterator_base_test()
     typename Container::reverse_iterator rit(it);
 
     assert(rit.base() == it);
-    //assert(&*(--(typename Container::iterator(rit.base()))) == &*rit);
+    assert(&*(--(typename Container::iterator(rit.base()))) == &*rit);
 
     log("base()");
 }
@@ -594,9 +593,6 @@ void iterator_non_equal_test_constructed_by_copy()
     }
 }
 
-/// @todo clear distinction between:
-///       - test constructed by copy
-///       - test constructed by container public method
 template <typename Container>
 void iterator_equal_test()
 {
@@ -607,9 +603,6 @@ void iterator_equal_test()
     log("operator==");
 }
 
-/// @todo clear distinction between:
-///       - test constructed by copy
-///       - test constructed by container public method
 template <typename Container>
 void iterator_not_equal_test()
 {
@@ -1112,7 +1105,6 @@ void iterator_substraction_test()
 
             assert(cit - it == 0);
             assert(cite - it == 3);
-            assert(cite - it == static_cast<ptrdiff_t>(ctn.size())); // TODO
         }
         {
             // const_it - const_it
