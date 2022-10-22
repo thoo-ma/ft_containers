@@ -132,6 +132,14 @@ void max_test()
     log("max");
 }
 
+template <typename Tree>
+void utilities_tests()
+{
+    std::cout << "== Utilities ==" << std::endl;
+    min_test<Tree>();
+    max_test<Tree>();
+}
+
 /****** Constructors test *****************************************************/
 
 template <typename Tree>
@@ -453,11 +461,12 @@ void operators_tests()
 template <typename T>
 void tree_test()
 {
-//    constructors_tests<ft::rb_tree<T>>();
-//    capacity_tests<ft::rb_tree<T>>();
-//    accessors_tests<ft::rb_tree<T>>();
-//    modifiers_tests<ft::rb_tree<T>>();
-//    operators_tests<ft::rb_tree<T>>();
+    constructors_tests<ft::rb_tree<T>>();
+    capacity_tests<ft::rb_tree<T>>();
+    accessors_tests<ft::rb_tree<T>>();
+    modifiers_tests<ft::rb_tree<T>>();
+    operators_tests<ft::rb_tree<T>>();
+    utilities_tests<ft::rb_tree<T>>();
 
     /// @note this won't compile since `operator*` doesn't return a `value_type`
 //    iterator_test<ft::rb_tree<T>>();
@@ -465,8 +474,6 @@ void tree_test()
 //    /// @todo (?)
 //    // allocator_tests<ft::rb_tree<T>>();
 
-//    min_test<ft::rb_tree<T>>();
-//    max_test<ft::rb_tree<T>>();
 }
 
 /****** Main ******************************************************************/
