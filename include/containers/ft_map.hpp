@@ -253,7 +253,6 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     key_compare	            _key_comp;
     value_compare	        _value_comp;
     btree_type              _tree;
-    //size_type           _max_size; // remove
     //allocator_type	    _alloc; // this is not used
 
     /**************************************************************************/

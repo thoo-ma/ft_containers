@@ -73,7 +73,6 @@ class rb_tree
 
     pointer         _root;
     size_type       _size;
-    //size_type       _max_size; // just to be inherited by map
     value_type      _sentinel;
     allocator_type  _alloc;
     compare_type    _comp;

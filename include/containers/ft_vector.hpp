@@ -17,6 +17,7 @@
 /// @todo (?) why can we write `vector` instead of `vector<value_type>`
 /// @todo (?) why can we access private variable of vector passed as arguments
 /// @todo (?) do not set _capacity nor _size before calling allocate()
+/// @todo (?) remove `_max_size` like `map` and `rbtree`
 
 namespace ft {
 
