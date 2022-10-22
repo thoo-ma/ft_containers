@@ -8,6 +8,9 @@
 #include "rb_tree.hpp"
 #include "ft_type_traits.hpp"
 
+/// @todo std::add_const    --> ft::add_const
+/// @todo std::remove_const --> ft::remove_const
+
 namespace ft {
 
 /// @note Allocator won't be used. This map uses rb_tree allocator.
@@ -44,46 +47,171 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     private:
 
     /// @note just some convenient typedefs
-    typedef rb_tree<value_type, value_compare>  btree_type;
-    typedef typename btree_type::iterator       btree_iterator;
-    typedef typename btree_type::const_iterator btree_const_iterator;
+    typedef rb_tree<value_type, value_compare> btree_type;
+    typedef typename btree_type::value_type     node_type;
+    typedef typename btree_type::value_type &   node_reference;
+    typedef typename btree_type::value_type *   node_pointer;
+
+
+    template <typename U = T>
+    class map_iterator : public iterator<bidirectional_iterator_tag, U>
+    {
+        public:
+
+        typedef iterator_traits<map_iterator>       traits; // to shorten below
+        typedef typename traits::iterator_category  iterator_category;
+        typedef typename traits::value_type         value_type;
+        typedef typename traits::difference_type    difference_type;
+        typedef typename traits::pointer	        pointer;
+        typedef typename traits::reference	        reference;
+
+        private:
+
+        node_pointer _current;
+        node_pointer _sentinel;
+
+        public:
+
+        /// @brief Constructor by default
+        map_iterator (node_pointer current = NULL, node_pointer sentinel = NULL)
+        :_current(current), _sentinel(sentinel)
+        { }
+
+        /// @brief Constructor by copy from mutable iterator
+        map_iterator (map_iterator<typename std::remove_const<value_type>::type> const & it)
+        : _current(it.current_node()),
+         _sentinel(const_cast<node_pointer>(it.sentinel_node()))
+        { }
+
+        /// @brief Constructor by copy from const iterator
+        map_iterator (map_iterator<typename std::add_const<value_type>::type> const & it)
+        : _current(const_cast<node_pointer>(it.current_node())),
+         _sentinel(const_cast<node_pointer>(it.sentinel_node()))
+        { }
+
+        map_iterator operator= (map_iterator const & it)
+        {
+            _current = it.current_node();
+            _sentinel = it.sentinel_node();
+            return *this;
+        }
+
+        reference operator* () const
+        { return _current->key; }
+
+        pointer operator-> () const
+        { return &_current->key; }
+
+        bool operator== (map_iterator const & it) const
+        { return _current == it.current_node(); }
+
+    //    bool operator== (map_iterator<value_type> const & it) const
+    //    { return _current == it.current_node(); }
+
+    //    bool operator== (map_iterator<value_type const> const & it) const
+    //    { return _current == it.current_node(); }
+
+        bool operator!= (map_iterator const & it) const
+        { return !(*this == it); }
+
+       // bool operator!= (map_iterator<value_type> const & it) const
+       // { return !(*this == it); }
+
+       // bool operator!= (map_iterator<value_type const> const & it) const
+       // { return !(*this == it); }
+
+        /// @brief prefix incerement
+        map_iterator & operator++ ()
+        {
+            // case 1: next node is min(_current->right)
+            if (_current->right != _sentinel)
+            {
+                _current = _current->right;
+                while (_current != _sentinel && _current->left != _sentinel)
+                    _current = _current->left;
+                return *this;
+            }
+
+            // case 2: next node is parent
+            if (_current->parent != _sentinel && _current == _current->parent->left)
+            {
+                _current = _current->parent;
+                return *this;
+            }
+
+            // case 3: next node is further parent or not at all
+            _current = _current->parent;
+            while (_current != _sentinel
+                && _current->parent != _sentinel
+                && _current == _current->parent->left)
+                _current = _current->parent;
+
+            if (_current->parent == _sentinel)
+                _current = _sentinel;
+
+            return *this;
+        }
+
+        /// @brief prefix decerement
+        map_iterator & operator-- ()
+        {
+            // case 0: previous node is max(root)
+            if (_current == _sentinel)
+            {
+                _current = _current->right;
+                while (_current != _sentinel && _current->right != _sentinel)
+                    _current = _current->right;
+                return *this;
+            }
+
+            // case 1: previous node is max(_current->left)
+            if (_current->left != _sentinel)
+            {
+                _current = _current->left;
+                while (_current != _sentinel && _current->right != _sentinel)
+                    _current = _current->right;
+                return *this;
+            }
+
+            // case 2: previous node is parent
+            if (_current->parent != _sentinel && _current == _current->parent->right)
+            {
+                _current = _current->parent;
+                return *this;
+            }
+
+            // case 3: previous node is further parent or not at all
+            _current = _current->parent;
+            while (_current != _sentinel
+                && _current->parent != _sentinel
+                && _current == _current->parent->right)
+                _current = _current->parent;
+
+            if (_current->parent == _sentinel)
+                _current = _sentinel;
+
+            return *this;
+        }
+
+        /// @brief postfix incerement
+        map_iterator operator++ (int)
+        { map_iterator tmp = *this; this->operator++(); return tmp; }
+
+        /// @brief postfix decerement
+        map_iterator operator-- (int)
+        { map_iterator tmp = *this; this->operator--(); return tmp; }
+
+        node_pointer current_node () const
+        { return _current; }
+
+        node_pointer sentinel_node () const
+        { return _sentinel; }
+    };
 
     public:
 
-    class iterator : public btree_iterator
-    {
-        public:
-
-        //iterator () { }
-        iterator () : btree_iterator() { }
-
-        iterator (btree_iterator it) : btree_iterator(it) { }
-
-        iterator (iterator const & it) : btree_iterator(it) { }
-
-        iterator operator= (iterator const & it)
-        { return btree_iterator::operator=(it); }
-
-    };
-
-    class const_iterator : public btree_const_iterator
-    {
-        public:
-
-        const_iterator () { }
-
-        const_iterator (btree_iterator it) : btree_const_iterator(it) { }
-
-        const_iterator (btree_const_iterator it) : btree_const_iterator(it) { }
-
-        const_iterator (iterator const & it) : btree_const_iterator(it) { }
-
-        const_iterator (const_iterator const & it) : btree_const_iterator(it) { }
-
-        const_iterator operator= (const_iterator const & it)
-        { return btree_const_iterator::operator=(it); }
-
-    };
+    typedef map_iterator<value_type>                iterator;
+    typedef map_iterator<value_type const>          const_iterator;
 
     typedef ft::reverse_iterator<iterator>          reverse_iterator;
     typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
@@ -213,11 +341,12 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     template <class InputIterator>
     void insert (InputIterator first, InputIterator last,
     typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
-    { return _tree.insert(first, last); }
+    { for (; first != last; first++) insert(*first); }
 
     /// @brief erase by iterator position (1)
     void erase (iterator position)
-    { return _tree.erase(position); }
+    { return _tree.erase(*position); }
+    //{ return _tree.erase(position); }
 
     /// @brief erase by key (2)
     /// @note always return 1 since our map doesn't support duplicated keys
@@ -226,7 +355,16 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /// @brief erase by iterator range (3)
     void erase (iterator first, iterator last)
-    { return _tree.erase(first, last); }
+    {
+        iterator node;
+        while (first != last)
+        {
+            node = first;
+            ++first;
+            erase(node);
+        }
+    }
+    //{ for (; first != last; first++) { _tree.erase(*first); } }
 
     void swap (map & m)
     { map tmp(m); m = *this; *this = tmp; }
@@ -245,36 +383,42 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     /****** Iterators *********************************************************/
 
     iterator begin ()
-    { return iterator(_tree.begin()); }
+    { return iterator(_tree.min(_tree.root()), _tree.sentinel()); }
 
     const_iterator begin () const
-    { return const_iterator(_tree.begin()); }
+    { return const_iterator(_tree.min(_tree.root()), _tree.sentinel()); }
 
     iterator end ()
-    { return iterator(_tree.end()); }
+    { return iterator(_tree.sentinel(), _tree.sentinel()); }
 
     const_iterator end () const
-    { return const_iterator(_tree.end()); }
+    { return const_iterator(_tree.sentinel(), _tree.sentinel()); }
 
     reverse_iterator rbegin ()
-    { return reverse_iterator(_tree.rbegin()); }
+    { return reverse_iterator(end()); }
 
     const_reverse_iterator rbegin () const
-    { return const_reverse_iterator(_tree.rbegin()); }
+    { return const_reverse_iterator(end()); }
 
     reverse_iterator rend ()
-    { return reverse_iterator(_tree.rend()); }
+    { return reverse_iterator(begin()); }
 
     const_reverse_iterator rend () const
-    { return const_reverse_iterator(_tree.rend()); }
+    { return const_reverse_iterator(begin()); }
 
     /****** Operations ********************************************************/
 
     iterator find (key_type const & key)
-    { return iterator(_tree.find(value_type(key, mapped_type()))); }
+    {
+        node_pointer p = _tree.find(value_type(key, mapped_type()));
+        return p ? iterator(p, _tree.sentinel()) : end();
+    }
 
     const_iterator find (key_type const & key) const
-    { return const_iterator(_tree.find(value_type(key, mapped_type()))); }
+    {
+        node_pointer p = _tree.find(value_type(key, mapped_type()));
+        return p ? const_iterator(p, _tree.sentinel()) : end();
+    }
 
     size_type count (key_type const & key)
     { return find(key) == end() ? 0 : 1; }

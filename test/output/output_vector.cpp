@@ -1365,31 +1365,32 @@ void operators_tests()
 template <typename Vector>
 void begin_test()
 {
+    typename Vector::value_type val(21);
     {
         // iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::iterator it = v.begin();
-        assert(*it == 21);
+        assert(*it == val);
         it++;
     }
     {
         // const_iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::const_iterator it = v.begin();
-        assert(*it == 21);
+        assert(*it == val);
         it++;
     }
     {
         // iterator from const vector -- sould not compile
-     //   const Vector v(10, 21);
-     //   typename Vector::iterator it = v.begin();
-     //   (void)it;
+    //   Vector u; u.insert(u.begin(), val); const Vector v(u);
+    //   typename Vector::iterator it = v.begin();
+    //   (void)it;
     }
     {
         // const_iterator from const vector
-        const Vector v(10, 21);
+        Vector u; u.insert(u.begin(), val); const Vector v(u);
         typename Vector::const_iterator it = v.begin();
-        assert(*it == 21);
+        assert(*it == val);
         it++;
     }
     log("begin()");
@@ -1398,29 +1399,34 @@ void begin_test()
 template <typename Vector>
 void end_test()
 {
+    typename Vector::value_type val(21);
     {
         // iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::iterator it = v.end();
         it--;
+        assert(*it == val);
     }
     {
         // const_iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::const_iterator it = v.end();
         it--;
+        assert(*it == val);
     }
     {
         // iterator from const vector -- should not compile
-     //   const Vector v(10, 21);
-     //   typename Vector::iterator it = v.end();
-     //   it--;
+    //    Vector u; u.insert(u.begin(), val); const Vector v(u);
+    //    typename Vector::iterator it = v.end();
+    //    it--;
+    //    assert(*it == val);
     }
     {
         // const_iterator from const vector
-        const Vector v(10, 21);
+        Vector u; u.insert(u.begin(), val); const Vector v(u);
         typename Vector::const_iterator it = v.end();
         it--;
+        assert(*it == val);
     }
     log("end()");
 }
@@ -1428,37 +1434,38 @@ void end_test()
 template <typename Vector>
 void rbegin_test()
 {
+    typename Vector::value_type val(21);
     {
         // reverse_iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::reverse_iterator it = v.rbegin();
         assert(it.base() == v.end());
         it++;
-        assert(*it == 21);
+        assert(it.base() == v.begin());
     }
     {
         // const_reverse_iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::const_reverse_iterator it = v.rbegin();
         assert(it.base() == v.end());
         it++;
-        assert(*it == 21);
+        assert(it.base() == v.begin());
     }
     {
         // reverse_iterator from const vector -- should not compile
-     //   const Vector v(10, 21);
-     //   typename Vector::reverse_iterator it = v.rbegin();
-     //   assert(it.base() == v.end());
-     //   it++;
-     //   assert(*it == 21);
+    //    Vector u; u.insert(u.begin(), val); const Vector v(u);
+    //    typename Vector::reverse_iterator it = v.rbegin();
+    //    assert(it.base() == v.end());
+    //    it++;
+    //    assert(it.base() == v.begin());
     }
     {
         // const_reverse_iterator from const vector
-        const Vector v(10, 21);
+        Vector u; u.insert(u.begin(), val); const Vector v(u);
         typename Vector::const_reverse_iterator it = v.rbegin();
         assert(it.base() == v.end());
         it++;
-        assert(*it == 21);
+        assert(it.base() == v.begin());
     }
     log("rbegin()");
 }
@@ -1466,37 +1473,38 @@ void rbegin_test()
 template <typename Vector>
 void rend_test()
 {
+    typename Vector::value_type val(21);
     {
         // reverse_iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::reverse_iterator it = v.rend();
         assert(it.base() == v.begin());
         it--;
-        assert(*it == 21);
+        assert(*it == val);
     }
     {
         // const_reverse_iterator from mutable vector
-        Vector v(10, 21);
+        Vector v; v.insert(v.begin(), val);
         typename Vector::const_reverse_iterator it = v.rend();
         assert(it.base() == v.begin());
         it--;
-        assert(*it == 21);
+        assert(*it == val);
     }
     {
         // reverse_iterator from const vector -- should not compile
-     //   const Vector v(10, 21);
-     //   typename Vector::reverse_iterator it = v.rend();
-     //   it--;
-     //   assert(*it == 21);
-     //   //assert(it.base() == v.begin());
+    //    Vector u; u.insert(u.begin(), val); const Vector v(u);
+    //    typename Vector::reverse_iterator it = v.rend();
+    //    assert(it.base() == v.begin());
+    //    it--;
+    //    assert(*it == val);
     }
     {
         // const_reverse_iterator from const vector
-        const Vector v(10, 21);
+        Vector u; u.insert(u.begin(), val); const Vector v(u);
         typename Vector::const_reverse_iterator it = v.rend();
         assert(it.base() == v.begin());
         it--;
-        assert(*it == 21);
+        assert(*it == val);
     }
     log("rend()");
 }

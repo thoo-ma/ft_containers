@@ -62,200 +62,10 @@ class rb_tree
             return *this;
         }
 
-        /// @todo (?)
-    //    bool operator <(struct node const & rhs)
-    //    {
-    //        std::cout << "comp" << std::endl;
-    //        return compare(key, rhs.key);
-    //    }
-
-        bool operator== (struct node const & rhs) const
-        { return this->key == rhs.key; }
-
-        /// @todo (?)
-    //    Compare compare;
-    };
-
-    /****** Iterator **********************************************************/
-
-    private:
-
-    /// @todo iterator tag from std
-    template <typename U>
-    class rb_tree_iterator : public iterator<bidirectional_iterator_tag, U>
-    {
-        /****** Types *********************************************************/
-
-        public:
-
-        typedef iterator_traits<rb_tree_iterator>	traits; // to shorten below
-        typedef typename traits::iterator_category  iterator_category;
-        typedef typename traits::value_type         value_type;
-        typedef typename traits::difference_type    difference_type;
-        typedef typename traits::pointer	        pointer;
-        typedef typename traits::reference	        reference;
-
-        /****** Data **********************************************************/
-
-        private:
-
-        pointer _data;
-        pointer _sentinel_ptr;
-
-        /****** Public methods ************************************************/
-
-        public:
-
-        /// @note explicit ?
-        rb_tree_iterator (pointer data = NULL, pointer sentinel_ptr = NULL)
-        : _data(data), _sentinel_ptr(sentinel_ptr)
-        { }
-
-        rb_tree_iterator (rb_tree_iterator<rb_tree::value_type> const & it)
-        : _data(it.data()), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
-        { }
-
-        /// @note yes, those casts are nasty but seems necessary...
-        rb_tree_iterator (rb_tree_iterator<rb_tree::value_type const> const & it)
-        : _data(const_cast<pointer>(it.data())), _sentinel_ptr(const_cast<pointer>(it.sentinel_ptr()))
-        { }
-
-        rb_tree_iterator operator= (rb_tree_iterator const & it)
-        { _data = it.data(); _sentinel_ptr = it.sentinel_ptr(); return *this; }
-
-        key_type operator* () const
-        { return _data->key; }
-
-        key_type * operator-> () const
-        { return &_data->key; }
-
-    //    virtual value_type & operator* () const
-    //    { return *_data; }
-
-    //    virtual pointer operator-> () const
-    //    { return _data; }
-
-        bool operator== (rb_tree_iterator<rb_tree::value_type> const & it) const
-        {
-            return _data == it.data();
-           // return (_data == it.data()
-           //     || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
-        }
-
-        bool operator== (rb_tree_iterator<rb_tree::value_type const> const & it) const
-        {
-            return _data == it.data();
-            //return (_data == it.data()
-            //    || (_data == _sentinel_ptr && it.data() == it.sentinel_ptr()));
-        }
-
-        bool operator!= (rb_tree_iterator<rb_tree::value_type> const & it) const
-        { return !(*this == it); }
-
-        bool operator!= (rb_tree_iterator<rb_tree::value_type const> const & it) const
-        { return !(*this == it); }
-
-        /// @note prefix
-        /// @note might improve case 3
-        /// @pre  _sentinel.right == _root
-        rb_tree_iterator & operator++ ()
-        {
-            // case 1: next node is min(_data->right)
-            if (_data->right != _sentinel_ptr)
-            {
-                _data = _data->right;
-                while (_data != _sentinel_ptr && _data->left != _sentinel_ptr)
-                    _data = _data->left;
-                return *this;
-            }
-
-            // case 2: next node is parent
-            if (_data->parent != _sentinel_ptr && _data == _data->parent->left)
-            {
-                _data = _data->parent;
-                return *this;
-            }
-
-            // case 3: next node is further parent or not at all
-            _data = _data->parent;
-            while (_data != _sentinel_ptr
-                && _data->parent != _sentinel_ptr
-                && _data == _data->parent->left)
-                _data = _data->parent;
-
-            if (_data->parent == _sentinel_ptr)
-                _data = _sentinel_ptr;
-
-            return *this;
-        }
-
-        /// @note prefix
-        /// @note might improve case 3
-        /// @pre  _sentinel.right == _root
-        rb_tree_iterator & operator-- ()
-        {
-            // case 0: previous node is max(root)
-            if (_data == _sentinel_ptr)
-            {
-                _data = _data->right;
-                while (_data != _sentinel_ptr && _data->right != _sentinel_ptr)
-                    _data = _data->right;
-                return *this;
-            }
-
-            // case 1: previous node is max(_data->left)
-            if (_data->left != _sentinel_ptr)
-            {
-                _data = _data->left;
-                while (_data != _sentinel_ptr && _data->right != _sentinel_ptr)
-                    _data = _data->right;
-                return *this;
-            }
-
-            // case 2: previous node is parent
-            if (_data->parent != _sentinel_ptr && _data == _data->parent->right)
-            {
-                _data = _data->parent;
-                return *this;
-            }
-
-            // case 3: previous node is further parent or not at all
-            _data = _data->parent;
-            while (_data != _sentinel_ptr
-                && _data->parent != _sentinel_ptr
-                && _data == _data->parent->right)
-                _data = _data->parent;
-
-            if (_data->parent == _sentinel_ptr)
-                _data = _sentinel_ptr;
-
-            return *this;
-        }
-
-        /// @note postfix
-        rb_tree_iterator operator++ (int)
-        { rb_tree_iterator tmp = *this; this->operator++(); return tmp; }
-
-        /// @note postfix
-        rb_tree_iterator operator-- (int)
-        { rb_tree_iterator tmp = *this; this->operator--(); return tmp; }
-
-        pointer data() const
-        { return _data; }
-
-        pointer sentinel_ptr() const
-        { return _sentinel_ptr; }
+//        bool operator== (struct node const & rhs) const
+//        { return this->key == rhs.key; }
 
     };
-
-    public:
-
-    typedef rb_tree_iterator<value_type>             iterator;
-    typedef rb_tree_iterator<value_type const>       const_iterator;
-
-    // namespace below is mandatory since typedef operands share the same name
-    typedef ft::reverse_iterator<iterator>          reverse_iterator;
-    typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
     /****** Data **************************************************************/
 
@@ -389,14 +199,6 @@ class rb_tree
 
     void _erase_fixup (pointer x)
     {
-       // if (x)
-       // {
-       //     std::cout << "erase_fixup(" << x->key << ")" << std::endl;
-       //     x->color == Red
-       //     ? std::cout << "color: Red" << std::endl
-       //     : std::cout << "color: Black" << std::endl;
-       // }
-
         pointer w; // `x` sibling
         while (x != _root && x->color == Black)
         {
@@ -579,16 +381,6 @@ class rb_tree
     //    _sentinel.parent = _root;
     } //{ _root = _copy(tree._root, NULL); }
 
-    /// @brief Constructor by iterator range (3)
-    rb_tree (iterator first, iterator last)
-    : _root(&_sentinel), _size(0)//, _max_size(_alloc.max_size())
-    {
-        _sentinel.left = _root;
-        _sentinel.right = _root;
-        _sentinel.parent = _root;
-        insert(first, last);
-    }
-
     /// @brief Recursive destructor
 //    ~rb_tree ()
 //    { _destroy(_root); }
@@ -663,9 +455,9 @@ class rb_tree
     void insert (key_type const & key)
     {
         // do not insert duplicated key
-        //if (find(_root, key))
+        if (find(_root, key))
         //if (find(_root, key) == end())
-        if (find(key) != end())
+        //if (find(key) != end())
             return;
 
         // alloc and construct
@@ -679,26 +471,9 @@ class rb_tree
         _size++;
     }
 
-    /// @brief Insert by value (1)
+    /// @brief Insert by value
     void insert (value_type const & val)
     { return insert(val.key); }
-
-    /// @brief Insert with hint (2)
-    /// @todo Use position to improve speed
-    void insert (iterator position, value_type const & val)
-    { (void)position; return insert(val); }
-
-    /// @brief Insert by iterator range (3)
-    template <class InputIterator>
-    void insert (InputIterator first, InputIterator last,
-    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
-    {
-        while (first != last)
-        {
-            insert(*first);
-            ++first;
-        }
-    }
 
     /// @brief Erase base routine
     /// @todo private/protected ?
@@ -743,106 +518,18 @@ class rb_tree
         _size--;
     }
 
-    /// @brief Erase by position (1)
-    void erase (iterator position)
-    { return erase(position.data()); }
-
-    /// @brief Erase by key (2)
-//    void erase (key_type const & key)
-//    {
-//        pointer x = find(_root, key);
-//        if (x) erase(x);
-//    }
-
-    /// @brief Erase by key (2)
+    /// @brief Erase by key
     void erase (key_type const & key)
-    {
-        iterator it = find(_root, key);
-        if (it != end()) erase(it);
-    }
+    { pointer x = find(_root, key); if (x) erase(x); }
 
-    /// @brief Erase by iterator range (3)
-    void erase (iterator first, iterator last)
-    {
-        iterator node;
-        while (first != last)
-        {
-            node = first;
-            ++first;
-            erase(node);
-        }
-    }
-
-//    pointer find (pointer x, key_type const & key) const
-//    {
-//        while (x != &_sentinel && x->key != key)
-//            _comp(key, x->key) ? x = x->left : x = x->right;
-//        return x != &_sentinel ? x : NULL;
-//    }
-
-//    pointer find (key_type const & key) const
-//    { return find(_root, key); }
-
-    iterator find (pointer x, key_type const & key)
-    {
-    //    std::cout << "tree find mutable" << std::endl;
-
-    //    std::cout << "key: " << key.first << std::endl;
-    //    std::cout << "x.key: " << x->key.first << std::endl;
-
-    //    std::cout << "before loop" << std::endl;
-
-        while (x != &_sentinel && (_comp(key, x->key) || _comp(x->key, key)))
-        {
-        //    std::cout << "inside loop" << std::endl;
-
-        //    std::cout << "key: " << key.first << std::endl;
-        //    std::cout << "x.key: " << x->key.first << std::endl;
-
-        //    if (key.first < x->key.first)  { std::cout << "LT" << std::endl; }
-        //    if (key.first > x->key.first)  { std::cout << "GT" << std::endl; }
-        //    if (key.first == x->key.first) { std::cout << "EQ" << std::endl; }
-
-        //    std::cout << _comp(key, x->key) << std::endl;
-        //    std::cout << _comp(x->key, key) << std::endl;
-
-            _comp(key, x->key) ? x = x->left : x = x->right;
-        }
-
-    //    std::cout << sentinel() << std::endl;
-    //    std::cout << &_sentinel << std::endl;
-    //    std::cout << x << std::endl;
-
-        //return x != &_sentinel ? iterator(x, &_sentinel) : end();
-        return x == &_sentinel ? end() : iterator(x, &_sentinel);
-
-    //    if (x == &_sentinel)
-    //    {
-    //        std::cout << "didn't find" << std::endl;
-    //        iterator it = end();
-    //        std::cout << (*it).first << std::endl;
-    //        return it;
-    //    }
-    //    else
-    //    {
-    //        std::cout << "we found!" << std::endl;
-    //        iterator it = iterator(x, &_sentinel);
-    //        std::cout << it.data() << std::endl;
-    //        return it;
-    //    }
-    }
-
-    const_iterator find (pointer x, key_type const & key) const
+    pointer find (pointer x, key_type const & key) const
     {
         while (x != &_sentinel && (_comp(key, x->key) || _comp(x->key, key)))
             _comp(key, x->key) ? x = x->left : x = x->right;
-        return x == &_sentinel ? end() : const_iterator(x, &_sentinel);
+        return x != &_sentinel ? x : NULL;
     }
 
-    iterator find (key_type const & key)
-    { return find(_root, key); }
-
-    const_iterator find (key_type const & key) const
+    pointer find (key_type const & key) const
     { return find(_root, key); }
 
     /// @note is it very useful ?...
@@ -897,36 +584,6 @@ class rb_tree
 
     pointer sentinel () const
     { return const_cast<pointer>(&_sentinel); }
-
-    /****** Iterator **********************************************************/
-
-    iterator begin ()
-    { return iterator(min(_root), &_sentinel); }
-
-    const_iterator begin () const
-    { return const_iterator(min(_root), &_sentinel); }
-
-    iterator end()
-    { return iterator(&_sentinel, &_sentinel); }
-
-    const_iterator end() const
-    { return const_iterator(&_sentinel, &_sentinel); }
-
-    reverse_iterator rbegin()
-    //{ return reverse_iterator(--end()); }
-    { return reverse_iterator(end()); }
-
-    const_reverse_iterator rbegin() const
-    //{ return const_reverse_iterator(--end()); }
-    { return const_reverse_iterator(end()); }
-
-    reverse_iterator rend()
-    //{ return reverse_iterator(end()); }
-    { return reverse_iterator(begin()); }
-
-    const_reverse_iterator rend() const
-    //{ return const_reverse_iterator(end()); }
-    { return const_reverse_iterator(begin()); }
 
     /****** Debug *************************************************************/
 
@@ -983,17 +640,14 @@ class rb_tree
 
 };
 
+/// @todo
 /// @note not used by map
 template <typename T>
 bool operator== (rb_tree<T> const & lhs, rb_tree<T> const & rhs)
 {
-    typename rb_tree<T>::const_iterator lit = lhs.begin();
-    typename rb_tree<T>::const_iterator rit = rhs.begin();
-    typename rb_tree<T>::const_iterator lite = lhs.end();
-    typename rb_tree<T>::const_iterator rite = rhs.end();
-
-    for (; lit != lite && rit != rite && *lit == *rit; lit++, rit++);
-    return (lit == lite && rit == rite);
+    (void)lhs;
+    (void)rhs;
+    return true;
 }
 
 /// @note not used by map

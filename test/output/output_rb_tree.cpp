@@ -176,34 +176,11 @@ void constructor_by_copy_test()
 }
 
 template <typename Tree>
-void constructor_by_iterator_range_test()
-{
-    typename Tree::value_type i(key_type<Tree>(1));
-    typename Tree::value_type j(key_type<Tree>(2));
-    {
-        // empty range
-        Tree a;
-        Tree b(a.begin(), a.end());
-        assert(a == b);
-    }
-    {
-        // non-empty range
-        Tree a;
-        a.insert(i);
-        a.insert(j);
-        Tree b(a.begin(), a.end());
-        assert(a == b);
-    }
-    log("constructor by iterator range");
-}
-
-template <typename Tree>
 void constructors_tests()
 {
     std::cout << "== Constructors ==" << std::endl;
     constructor_by_default_test<Tree>();
     constructor_by_copy_test<Tree>();
-    constructor_by_iterator_range_test<Tree>();
 }
 
 /****** Capacity test *********************************************************/
@@ -220,10 +197,6 @@ void empty_test()
     {
         // by copy
         assert(Tree(t).empty());
-    }
-    {
-        // by iterator range
-        assert(Tree(t.begin(), t.end()).empty());
     }
     log("empty");
 }
@@ -243,14 +216,6 @@ void size_test()
         assert(a.size() != b.size());
         assert(Tree(a).size() == a.size());
         assert(Tree(b).size() == b.size());
-    }
-    {
-        // constructed by iteratior range
-        Tree a, b;
-        b.insert(typename Tree::value_type());
-        assert(a.size() != b.size());
-        assert(Tree(a.begin(), a.end()).size() == a.size());
-        assert(Tree(b.begin(), b.end()).size() == b.size());
     }
     log("size");
 }
@@ -274,15 +239,13 @@ void find_test()
     typename Tree::key_type k = key_type<Tree>(42);
     typename Tree::key_type l = key_type<Tree>(21);
 
-    assert(t.find(k) == t.end());
+    assert(t.find(k) == NULL);
     t.insert(k);
-   // std::cout << *t.find(k) << std::endl;
-   // std::cout << *t.end() << std::endl;
-    assert(t.find(k) != t.end());
+    assert(t.find(k) != NULL);
 
-    assert(t.find(l) == t.end());
+    assert(t.find(l) == NULL);
     t.insert(l);
-    assert(t.find(l) != t.end());
+    assert(t.find(l) != NULL);
 
     log("find");
 }
@@ -304,7 +267,7 @@ void insert_test()
     value_type k(key_type<Tree>(42));
     value_type l(key_type<Tree>(21));
     {
-        // single element (1)
+        // by value
         Tree t;
         t.insert(k);
         t.insert(l);
@@ -336,23 +299,6 @@ void insert_test()
         // insert duplicate node
         tree.insert(value_type(key_type<Tree>(42)));
     }
-    {
-        // with hint (2)
-        /// @todo add some statements ?
-        Tree tree;
-        tree.insert(tree.begin(), k);
-        tree.insert(tree.begin(), l);
-    }
-    {
-        // by range (3)
-        /// @todo add some statements ?
-        Tree t, u;
-        t.insert(k);
-        t.insert(l);
-        assert(t != u);
-        u.insert(t.begin(), t.end());
-        assert(t == u);
-    }
     log("insert");
 }
 
@@ -361,32 +307,12 @@ template <typename Tree>
 void erase_test()
 {
     {
-        // by iterator position
-        Tree a, b;
-        assert(a == b);
-        a.insert(typename Tree::value_type());
-        assert(a != b);
-        a.erase(a.begin());
-        assert(a == b);
-    }
-    {
         // by key
         Tree a, b;
         assert(a == b);
         a.insert(typename Tree::value_type());
         assert(a != b);
         a.erase(typename Tree::value_type().key);
-        assert(a == b);
-    }
-    {
-        // by iterator range
-        Tree a, b;
-        assert(a == b);
-        a.insert(typename Tree::value_type());
-        assert(a != b);
-        a.erase(a.begin(), a.begin());
-        assert(a != b);
-        a.erase(a.begin(), a.end());
         assert(a == b);
     }
     log("erase");
@@ -467,9 +393,6 @@ void tree_test()
     modifiers_tests<ft::rb_tree<T>>();
     operators_tests<ft::rb_tree<T>>();
     utilities_tests<ft::rb_tree<T>>();
-
-    /// @note this won't compile since `operator*` doesn't return a `value_type`
-//    iterator_test<ft::rb_tree<T>>();
 
 //    /// @todo (?)
 //    // allocator_tests<ft::rb_tree<T>>();

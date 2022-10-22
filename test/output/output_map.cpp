@@ -391,8 +391,6 @@ void operator_bracket_test()
         assert(m[21] == 21);
         assert(m[88] == 88);
 
-        //m._tree.make_graph();
-
         /// @note each of those 3 insert causes infinite loop
 //        m.insert(value(key(33), mapped(33)));
 //        m.insert(value(key(99), mapped(99)));
@@ -1341,42 +1339,36 @@ template <typename Map>
 void begin_test()
 {
     typedef typename Map::iterator          iterator;
-    //typedef typename Map::const_iterator    const_iterator;
+    typedef typename Map::const_iterator    const_iterator;
 
     typename Map::value_type p(21,42);
     {
         // iterator from mutable map
-        Map m;
-        m.insert(p);
+        Map m; m.insert(p);
         iterator it = m.begin();
         assert(*it == p);
         it++;
     }
     {
         // const_iterator from mutable map
-//        Map m;
-//        m.insert(p);
-//        const_iterator it = m.begin();
-//        assert(*it == p);
-//        it++;
+        Map m; m.insert(p);
+        const_iterator it = m.begin();
+        assert(*it == p);
+        it++;
     }
     {
         // iterator from const map -- sould not compile
-        // Map m;
-        // m.insert(p);
-        // const Map n(m);
+        // Map m; m.insert(p); const Map n(m);
         // iterator it = n.begin();
         // assert(*it == p);
         // (void)it;
     }
     {
         // const_iterator from const map
-//        Map m;
-//        m.insert(p);
-//        const Map n(m);
-//        const_iterator it = n.begin();
-//        assert(*it == p);
-//        it++;
+        Map m; m.insert(p); const Map n(m);
+        const_iterator it = n.begin();
+        assert(*it == p);
+        it++;
     }
     log("begin");
 }
@@ -1390,34 +1382,28 @@ void end_test()
     typename Map::value_type p(21,42);
     {
         // iterator from mutable map
-        Map m;
-        m.insert(p);
+        Map m; m.insert(p);
         iterator it = m.end();
         it--;
         assert(*it == p);
     }
     {
         // const_iterator from mutable map
-        Map m;
-        m.insert(p);
+        Map m; m.insert(p);
         const_iterator it = m.end();
         it--;
         assert(*it == p);
     }
     {
         // iterator from const map -- should not compile
-        // Map m;
-        // m.insert(p);
-        // Map n(m);
+        // Map m; m.insert(p); Map n(m);
         // iterator it = n.end();
         // assert(*it == p);
         // (void)it;
     }
     {
         // const_iterator from const map
-        Map m;
-        m.insert(p);
-        const Map n(m);
+        Map m; m.insert(p); const Map n(m);
         const_iterator it = n.end();
         it--;
         assert(*it == p);
@@ -1434,8 +1420,7 @@ void rbegin_test()
     typename Map::value_type p(21,42);
     {
         // reverse_iterator from mutable map
-        Map m;
-        m.insert(p);
+        Map m; m.insert(p);
         reverse_iterator it = m.rbegin();
         assert(it.base() == m.end());
         it++;
@@ -1443,8 +1428,7 @@ void rbegin_test()
     }
     {
         // const_reverse_iterator from mutable map
-        Map m;
-        m.insert(p);
+        Map m; m.insert(p);
         const_reverse_iterator it = m.rbegin();
         assert(it.base() == m.end());
         it++;
@@ -1452,9 +1436,7 @@ void rbegin_test()
     }
     {
         // reverse_iterator from const map -- should not compile
-    //    Map m;
-    //    m.insert(p);
-    //    const Map n(m);
+    //    Map m; m.insert(p); const Map n(m);
     //    reverse_iterator it = n.rbegin();
     //    assert(it.base() == n.end());
     //    it++;
@@ -1462,9 +1444,7 @@ void rbegin_test()
     }
     {
         // const_reverse_iterator from const map
-        Map m;
-        m.insert(p);
-        const Map n(m);
+        Map m; m.insert(p); const Map n(m);
         const_reverse_iterator it = n.rbegin();
         assert(it.base() == n.end());
         it++;
@@ -1482,61 +1462,56 @@ void rend_test()
     typename Map::value_type p(21,42);
     {
         // reverse_iterator from mutable map
-        Map m;
-        m.insert(p);
+        Map m; m.insert(p);
         reverse_iterator it = m.rend();
-        assert(it.base() == --m.begin());
-        it++;
         assert(it.base() == m.begin());
+        it++;
+        assert(*it == p);
     }
     {
         // const_reverse_iterator from mutable map
-        Map m;
-        m.insert(p);
+        Map m; m.insert(p);
         const_reverse_iterator it = m.rend();
-        assert(it.base() == --m.begin());
-        it++;
         assert(it.base() == m.begin());
+        it++;
+        assert(*it == p);
     }
     {
         // reverse_iterator from const map -- should not compile
-    //    Map m;
-    //    m.insert(p);
-    //    const Map n(m);
+    //    Map m; m.insert(p); const Map n(m);
     //    reverse_iterator it = n.rend();
-    //    assert(it.base() == --n.begin());
-    //    it++;
     //    assert(it.base() == n.begin());
+    //    it++;
+    //    assert(*it == p);
     }
     {
         // const_reverse_iterator from const map
-        Map m;
-        m.insert(p);
-        const Map n(m);
+        Map m; m.insert(p); const Map n(m);
         const_reverse_iterator it = n.rend();
-        assert(it.base() == --n.begin());
-        it++;
         assert(it.base() == n.begin());
+        it++;
+        assert(*it == p);
     }
     log("rend");
 }
 
+/// @todo rend()
 template <typename T, typename U>
 void iterators_tests()
 {
     std::cout << "== Iterators ==" << std::endl;
 
-//    begin_test<std::map<T,U>>();
-//    begin_test< ft::map<T,U>>();
-//
-//    end_test<std::map<T,U>>();
-//    end_test< ft::map<T,U>>();
-//
-//    rbegin_test<std::map<T,U>>();
-//    rbegin_test< ft::map<T,U>>();
+    begin_test<std::map<T,U>>();
+    begin_test< ft::map<T,U>>();
 
-//    rend_test<std::map<T,U>>();
-//    rend_test< ft::map<T,U>>();
+    end_test<std::map<T,U>>();
+    end_test< ft::map<T,U>>();
+
+    rbegin_test<std::map<T,U>>();
+    rbegin_test< ft::map<T,U>>();
+
+    rend_test<std::map<T,U>>();
+    rend_test< ft::map<T,U>>();
 
     iterator_test<std::map<T,U>>();
     iterator_test< ft::map<T,U>>();
@@ -1548,14 +1523,14 @@ void iterators_tests()
 template <typename T, typename U>
 void map_test()
 {
-//    constructors_tests<T,U>();
-//    allocator_tests<T,U>();
-//    observers_tests<T,U>();
-//    capacity_tests<T,U>();
-//    accessors_tests<T,U>();
-//    modifiers_tests<T,U>();
-//    operations_tests<T,U>();
-//    operators_tests<T,U>();
+    constructors_tests<T,U>();
+    allocator_tests<T,U>();
+    observers_tests<T,U>();
+    capacity_tests<T,U>();
+    accessors_tests<T,U>();
+    modifiers_tests<T,U>();
+    operations_tests<T,U>();
+    operators_tests<T,U>();
     iterators_tests<T,U>();
 }
 
