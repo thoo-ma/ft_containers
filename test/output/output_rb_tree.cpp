@@ -2,17 +2,8 @@
 #include <iostream>
 
 #include "output_iterator.hpp"
-
-/// @todo absolute paths
-#include "../../include/utility/ft_pair.hpp"
-#include "../utils.hpp"
-
-// To use it, substitute `insert(tree.root(), i)' by 'insert(i)`
-//#include "../../old_rb_tree.hpp"
-
-// To use it, substitute `insert(i)' by 'insert(tree.root(), i)`
-#include "rb_tree.hpp"
-//#include "../../rbtree_no_sentinel.hpp"
+#include "utils.hpp"
+#include "ft_pair.hpp"
 
 ///@note These 'tests' are not to be run at ft_containers evaluation.
 ///      Their purpose is to check for my own red black tree implementation if

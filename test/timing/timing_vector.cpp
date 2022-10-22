@@ -5,9 +5,7 @@
 #include <iostream>
 
 #include "ft_vector.hpp"
-
-/// @todo absolute path
-#include "../utils.hpp"
+#include "utils.hpp"
 
 using namespace std::chrono;
 

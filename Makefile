@@ -23,7 +23,8 @@ INCLUDE			=	-I include \
 					-I $(CONTAINERS_DIR) \
 					-I $(ALGORITHMS_DIR) \
 					-I $(ITERATORS_DIR) \
-					-I $(UTILITY_DIR)
+					-I $(UTILITY_DIR) \
+					-I $(TEST_DIR)
 
 ################### HEADERS ####################################################
 

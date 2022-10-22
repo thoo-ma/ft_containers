@@ -4,11 +4,9 @@
 #include <list>
 #include <deque>
 
+#include "utils.hpp"
 #include "ft_vector.hpp"
 #include "output_iterator.hpp"
-
-/// @todo absolute path
-#include "../utils.hpp"
 
 /// @todo ft::vector<int> v(5, 42);
 ///       --> std::cout << std::distance(v.begin(), v.end()) << std::endl;

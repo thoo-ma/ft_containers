@@ -9,9 +9,7 @@
 
 #include "ft_map.hpp"
 #include "output_iterator.hpp"
-
-/// @todo absolute path
-#include "../utils.hpp"
+#include "utils.hpp"
 
 /// @todo delete
 template <typename T1, typename T2>

@@ -3,9 +3,7 @@
 #include <iostream>
 
 #include "ft_pair.hpp"
-
-/// @todo absolute path
-#include "../utils.hpp"
+#include "utils.hpp"
 
 //#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 
