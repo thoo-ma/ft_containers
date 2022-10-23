@@ -1,33 +1,26 @@
 todo
 1. test timing stack, map, iterators
-2. test lexicographical_compare
-3. test type_traits
-4. test _everyting_ with -Wconversion and valgrind
-5. is_constructible and co. (cf. type_traits) for pair conversions
-   (needed by -Wconversion)
-6. iterators operators: member or non-member functions ?
-7. handle error when _any_ allocate() fails (gotta catch bad_alloc)
-8. debug iso_stardard script
-9. output_iterator.hpp to .cpp
-10. bien penser a tester les valeurs de retour des methodes des containers
-11. compile everything well with c++98
-12. add tests with different `Compare` objects
+2. test `lexicographical_compare`
+3. test `type_traits`
+4. test _everyting_ with `-Wconversion` and `valgrind`
+5. `is_constructible` and co. (cf. `type_traits`) for pair conversions
+   (needed by `-Wconversion`)
+6. handle `allocate()` exceptions (catch `bad_alloc`)
+7. debug iso_stardard script
+8. output_iterator.hpp to .cpp
+9. bien penser a tester les valeurs de retour des methodes des containers
+10. compile _everything_ well with `c++98`
+11. add tests with different `Compare` objects
     (e.g. `compare maped_type` instead of `key_type`)
-13. `output_stack`: `valgrind` warns about uninitialised values
+12. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
 ________
 
 maybe
-- explicit qualifer upon constructors
-- ft::equal (upon all ft datatypes: map, vector, tree, pair, etc.)
-- ikos --> utile pour les uninitialized values (valgrind output_stack)
-- configure script
+- `explicit` qualifer upon constructors
+- `ft::equal` (upon all ft datatypes: map, vector, tree, pair, etc.)
 - `make all` re-mkdir output folders but not timing ones...
 - keep our iterator_traits but forget abour our iterator struct
 --> this way, we can use stl algorithms act upon our containers
-- make sure that const_iterator = begin() calls the begin() method that returns
-const_iterator
---> and not begin() returning iterator then construct const_iterator from it
-- add default destructors to be coplien compliant
 ________
 
 readme
