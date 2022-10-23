@@ -10,13 +10,10 @@ todo
 8. debug iso_stardard script
 9. output_iterator.hpp to .cpp
 10. bien penser a tester les valeurs de retour des methodes des containers
-11. Faire un namespace test ou mettre tous les typedef, toutes les instances de
-    types utiles et les fonctions de log
-12. Put custom datatype for output tests in one specific file
-13. check compilation flags into makefile
-14. compile everything well with c++98
-15. add tests with different `Compare` objects
+11. compile everything well with c++98
+12. add tests with different `Compare` objects
     (e.g. `compare maped_type` instead of `key_type`)
+13. `output_stack`: `valgrind` warns about uninitialised values
 ________
 
 maybe

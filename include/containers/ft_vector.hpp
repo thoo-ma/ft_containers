@@ -151,11 +151,11 @@ class vector {
 
         difference_type operator- (vector_iterator<T> const & rhs) const
         { return _data > &(*rhs) ? _data - &(*rhs) : -(&(*rhs) - _data); }
-       // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
+        // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
 
         difference_type operator- (vector_iterator<T const> const & rhs) const
         { return _data > &(*rhs) ? _data - &(*rhs) : -(&(*rhs) - _data); }
-       // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
+        // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
 
         value_type & operator[] (difference_type const n) const
         { return this->_data[n]; }
@@ -333,8 +333,10 @@ class vector {
             // reallocate
             pointer tmp = _alloc.allocate(n);
             // copy
-            for (size_type i = 0; i < size(); i++)
+            for (size_type i = 0, j = size(); i < j; i++)
                 _alloc.construct(&tmp[i], at(i));
+            for (size_type i = size(); i < n; i++)
+                _alloc.construct(&tmp[i], value_type());
             // save size
             size_type size = _size;
             // destroy (reset size at 0 !)

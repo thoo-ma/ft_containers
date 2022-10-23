@@ -1,17 +1,17 @@
 #ifndef OUTPUT_ITERATOR_HPP
 #define OUTPUT_ITERATOR_HPP 1
 
-#include <map> // is_map
-#include <vector> // is_vector
+#include <map>
+#include <vector>
 #include <cassert>
 #include <type_traits> // std::is_base_of
 
 #include "ft_type_traits.hpp"
 #include "ft_iterator_base_types.hpp"
 
-#include "ft_map.hpp" // is_map
-#include "rb_tree.hpp" // is_rbtree
-#include "ft_vector.hpp" // is_vector
+#include "ft_map.hpp"
+#include "rb_tree.hpp"
+#include "ft_vector.hpp"
 #include "utils.hpp"
 
 /// @todo Add tests to increment and decrement out of container boundaries.
@@ -1708,11 +1708,12 @@ void iterator_brackets_operator_test()
         assert(it[2] == 21);
     }
 
-    typename Container::iterator it = ctn.begin();
-    typename Container::value_type x = it[42]; // doesn't throw anything
-    typename Container::value_type y = it[-4]; // doesn't throw anything
-    (void)x;
-    (void)y;
+    /// @note doesn't throw anything but valgrind warns about invalid read
+//    typename Container::iterator it = ctn.begin();
+//    typename Container::value_type x = it[42];
+//    typename Container::value_type y = it[-4];
+//    (void)x;
+//    (void)y;
 
     log("operator[]");
 }

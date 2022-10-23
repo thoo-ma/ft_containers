@@ -5,8 +5,6 @@
 #include "ft_stack.hpp"
 #include "utils.hpp"
 
-/// @todo add test with custom datatype
-
 /****** Constructor test ******************************************************/
 
 template <typename Stack>
@@ -128,10 +126,10 @@ void stack_functions_test()
     typedef typename Stack::value_type      Value;
     typedef typename Stack::container_type  Container;
 
-    stack_top_test<Stack, Container, Value, Size>();
-    stack_pop_test<Stack, Container, Value, Size>();
-    stack_size_test<Stack, Container, Value, Size>();
-    stack_push_test<Stack, Container, Value, Size>();
+    stack_top_test  <Stack, Container, Value, Size>();
+    stack_pop_test  <Stack, Container, Value, Size>();
+    stack_size_test <Stack, Container, Value, Size>();
+    stack_push_test <Stack, Container, Value, Size>();
     stack_empty_test<Stack, Container, Value, Size>();
 }
 
@@ -253,6 +251,7 @@ void stack_test()
     // explicit underlying container
     stack_constructor_test<std::stack<std::vector<T>>>();
     stack_constructor_test< ft::stack<std::vector<T>>>();
+    stack_constructor_test< ft::stack< ft::vector<T>>>();
 
     stack_functions_test<std::stack<T>>();
     stack_functions_test< ft::stack<T>>();
@@ -265,8 +264,7 @@ void stack_test()
 
 int main()
 {
+    stack_test<A>();
     stack_test<int>();
-    stack_test<double>();
-    //stack_test<A>();
     return 0;
 }
