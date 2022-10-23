@@ -9,14 +9,11 @@
 
 using namespace std::chrono;
 
-/**
- * @todo add more teste into compute section
- * @todo #define 20.0 limit
- * @todo verify we don't go over max_size !! (could explain very good perfs...)
- * @todo add `timing_log()`
- * @todo template tests upon `vector<T>` instead of `vector<int>`
- * --> gather them in sections (cf. output_vector) instead of alphabetical order
- */
+#define RATIO_LIMIT 20.0
+
+/// @todo templated tests : `vector<T>` instead of `vector<int>`
+/// @todo verify we don't go over max_size !! (could explain very good perfs...)
+/// @todo (?) add `timing_log()`
 
 /****** at() ******************************************************************/
 
@@ -49,7 +46,7 @@ void timing_test_vector_at(std::ofstream & outfile)
     outfile << "vector,at," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -85,7 +82,7 @@ void timing_test_vector_back(std::ofstream & outfile)
     outfile << "vector,back," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -123,7 +120,7 @@ void timing_test_vector_begin(std::ofstream & outfile)
     outfile << "vector,begin," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -159,7 +156,7 @@ void timing_test_vector_capacity(std::ofstream & outfile)
     outfile << "vector,capacity," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -200,7 +197,7 @@ void timing_test_vector_clear(std::ofstream & outfile)
     outfile << "vector,clear," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -240,7 +237,7 @@ void timing_test_vector_constructor_by_default(std::ofstream & outfile)
     outfile << "vector,constructor_by_default," << ft_chrono << "," <<
     std_chrono << "," << ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -288,7 +285,7 @@ void timing_test_vector_constructor_by_copy(std::ofstream & outfile)
     outfile << "vector,constructor_by_copy," << ft_chrono << "," <<
     std_chrono << "," << ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -328,7 +325,7 @@ void timing_test_vector_constructor_by_fill(std::ofstream & outfile)
     outfile << "vector,constructor_by_fill," << ft_chrono << "," <<
     std_chrono << "," << ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -369,7 +366,7 @@ void timing_test_vector_constructor_by_range(std::ofstream & outfile)
     outfile << "vector,constructor_by_range," << ft_chrono << "," <<
     std_chrono << "," << ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -409,7 +406,7 @@ void timing_test_vector_empty(std::ofstream & outfile)
     outfile << "vector,empty," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -448,7 +445,7 @@ void timing_test_vector_end(std::ofstream & outfile)
     outfile << "vector,end," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -484,7 +481,7 @@ void timing_test_vector_front(std::ofstream & outfile)
     outfile << "vector,front," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -520,7 +517,7 @@ void timing_test_vector_get_allocator(std::ofstream & outfile)
     outfile << "vector,get_allocator," << ft_chrono << "," << std_chrono <<
     "," << ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -560,7 +557,7 @@ void timing_test_vector_max_size(std::ofstream & outfile)
     outfile << "vector,max_size," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -600,7 +597,7 @@ void timing_test_vector_pop_back(std::ofstream & outfile)
     outfile << "vector,pop_back," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -640,7 +637,7 @@ void timing_test_vector_push_back(std::ofstream & outfile)
     outfile << "vector,push_back," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -678,7 +675,7 @@ void timing_test_vector_rbegin(std::ofstream & outfile)
     outfile << "vector,rbegin," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -717,7 +714,7 @@ void timing_test_vector_rend(std::ofstream & outfile)
     outfile << "vector,rend," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -761,7 +758,7 @@ void timing_test_vector_reserve(std::ofstream & outfile)
     outfile << "vector,reserve," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -802,7 +799,7 @@ void timing_test_vector_resize(std::ofstream & outfile)
     outfile << "vector,resize," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -846,7 +843,7 @@ void timing_test_vector_size(std::ofstream & outfile)
     outfile << "vector,size," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -883,7 +880,7 @@ void timing_test_vector_op_assign(std::ofstream & outfile)
     outfile << "vector,=," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -920,7 +917,7 @@ void timing_test_vector_op_equal(std::ofstream & outfile)
     outfile << "vector,==," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -957,7 +954,7 @@ void timing_test_vector_op_not_equal(std::ofstream & outfile)
     outfile << "vector,!=," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -994,7 +991,7 @@ void timing_test_vector_op_less_than(std::ofstream & outfile)
     outfile << "vector,<," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1031,7 +1028,7 @@ void timing_test_vector_op_greater_than(std::ofstream & outfile)
     outfile << "vector,>," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1068,7 +1065,7 @@ void timing_test_vector_op_less_than_equal(std::ofstream & outfile)
     outfile << "vector,<=," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1105,7 +1102,7 @@ void timing_test_vector_op_greater_than_equal(std::ofstream & outfile)
     outfile << "vector,>=," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1142,7 +1139,7 @@ void timing_test_vector_op_bracket(std::ofstream & outfile)
     outfile << "vector,[]," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1180,7 +1177,7 @@ void timing_test_vector_swap(std::ofstream & outfile)
     outfile << "vector,swap," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1223,7 +1220,7 @@ void timing_test_vector_erase(std::ofstream & outfile)
     outfile << "vector,erase," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1267,7 +1264,7 @@ void timing_test_vector_insert(std::ofstream & outfile)
     outfile << "vector,insert," << ft_chrono << "," << std_chrono << "," <<
     ratio << ",";
 
-    ft_chrono > std_chrono && ratio > 20.0
+    ft_chrono > std_chrono && ratio > RATIO_LIMIT
     ? outfile << RED << "KO" << RESET << std::endl
     : outfile << GREEN << "OK" << RESET << std::endl;
 }
@@ -1292,20 +1289,20 @@ int main()
     // tests: each one append a line to outfile
 
     // allocator
-//    timing_test_vector_get_allocator(outfile);
+    timing_test_vector_get_allocator(outfile);
 
     // constructors
-//    timing_test_vector_constructor_by_default(outfile);
-//    timing_test_vector_constructor_by_fill(outfile);
-//    timing_test_vector_constructor_by_copy(outfile);
-//    timing_test_vector_constructor_by_range(outfile);
+    timing_test_vector_constructor_by_default(outfile);
+    timing_test_vector_constructor_by_fill(outfile);
+    timing_test_vector_constructor_by_copy(outfile);
+    timing_test_vector_constructor_by_range(outfile);
 
     // capacity
-//    timing_test_vector_empty(outfile);
-//    timing_test_vector_size(outfile);
-//    timing_test_vector_max_size(outfile);
-//    timing_test_vector_capacity(outfile);
-//    timing_test_vector_reserve(outfile);
+    timing_test_vector_empty(outfile);
+    timing_test_vector_size(outfile);
+    timing_test_vector_max_size(outfile);
+    timing_test_vector_capacity(outfile);
+    timing_test_vector_reserve(outfile);
 
     // iterators
     timing_test_vector_begin(outfile);
@@ -1331,28 +1328,28 @@ int main()
 //    timing_test_vector_iterator_sub_then_assign(outfile);
 
     // accessors
-//    timing_test_vector_at(outfile);
-//    timing_test_vector_back(outfile);
-//    timing_test_vector_front(outfile);
-//    timing_test_vector_op_bracket(outfile);
+    timing_test_vector_at(outfile);
+    timing_test_vector_back(outfile);
+    timing_test_vector_front(outfile);
+    timing_test_vector_op_bracket(outfile);
 
     // modifiers
-//    timing_test_vector_clear(outfile); // KO
-//    timing_test_vector_erase(outfile);
-//    timing_test_vector_insert(outfile); // KO
-//    timing_test_vector_push_back(outfile); // KO
-//    timing_test_vector_pop_back(outfile);
-//    timing_test_vector_resize(outfile); // KO
-//    timing_test_vector_swap(outfile);
+    timing_test_vector_clear(outfile); // KO
+    timing_test_vector_erase(outfile);
+    timing_test_vector_insert(outfile); // KO
+    timing_test_vector_push_back(outfile); // KO
+    timing_test_vector_pop_back(outfile);
+    timing_test_vector_resize(outfile); // KO
+    timing_test_vector_swap(outfile);
 
     // operators
-//    timing_test_vector_op_assign(outfile);
-//    timing_test_vector_op_equal(outfile);
-//    timing_test_vector_op_not_equal(outfile);
-//    timing_test_vector_op_less_than(outfile);
-//    timing_test_vector_op_less_than_equal(outfile);
-//    timing_test_vector_op_greater_than(outfile);
-//    timing_test_vector_op_greater_than_equal(outfile);
+    timing_test_vector_op_assign(outfile);
+    timing_test_vector_op_equal(outfile);
+    timing_test_vector_op_not_equal(outfile);
+    timing_test_vector_op_less_than(outfile);
+    timing_test_vector_op_less_than_equal(outfile);
+    timing_test_vector_op_greater_than(outfile);
+    timing_test_vector_op_greater_than_equal(outfile);
 
     // close file
     outfile.close();
