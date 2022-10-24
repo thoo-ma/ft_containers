@@ -93,6 +93,7 @@ void timing_test_vector_back(std::ofstream & outfile)
 template <typename Vector>
 double get_timing_vector_begin()
 {
+    // data we will operate on
     Vector v1;
     Vector v2(10, 42);
 
@@ -351,7 +352,7 @@ double get_timing_vector_constructor_by_range()
 
     // compute
     for (int i = 0; i < 100000; i++)
-        v[i] = new Vector(v1.begin(), v1.end() - 1);
+        v[i] = new Vector(v1.begin(), v1.end());
 
     // ending point
     time_point<system_clock> end = system_clock::now();
@@ -404,6 +405,8 @@ double get_timing_vector_empty()
     // get delta
     return duration<double>(end - start).count();
 }
+
+std::pair<int,int> p;
 
 template <typename T>
 void timing_test_vector_empty(std::ofstream & outfile)
@@ -662,6 +665,7 @@ void timing_test_vector_push_back(std::ofstream & outfile)
 template <typename Vector>
 double get_timing_vector_rbegin()
 {
+    // data we will operate on
     Vector v1;
     Vector v2(10, 42);
 
@@ -1379,7 +1383,7 @@ int main()
     // check for open error
     if (outfile.rdstate())
     {
-        std::cout << "Error: can't open timing.csv" << std::endl;
+        std::cout << "Error: can't open timing_vector.csv" << std::endl;
         return 1;
     }
 

@@ -5,14 +5,10 @@ todo
 4. test _everyting_ with `-Wconversion` and `valgrind`
 5. `is_constructible` and co. (cf. `type_traits`) for pair conversions
    (needed by `-Wconversion`)
-6. handle `allocate()` exceptions (catch `bad_alloc`)
-7. debug iso_stardard script
-8. output_iterator.hpp to .cpp
-9. bien penser a tester les valeurs de retour des methodes des containers
-10. compile _everything_ well with `c++98`
-11. add tests with different `Compare` objects
-    (e.g. `compare maped_type` instead of `key_type`)
-12. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
+6. output_iterator.hpp to .cpp
+7. add tests with different `Compare` objects
+    (e.g. compare `maped_type` instead of `key_type`)
+8. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
 ________
 
 maybe

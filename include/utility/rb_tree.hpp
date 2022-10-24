@@ -413,7 +413,7 @@ class rb_tree
         }
     }
 
-    /// @brief Base routine to insert a node
+    /// @brief Insert base routine
     /// @param z New node to be inserted in the tree
     void insert (pointer z)
     {
@@ -455,8 +455,6 @@ class rb_tree
     {
         // do not insert duplicated key
         if (find(_root, key))
-        //if (find(_root, key) == end())
-        //if (find(key) != end())
             return;
 
         // alloc and construct
