@@ -18,7 +18,7 @@
 
 namespace ft {
 
-template <typename T, typename Compare = std::less<T>>
+template <typename T, typename Compare = std::less<T> >
 class rb_tree
 {
     /****** Types *************************************************************/

@@ -8,14 +8,11 @@
 #include "rb_tree.hpp"
 #include "ft_type_traits.hpp"
 
-/// @todo std::add_const    --> ft::add_const
-/// @todo std::remove_const --> ft::remove_const
-
 namespace ft {
 
 /// @note Allocator won't be used. This map uses rb_tree allocator.
 template <typename Key, typename T, typename Compare = std::less<Key>,
-          typename Allocator = std::allocator<pair<typename ft::add_const<Key>::type, T>>
+          typename Allocator = std::allocator<pair<typename ft::add_const<Key>::type, T> >
           //typename Allocator = std::allocator<std::pair<typename ft::add_const<Key>::type, T>>
           //typename Allocator = std::allocator<std::pair<const Key, T>>
           //typename Allocator = std::allocator<ft::pair<const Key, T>>
@@ -78,13 +75,13 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         { }
 
         /// @brief Constructor by copy from mutable iterator
-        map_iterator (map_iterator<typename std::remove_const<value_type>::type> const & it)
+        map_iterator (map_iterator<typename ft::remove_const<value_type>::type> const & it)
         : _current(it.current_node()),
          _sentinel(const_cast<node_pointer>(it.sentinel_node()))
         { }
 
         /// @brief Constructor by copy from const iterator
-        map_iterator (map_iterator<typename std::add_const<value_type>::type> const & it)
+        map_iterator (map_iterator<typename ft::add_const<value_type>::type> const & it)
         : _current(const_cast<node_pointer>(it.current_node())),
          _sentinel(const_cast<node_pointer>(it.sentinel_node()))
         { }

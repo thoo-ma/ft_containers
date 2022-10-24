@@ -1,10 +1,6 @@
 #ifndef FT_TYPE_TRAITS_HPP
 #define FT_TYPE_TRAITS_HPP 1
 
-/**
- * @file ft_type_traits.hpp
- */
-
 namespace ft {
 
     /// @todo arbitrary for now
@@ -21,23 +17,18 @@ namespace ft {
 
     /****** remove_const ******************************************************/
 
-    /// @note default case: less specialized
     template <class T>
     struct remove_const { typedef T type; };
 
-    /// @note const case: more specialized
-    template <class T> // class U ?
+    template <class T>
     struct remove_const <T const> { typedef T type; };
 
     /****** add_const *********************************************************/
 
-    /// @note default case: less specialized
+    /// @note Thanks to some compiler magic, when `T` is already const-qualified
+    ///       we don't get the duplicate const error.
     template <class T>
     struct add_const { typedef T const type; };
-
-    /// @note const case: more specialized
-    template <class T> // class U ?
-    struct add_const <T const> { typedef T type; };
 
     /****** integral_constant *************************************************/
 

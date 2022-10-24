@@ -4,26 +4,33 @@ RED="\e[31m"
 GREEN="\e[32m"
 RESET="\e[0m"
 
-include_dir="../include"
+include_dir="include"
 logfile="log_iso_standard.txt"
 
 iso_standard()
 {
     # creating main
     echo '
-    #include "ft_type_traits.hpp"
-    #include "ft_bidirectional_iterator.hpp"
-    #include "ft_iterator_base_types.hpp"
-    #include "ft_random_access_iterator.hpp"
+    #include "ft_map.hpp"
+    #include "rb_tree.hpp"
     #include "ft_vector.hpp"
+    #include "ft_stack.hpp"
+    #include "ft_type_traits.hpp"
+    #include "ft_iterator_base_types.hpp"
     #include "ft_lexicographical_compare.hpp"
 
-    //#include <chrono>
-
-    int main() { return 0; } ' > main.cpp
+    int main()
+    {
+        ft::vector<int> v;
+        ft::rb_tree<int> t;
+        ft::map<int,int> m;
+        ft::stack<int> s;
+        return 0;
+    }
+    ' > main.cpp
 
     # compiling + eventually create logfile
-	g++ -std=c++98 -Wall -Wextra -fsyntax-only \
+	c++ -std=c++98 -Wall -Wextra -fsyntax-only \
     -I $include_dir \
     -I $include_dir/containers \
     -I $include_dir/algorithms \
