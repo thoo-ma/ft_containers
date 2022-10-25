@@ -1,14 +1,13 @@
 todo
-1. test timing stack, iterators
-2. test `lexicographical_compare`
-3. test `type_traits`
-4. test _everyting_ with `-Wconversion` and `valgrind`
-5. `is_constructible` and co. (cf. `type_traits`) for pair conversions
-   (needed by `-Wconversion`)
-6. `output_iterator.hpp` to `.cpp` (same for `timing_iterator.hpp`)
-7. add tests with different `Compare` objects
-    (e.g. compare `maped_type` instead of `key_type`)
-8. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
+1. test timing iterators
+2. test timing stack
+3. test `lexicographical_compare`
+4. test `type_traits`
+5. test _everyting_ with `-Wconversion` and `valgrind`
+6. `is_constructible` and co. for pair conversions (needed by `-Wconversion`)
+7. `output_iterator.hpp` to `.cpp` (same for `timing_iterator.hpp`)
+8. add `Compare` object tests (e.g. compare `maped_type` instead of `key_type`)
+9. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
 ________
 
 maybe
@@ -34,19 +33,4 @@ it would do with the template solution.)
 - say some about iterator and reverse iterator relationship
 - say some about doubling `assert` parenthesis
 - say some about our use of `enable_if`
-________
-
-iterators
-- vector --> random access iterator
-- map    --> bidirectional iterator
-- base_iterator (iterator traits typedefs + operateurs comparaison)
-________
-
-template <bool>
-struct ft_static_assert;
-
-template <>
-struct ft_static_assert<true>{};
-________
-https://cppinsights.io/
 ________
