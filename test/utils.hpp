@@ -4,11 +4,15 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <cstdlib> // rand()
+#include <ctime> // time()
 
 #include "ft_map.hpp"
 #include "rb_tree.hpp"
 #include "ft_pair.hpp"
 #include "ft_vector.hpp"
+
+#define RATIO_LIMIT 20.0
 
 /****** Colors ****************************************************************/
 
@@ -35,6 +39,19 @@
 inline void log(std::string const s)
 {
     std::cout << s << GREEN << " OK" << RESET << std::endl;
+}
+
+/****** Timing log ************************************************************/
+
+void timing_log(std::ofstream & o, double ft, double std, std::string const & s)
+{
+    double ratio = ft / std;
+
+    o << s << "," << ft << "," << std << "," << ratio << ",";
+
+    ft > std && ratio > RATIO_LIMIT
+    ? o <<   RED << "KO" << RESET << std::endl
+    : o << GREEN << "OK" << RESET << std::endl;
 }
 
 /****** Custom datatype *******************************************************/
@@ -140,6 +157,27 @@ value_type (int x) { return typename Container::value_type(x,x); }
 template <typename Container>
 typename std::enable_if<is_rbtree<Container>::value, typename Container::value_type>::type
 value_type (int x) { return typename Container::value_type(key_type<Container>(x)); }
+
+/****** Fill a map with random values *****************************************/
+
+template <typename Map>
+void random_map (Map & m, int const & size)
+{
+    typedef typename Map::value_type    Value;
+    typedef typename Map::key_type      Key;
+    typedef typename Map::mapped_type   Mapped;
+
+    std::srand(std::time(0));
+
+    // assume `key_type` and `mapped_type` are constructible from `int`
+    for (int i = 0; i < size; i++)
+    {
+        int j = std::rand();
+        try { m.insert(Value(Key(j), Mapped(j))); }
+        catch (std::exception & e)
+        { std::cout << e.what() << std::endl; m.clear(); return; }
+    }
+}
 
 /******************************************************************************/
 

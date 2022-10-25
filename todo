@@ -1,11 +1,11 @@
 todo
-1. test timing stack, map, iterators
+1. test timing stack, iterators
 2. test `lexicographical_compare`
 3. test `type_traits`
 4. test _everyting_ with `-Wconversion` and `valgrind`
 5. `is_constructible` and co. (cf. `type_traits`) for pair conversions
    (needed by `-Wconversion`)
-6. output_iterator.hpp to .cpp
+6. `output_iterator.hpp` to `.cpp` (same for `timing_iterator.hpp`)
 7. add tests with different `Compare` objects
     (e.g. compare `maped_type` instead of `key_type`)
 8. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)

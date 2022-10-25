@@ -7,24 +7,9 @@
 
 using namespace std::chrono;
 
-#define RATIO_LIMIT 20.0
-
 /// @todo operator[] not good (cf. timing_map for a correct one)
 /// @todo verify we don't go over max_size !! (could explain very good perfs...)
 /// @todo (?) test all overloads (insert, erase, etc.)
-
-/****** Log *******************************************************************/
-
-void timing_log(std::ofstream & o, double ft, double std, std::string const & s)
-{
-    double ratio = ft / std;
-
-    o << s << "," << ft << "," << std << "," << ratio << ",";
-
-    ft > std && ratio > RATIO_LIMIT
-    ? o <<   RED << "KO" << RESET << std::endl
-    : o << GREEN << "OK" << RESET << std::endl;
-}
 
 /****** Allocator *************************************************************/
 

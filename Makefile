@@ -116,7 +116,7 @@ all: 				timing output traits# $(NAME)
 
 clean:			;	$(RM) $(OBJ_DIR)
 
-fclean:	clean	;	$(RM) $(BIN_DIR)
+fclean:	clean	;	$(RM) $(BIN_DIR) *.csv
 
 re:		fclean all
 
