@@ -11,8 +11,10 @@ using namespace std::chrono;
 
 #define RATIO_LIMIT 20.0
 
+/// @todo operator[] not good (cf. timing_map for a correct one)
 /// @todo verify we don't go over max_size !! (could explain very good perfs...)
 /// @todo (?) add `timing_log()`
+/// @todo (?) test all overloads (insert, erase, etc.)
 
 /****** at() ******************************************************************/
 
@@ -1261,6 +1263,7 @@ void timing_test_vector_erase(std::ofstream & outfile)
 
 /****** insert() **************************************************************/
 
+/// @todo insert by fill (3)
 template <typename Vector>
 double get_timing_vector_insert()
 {
