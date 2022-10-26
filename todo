@@ -2,7 +2,6 @@
 2. test timing stack
 3. test `lexicographical_compare`
 4. test `type_traits`
-5. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
-6. use stl `iterator_tags` to be compliant with stl `algorithms`
-7. why vector iterator `operator==` need to be templated unlike map iterator
-8. why can't we remove map `value_compare` constructor by default
+5. use stl `iterator_tags` to be compliant with stl `algorithms`
+6. why vector iterator `operator==` need to be templated unlike map iterator
+7. why can't we remove map `value_compare` constructor by default

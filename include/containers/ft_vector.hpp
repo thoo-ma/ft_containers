@@ -144,12 +144,10 @@ class vector {
         { return operator+(-n); }
 
         difference_type operator- (vector_iterator<T> const & rhs) const
-        { return _data > &(*rhs) ? _data - &(*rhs) : -(&(*rhs) - _data); }
-        // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
+        { return _data - &(*rhs); }
 
         difference_type operator- (vector_iterator<T const> const & rhs) const
-        { return _data > &(*rhs) ? _data - &(*rhs) : -(&(*rhs) - _data); }
-        // { return max(_data, &(*rhs)) - min(_data, &(*rhs)); }
+        { return _data - &(*rhs); }
 
         value_type & operator[] (difference_type const n) const
         { return this->_data[n]; }
