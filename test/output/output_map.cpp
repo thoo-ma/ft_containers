@@ -676,7 +676,6 @@ void value_comp_test()
     log("value_comp()");
 }
 
-/// @todo
 template <typename T, typename U>
 void observers_tests()
 {
@@ -1493,7 +1492,6 @@ void rend_test()
     log("rend");
 }
 
-/// @todo rend()
 template <typename T, typename U>
 void iterators_tests()
 {

@@ -267,10 +267,6 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /****** Element access ****************************************************/
 
-///   @todo remove (c++11)
-//    mapped_type & at (key_type const & k);
-//    mapped_type const & at (key_type const & k) const;
-
     mapped_type & operator[] (key_type const & key)
     { return (insert(make_pair(key, mapped_type())).first)->second; }
 

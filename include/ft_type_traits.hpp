@@ -48,8 +48,6 @@ namespace ft {
 
     /****** is_integral *******************************************************/
 
-    /// @todo add 'char16_t' 'char32_t' 'wchar_t' ?
-
     /// @note default case: less specialized
     template <class T> struct is_integral : public false_type {};
 

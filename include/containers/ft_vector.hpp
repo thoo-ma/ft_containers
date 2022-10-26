@@ -13,7 +13,6 @@
 
 /// @todo template iterator arguments (assert, assign, etc.)
 /// @todo (?) add some private functions like stl: _(re)allocate_and_copy, etc.
-/// @todo (?) use `_first` and `_finish` instead of `_size`
 /// @todo (?) do not set _capacity nor _size before calling allocate()
 
 namespace ft {
@@ -284,9 +283,6 @@ class vector {
     /// @note undefined behavior if vector is empty
     const_reference back () const
     { return _data[_size - 1]; }
-
-    /// @todo add ? (c++11)
-    // pointer data () { return _data; }
 
     /****** Capacity **********************************************************/
 

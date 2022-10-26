@@ -364,7 +364,6 @@ void not_equal_test()
     log("operator!=");
 }
 
-/// @todo
 template <typename Tree>
 void operators_tests()
 {
@@ -385,8 +384,8 @@ void tree_test()
     operators_tests<ft::rb_tree<T>>();
     utilities_tests<ft::rb_tree<T>>();
 
-//    /// @todo (?)
-//    // allocator_tests<ft::rb_tree<T>>();
+    /// @todo (?)
+    // allocator_tests<ft::rb_tree<T>>();
 
 }
 
