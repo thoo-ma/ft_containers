@@ -220,7 +220,7 @@ class vector {
     /// @brief Constructor by fill (2)
     explicit vector (size_type n, value_type const & val = value_type(),
         allocator_type const & alloc = allocator_type())
-    : _size(n), _capacity(n), _alloc(alloc)
+    : _data(NULL), _size(n), _capacity(n), _alloc(alloc)
     {
         if (n)
         {
@@ -237,7 +237,7 @@ class vector {
     vector (InputIterator first, InputIterator last,
     allocator_type const & alloc = allocator_type(),
     typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
-    : _alloc(alloc)
+    : _data(NULL), _size(0), _capacity(0), _alloc(alloc)
     {
         _size = 0;
         for (InputIterator it = first; it != last; it++)
@@ -250,7 +250,7 @@ class vector {
 
     /// @brief Constructor by copy (4)
     vector (vector<value_type, allocator_type> const & v)
-    : _size(0), _capacity(0), _alloc(v._alloc)
+    : _data(NULL), _size(0), _capacity(0), _alloc(v._alloc)
     { *this = v; }
 
     /****** Destructor ********************************************************/

@@ -7,5 +7,3 @@
 7. use stl `iterator_tags` to be compliant with stl `algorithms`
 8. why vector iterator `operator==` need to be templated unlike map iterator
 9. why can't we remove map `value_compare` constructor by default
-10. `output_vector`: `valgrind` warns about uninitialised values (const. by copy)
-    --> get back old vector `operator ==` and see if we still got the problem
