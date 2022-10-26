@@ -1,31 +1,9 @@
-todo
 1. test timing iterators
 2. test timing stack
 3. test `lexicographical_compare`
 4. test `type_traits`
 5. add `Compare` object tests (e.g. compare `mapped_type` instead of `key_type`)
 6. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
-________
-
-maybe
-- `explicit` qualifer upon constructors
-- `ft::equal`
-- use stl `iterator_tags` to be compliant with stl `algorithms`
-________
-
-readme
-- explain why some constructors are explicit
-- explain why east const instead of west const
---> the only consistent way to write const (got to read from right-to-left)
-- explain the difference between const and non-const begin() and end()
-- explain why we choose this implementation for const_iterator
---> explain why the templated solution is better in term of debugging
-(i.e. clangd doesnt warn with my solution when 'it = const_it', whereas
-it would do with the template solution.)
-- say some about the vague subject and why some tests here may be overkill
-- explain why map.end() dereferencing segfault: no sentinel node
-- make note that insert with hint is just a regular insert
-- say some about iterator and reverse iterator relationship
-- say some about doubling `assert` parenthesis
-- say some about our use of `enable_if`
-________
+7. `explicit` qualifer upon constructors
+8. `ft::equal`
+9. use stl `iterator_tags` to be compliant with stl `algorithms`
