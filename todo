@@ -4,9 +4,8 @@
 4. test `type_traits`
 5. add `Compare` object tests (e.g. compare `mapped_type` instead of `key_type`)
 6. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
-7. `explicit` qualifer upon constructors
-8. use stl `iterator_tags` to be compliant with stl `algorithms`
-9. why vector iterator `operator==` need to be templated unlike map iterator
-10. why can't we remove map `value_compare` constructor by default
-11. `output_vector`: `valgrind` warns about uninitialised values (const. by copy)
+7. use stl `iterator_tags` to be compliant with stl `algorithms`
+8. why vector iterator `operator==` need to be templated unlike map iterator
+9. why can't we remove map `value_compare` constructor by default
+10. `output_vector`: `valgrind` warns about uninitialised values (const. by copy)
     --> get back old vector `operator ==` and see if we still got the problem

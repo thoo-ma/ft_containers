@@ -39,8 +39,7 @@ class stack {
 
     public:
 
-    /// @todo (?) explicit
-    stack(container_type const & container = container_type())
+    explicit stack(container_type const & container = container_type())
     : _c(container) { }
 
     bool empty() const

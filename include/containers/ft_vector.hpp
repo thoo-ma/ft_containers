@@ -214,11 +214,11 @@ class vector {
     /****** Constructors ******************************************************/
 
     /// @brief Constructor by default (1)
-    vector (allocator_type const & alloc = allocator_type())
+    explicit vector (allocator_type const & alloc = allocator_type())
     : _data(NULL), _size(0), _capacity(0), _alloc(alloc) { }
 
     /// @brief Constructor by fill (2)
-    vector (size_type n, value_type const & val = value_type(),
+    explicit vector (size_type n, value_type const & val = value_type(),
         allocator_type const & alloc = allocator_type())
     : _size(n), _capacity(n), _alloc(alloc)
     {
