@@ -2,7 +2,7 @@
 #define FT_MAP_HPP 1
 
 #include <memory> // std::allocator
-#include <functional> // std::less (delete since into rb_tree.hpp)
+#include <functional> // std::less
 
 #include "ft_pair.hpp"
 #include "rb_tree.hpp"
@@ -13,7 +13,6 @@ namespace ft {
 /// @note Allocator won't be used. This map uses rb_tree allocator.
 template <typename Key, typename T, typename Compare = std::less<Key>,
           typename Allocator = std::allocator<pair<typename ft::add_const<Key>::type, T> >
-          //typename Allocator = std::allocator<std::pair<typename ft::add_const<Key>::type, T>>
 > class map
 {
     /**************************************************************************/
@@ -31,7 +30,7 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     typedef pair<Key const, T>	value_type;
     typedef Compare	            key_compare;
     typedef value_compare       value_compare;
-    typedef Allocator           allocator_type; // not used
+    typedef Allocator           allocator_type; // not used (but still present!)
     typedef size_t              size_type;
     typedef ptrdiff_t           difference_type;
     typedef value_type &        reference;
@@ -46,7 +45,6 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     typedef typename btree_type::value_type     node_type;
     typedef typename btree_type::value_type &   node_reference;
     typedef typename btree_type::value_type *   node_pointer;
-
 
     template <typename U = T>
     class map_iterator : public iterator<bidirectional_iterator_tag, U>
@@ -100,20 +98,8 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
         bool operator== (map_iterator const & it) const
         { return _current == it.current_node(); }
 
-    //    bool operator== (map_iterator<value_type> const & it) const
-    //    { return _current == it.current_node(); }
-
-    //    bool operator== (map_iterator<value_type const> const & it) const
-    //    { return _current == it.current_node(); }
-
         bool operator!= (map_iterator const & it) const
         { return !(*this == it); }
-
-       // bool operator!= (map_iterator<value_type> const & it) const
-       // { return !(*this == it); }
-
-       // bool operator!= (map_iterator<value_type const> const & it) const
-       // { return !(*this == it); }
 
         /// @brief prefix incerement
         map_iterator & operator++ ()
@@ -213,10 +199,10 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     class value_compare
     {
-        /// @note why friend ?
+        /// @note since `value_compare` is defined here as protected but `map`
+        //  wants acces to it, we declare it as a `friend` class.
         friend class map;
 
-        /// @note why protected ?
         protected:
 
         Compare comp;
@@ -343,7 +329,6 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
             erase(node);
         }
     }
-    //{ for (; first != last; first++) { _tree.erase(*first); } }
 
     void swap (map & m)
     { map tmp(m); m = *this; *this = tmp; }
