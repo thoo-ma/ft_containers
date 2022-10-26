@@ -9,6 +9,7 @@
 #include "ft_iterator_base_types.hpp"
 #include "ft_reverse_iterator.hpp"
 #include "ft_lexicographical_compare.hpp"
+#include "ft_equal.hpp"
 
 /// @todo template iterator arguments (assert, assign, etc.)
 /// @todo (?) add some private functions like stl: _(re)allocate_and_copy, etc.
@@ -596,7 +597,7 @@ template <class T, class Alloc>
 bool operator== (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 {
     return
-    lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+    lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 template <class T, class Alloc>
