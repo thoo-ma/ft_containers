@@ -362,7 +362,7 @@ class vector {
     /// @brief Insert by single element (1)
     iterator insert (iterator position, value_type const & val)
     {
-        size_type offset = position - begin();
+        difference_type offset = position - begin();
         insert(position, 1, val);
         return begin() + offset;
     }
@@ -374,13 +374,13 @@ class vector {
         if (_size + n > _capacity)
         {
             // because of reallocation, position need to be reset
-            size_type offset = position - begin();
+            difference_type offset = position - begin();
             reserve((_size + n) * 2); // remove *2 and we have terrible perfs
             position = begin() + offset;
         }
 
         // move what is after inserted range at the end
-        for (size_type i = end() - position, j = n; i > 0; i--, j--)
+        for (size_type i = static_cast<size_type>(end() - position), j = n; i > 0; i--, j--)
             _data[_size - 1 + j] = _data[_size - 1 + j - n];
 
         // insert
@@ -425,7 +425,7 @@ class vector {
         if (n > _capacity - _size)
         {
             // because of reallocation, position need to be reset
-            size_type pos = position - begin();
+            difference_type pos = position - begin();
             reserve(_size + n);
             position = begin() + pos;
         }
@@ -492,7 +492,7 @@ class vector {
            _alloc.destroy(&_data[start++]);
 
        // 4. update size
-       _size = (first - begin()) + (end() - last);
+       _size = static_cast<size_type>((first - begin()) + (end() - last));
 
        // 5. return
        return first;

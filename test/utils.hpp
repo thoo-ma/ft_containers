@@ -151,7 +151,12 @@ value_type (int x) { return typename Container::value_type(x); }
 /// @brief Construct a map `value_type` object from `int`
 template <typename Container>
 typename std::enable_if<is_map<Container>::value, typename Container::value_type>::type
-value_type (int x) { return typename Container::value_type(x,x); }
+value_type (int x)
+{
+    return typename Container::value_type(
+        typename Container::key_type(x),
+        typename Container::mapped_type(x));
+}
 
 /// @brief Construct a rbtree `value_type` object from `int`
 template <typename Container>
@@ -167,7 +172,7 @@ void random_map (Map & m, int const & size)
     typedef typename Map::key_type      Key;
     typedef typename Map::mapped_type   Mapped;
 
-    std::srand(std::time(0));
+    std::srand(static_cast<unsigned int>(std::time(0)));
 
     // assume `key_type` and `mapped_type` are constructible from `int`
     for (int i = 0; i < size; i++)

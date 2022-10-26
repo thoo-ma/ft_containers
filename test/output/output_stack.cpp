@@ -49,9 +49,9 @@ void stack_size_test()
 
     Stack stack;
 
-    for (Size i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
-        assert(stack.size() == i);
+        assert(stack.size() == static_cast<Size>(i));
         stack.push(Value(i));
     }
 
@@ -69,13 +69,14 @@ void stack_top_test()
 {
     Stack stack;
 
-    for (Size i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
-        stack.push(Value(i));
-        assert(stack.top() == Value(i));
+        Value val = Value(i);
+        stack.push(val);
+        assert(stack.top() == val);
     }
 
-    for (Size i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
         assert(stack.top() == Value(10 - i- 1));
         stack.pop();
@@ -109,11 +110,12 @@ void stack_push_test()
 {
     Stack stack;
 
-    for (Size i = 0; i < 21; i++)
+    for (int i = 0; i < 21; i++)
     {
-        assert(stack.size() == i);
-        stack.push(Value(i));
-        assert(stack.top() == Value(i));
+        Value val(i);
+        assert(stack.size() == static_cast<Size>(i));
+        stack.push(val);
+        assert(stack.top() == val);
     }
 
     log("push()");

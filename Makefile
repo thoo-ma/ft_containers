@@ -1,8 +1,8 @@
 ################### COMPILER ###################################################
 
-CXX				=	c++# -g
+CXX				=	c++
 
-CXXFLAGS		=	-std=c++11 -Wall -Wextra# -Werror # -Wconversion
+CXXFLAGS		=	-std=c++11 -Wall -Wextra -Werror -Wconversion
 
 ################### DIRECTORIES ################################################
 

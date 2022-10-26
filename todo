@@ -3,19 +3,14 @@ todo
 2. test timing stack
 3. test `lexicographical_compare`
 4. test `type_traits`
-5. test _everyting_ with `-Wconversion` and `valgrind`
-6. `is_constructible` and co. for pair conversions (needed by `-Wconversion`)
-7. `output_iterator.hpp` to `.cpp` (same for `timing_iterator.hpp`)
-8. add `Compare` object tests (e.g. compare `maped_type` instead of `key_type`)
-9. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
+5. add `Compare` object tests (e.g. compare `mapped_type` instead of `key_type`)
+6. `output_stack`: `valgrind` warns about uninitialised values (`ikos` could help)
 ________
 
 maybe
 - `explicit` qualifer upon constructors
-- `ft::equal` (upon all ft datatypes: map, vector, tree, pair, etc.)
-- `make all` re-mkdir output folders but not timing ones...
-- keep our iterator_traits but forget abour our iterator struct
---> this way, we can use stl algorithms act upon our containers
+- `ft::equal`
+- use stl `iterator_tags` to be compliant with stl `algorithms`
 ________
 
 readme
