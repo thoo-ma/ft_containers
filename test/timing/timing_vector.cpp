@@ -7,7 +7,6 @@
 
 using namespace std::chrono;
 
-/// @todo operator[] not good (cf. timing_map for a correct one)
 /// @todo verify we don't go over max_size !! (could explain very good perfs...)
 /// @todo (?) test all overloads (insert, erase, etc.)
 
@@ -418,14 +417,14 @@ template <typename Vector>
 double get_timing_vector_op_bracket()
 {
     // data we will operate on
-    Vector v[100000];
-    Vector tmp;
+    Vector v(10000, 42);
+    typename Vector::reference tmp = v[0];
 
     // starting point
     time_point<system_clock> start = system_clock::now();
 
     // compute
-    for (int i = 0; i < 100000; i++)
+    for (typename Vector::size_type i = 0; i < 10000; i++)
         tmp = v[i];
 
     // ending point
@@ -1055,10 +1054,10 @@ void timing_test_vector_iterators(std::ofstream & outfile)
 template <typename T>
 void timing_test_vector(std::ofstream & outfile)
 {
-    timing_test_vector_allocator<T>(outfile);
+//    timing_test_vector_allocator<T>(outfile);
 //    timing_test_vector_constructors<T>(outfile);
 //    timing_test_vector_capacity<T>(outfile);
-//    timing_test_vector_accessors<T>(outfile);
+    timing_test_vector_accessors<T>(outfile);
 //    timing_test_vector_modifiers<T>(outfile);
 //    timing_test_vector_operators<T>(outfile);
 //    timing_test_vector_iterators<T>(outfile);
