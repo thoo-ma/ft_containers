@@ -1,0 +1,4 @@
+#ifndef TIMING_ITERATOR_HPP
+#define TIMING_ITERATOR_HPP 1
+
+#endif /* TIMING_ITERATOR_HPP */
