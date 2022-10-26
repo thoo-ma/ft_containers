@@ -11,10 +11,8 @@
 #include "ft_reverse_iterator.hpp"
 #include "ft_type_traits.hpp"
 
-/// @todo benchmark destructors execution time (keep recursive one if possible)
 /// @todo handle allocator failure
 /// @todo unsupport duplicate nodes
-/// @todo (?) inline function or macro to replace ternaries
 
 namespace ft {
 
@@ -360,25 +358,16 @@ class rb_tree
     public:
 
     /// @brief Constructor by default (1)
-    explicit rb_tree ()
-    : _root(&_sentinel), _size(0)//, _max_size(_alloc.max_size())
+    explicit rb_tree () : _root(&_sentinel), _size(0)
     {
         _sentinel.left = _root;
         _sentinel.right = _root;
         _sentinel.parent = _root;
-    } //{ _root = _copy(tree._root, NULL); }
+    }
 
     /// @brief Constructor by copy (2)
-    /// @todo those three assignations not needed if constructor by default is
-    ///       called before function execution. need to check this. (delete ?)
-    rb_tree (rb_tree const & tree)
-    : _root(&_sentinel)//, _max_size(tree.max_size())
-    {
-        *this = tree;
-    //    _sentinel.left = _root;
-    //    _sentinel.right = _root;
-    //    _sentinel.parent = _root;
-    } //{ _root = _copy(tree._root, NULL); }
+    rb_tree (rb_tree const & tree) : _root(&_sentinel)
+    { *this = tree; }
 
     /// @brief Recursive destructor
 //    ~rb_tree ()
@@ -423,7 +412,6 @@ class rb_tree
         while (x != &_sentinel)
         {
             y = x;
-            //if (z->key < x->key)
             if (_comp(z->key, x->key))
                 x = x->left;
             else
@@ -437,7 +425,6 @@ class rb_tree
             _sentinel.right = _root;
 
         }
-        //else if (z->key < y->key)
         else if (_comp(z->key, y->key))
             y->left = z;
         else
@@ -565,9 +552,7 @@ class rb_tree
     size_type size () const
     { return _size; }
 
-    /// @todo
     size_type max_size () const
-    //{ return _max_size; }
     { return _alloc.max_size(); }
 
     bool empty () const

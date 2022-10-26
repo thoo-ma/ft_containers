@@ -14,8 +14,6 @@ namespace ft {
 template <typename Key, typename T, typename Compare = std::less<Key>,
           typename Allocator = std::allocator<pair<typename ft::add_const<Key>::type, T> >
           //typename Allocator = std::allocator<std::pair<typename ft::add_const<Key>::type, T>>
-          //typename Allocator = std::allocator<std::pair<const Key, T>>
-          //typename Allocator = std::allocator<ft::pair<const Key, T>>
 > class map
 {
     /**************************************************************************/
@@ -246,11 +244,9 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     private:
 
-    typename btree_type::allocator_type	    _alloc; // (?) remove
-    key_compare	            _key_comp;
-    value_compare	        _value_comp;
-    btree_type              _tree;
-    //allocator_type	    _alloc; // this is not used
+    key_compare     _key_comp;
+    value_compare   _value_comp;
+    btree_type      _tree;
 
     /**************************************************************************/
     /*                                                                        */
@@ -264,21 +260,20 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
     /// @brief Constructor by default (1)
     explicit map (key_compare const & comp = key_compare(),
-                allocator_type const & alloc = allocator_type())
-    : _alloc(alloc), _key_comp(comp), _value_comp(comp) { }
+                Allocator const & alloc = Allocator())
+    : _key_comp(comp), _value_comp(comp) { (void)alloc; }
 
     /// @brief Constructor by range (2)
     template <class InputIterator>
     map (InputIterator first, InputIterator last,
         key_compare const & comp = key_compare(),
-        allocator_type const & alloc = allocator_type(),
+        Allocator const & alloc = Allocator(),
         typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
-    : _alloc(alloc), _key_comp(comp), _value_comp(comp) { insert(first, last); }
+    : _key_comp(comp), _value_comp(comp) { (void)alloc; insert(first, last); }
 
     /// @brief Constructor by copy (3)
     map (map const & a)
-    : _alloc(a._alloc), _key_comp(a._key_comp), _value_comp(a._key_comp),
-      _tree(a._tree) { }
+    : _key_comp(a._key_comp), _value_comp(a._key_comp), _tree(a._tree) { }
 
     /****** Destructor ********************************************************/
 
@@ -301,30 +296,18 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     size_type size () const
     { return _tree.size(); }
 
-    /// @todo
     size_type max_size () const
     { return _tree.get_allocator().max_size(); }
 
     /****** Modifiers *********************************************************/
 
-    /// @todo ??
-  //  void insert (value_type const & val)
-  //  { return _tree.insert(_tree.root(), val); }
-
     /// @brief Insert single element (1)
-    /// @todo modify _tree.insert() return value to allow ternary below
     pair<iterator, bool> insert (value_type const & val)
     {
-        //iterator it = find(val.first);
-        //return it == end()
-        //? make_pair(_tree.insert(val), true)
-        //: make_pair(it, false);
-
         if (find(val.first) == end())
         {
             _tree.insert(val);
             return make_pair(iterator(find(val.first)), true);
-            //return make_pair(find(val.first), true);
         }
         return make_pair(find(val.first), false);
     }
@@ -419,54 +402,30 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     size_type count (key_type const & key)
     { return find(key) == end() ? 0 : 1; }
 
-    /// @todo
     iterator lower_bound (key_type const & key)
     {
-    //    std::cout << "lower mutable" << std::endl;
-
-        iterator it = begin();
-        iterator ite = end();
-
-        //while (it != ite && _key_comp(it->first, key)) it++;
+        iterator it = begin(), ite = end();
         while (it != ite && _key_comp((*it).first, key)) it++;
         return it;
     }
 
-    /// @todo
     const_iterator lower_bound (key_type const & key) const
     {
-    //    std::cout << "lower const" << std::endl;
-
-        const_iterator it = begin();
-        const_iterator ite = end();
-
-        //while (it != ite && _key_comp(it->first, key)) it++;
+        const_iterator it = begin(), ite = end();
         while (it != ite && _key_comp((*it).first, key)) it++;
         return it;
     }
 
-    /// @todo
     iterator upper_bound (key_type const & key)
     {
-    //    std::cout << "upper mutable" << std::endl;
-
-        iterator it = begin();
-        iterator ite = end();
-
-        //while (it != ite && !_key_comp(key, it->first)) it++;
+        iterator it = begin(), ite = end();
         while (it != ite && !_key_comp(key, (*it).first)) it++;
         return it;
     }
 
-    /// @todo
     const_iterator upper_bound (key_type const & key) const
     {
-    //    std::cout << "upper const" << std::endl;
-
-        const_iterator it = begin();
-        const_iterator ite = end();
-
-        //while (it != ite && !_key_comp(key, it->first)) it++;
+        const_iterator it = begin(), ite = end();
         while (it != ite && !_key_comp(key, (*it).first)) it++;
         return it;
     }

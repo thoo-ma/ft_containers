@@ -11,13 +11,9 @@
 #include "ft_lexicographical_compare.hpp"
 
 /// @todo template iterator arguments (assert, assign, etc.)
-/// @todo throw appropriate exception (out_of_bound) when `size_max` reached
 /// @todo (?) add some private functions like stl: _(re)allocate_and_copy, etc.
 /// @todo (?) use `_first` and `_finish` instead of `_size`
-/// @todo (?) why can we write `vector` instead of `vector<value_type>`
-/// @todo (?) why can we access private variable of vector passed as arguments
 /// @todo (?) do not set _capacity nor _size before calling allocate()
-/// @todo (?) remove `_max_size` like `map` and `rbtree`
 
 namespace ft {
 
@@ -59,10 +55,8 @@ class vector {
 
     private:
 
-    /// @todo put std iterator flags into 'ft_iterator_base_types.hpp'
     template <typename U>
-    //class vector_iterator : public iterator<random_access_iterator_tag, U>
-    class vector_iterator : public iterator<std::random_access_iterator_tag, U>
+    class vector_iterator : public iterator<random_access_iterator_tag, U>
     {
         /****** Member types **************************************************/
 
@@ -206,7 +200,6 @@ class vector {
     pointer         _data;
     size_type	    _size;
     size_type       _capacity;
-    size_type       _max_size;// cf. https://stackoverflow.com/questions/3813124
     allocator_type  _alloc;
 
     /**************************************************************************/
@@ -220,16 +213,13 @@ class vector {
     /****** Constructors ******************************************************/
 
     /// @brief Constructor by default (1)
-    /// @todo  add 'explicit' qualifier ?
     vector (allocator_type const & alloc = allocator_type())
-    : _data(NULL), _size(0), _capacity(0), _max_size(alloc.max_size()),
-        _alloc(alloc) { }
+    : _data(NULL), _size(0), _capacity(0), _alloc(alloc) { }
 
     /// @brief Constructor by fill (2)
-    /// @todo  add 'explicit' qualifier ?
     vector (size_type n, value_type const & val = value_type(),
-        allocator_type const & alloc = allocator_type()
-    ) : _size(n), _capacity(n), _max_size(alloc.max_size()), _alloc(alloc)
+        allocator_type const & alloc = allocator_type())
+    : _size(n), _capacity(n), _alloc(alloc)
     {
         if (n)
         {
@@ -245,8 +235,8 @@ class vector {
     template <class InputIterator>
     vector (InputIterator first, InputIterator last,
     allocator_type const & alloc = allocator_type(),
-    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0
-    ) : _alloc(alloc)
+    typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
+    : _alloc(alloc)
     {
         _size = 0;
         for (InputIterator it = first; it != last; it++)
@@ -259,8 +249,7 @@ class vector {
 
     /// @brief Constructor by copy (4)
     vector (vector<value_type, allocator_type> const & v)
-    : _size(0), _capacity(0), _max_size(v.max_size()), _alloc(v._alloc)
-    //: _size(v.size()), _capacity(v.capacity()), _max_size(v.max_size()), _alloc(v._alloc)
+    : _size(0), _capacity(0), _alloc(v._alloc)
     { *this = v; }
 
     /****** Destructor ********************************************************/
@@ -302,7 +291,7 @@ class vector {
 
     bool        empty ()     const    { return _size ? false : true;  }
     size_type   size ()      const    { return _size;                 }
-    size_type   max_size ()  const    { return _max_size;             }
+    size_type   max_size ()  const    { return _alloc.max_size();     }
     size_type   capacity ()  const    { return _capacity;             }
 
     /// @note stl version
@@ -327,7 +316,7 @@ class vector {
 
     void reserve (size_type n)
     {
-        if (n > _max_size) throw std::length_error("vector::reserve");
+        if (n > max_size()) throw std::length_error("vector::reserve");
         if (_capacity < n)
         {
             // reallocate
@@ -355,9 +344,9 @@ class vector {
 
     /****** Modifiers *********************************************************/
 
+    /// @note x2000 ratio against stl...
     void clear ()
-    { erase(begin(), end()); } // x2000
-    //{ for (size_type i = 0; i < _size; i++) { _alloc.destroy(_data + i); } _size = 0; } // x2000
+    { erase(begin(), end()); }
 
     /// @brief Insert by single element (1)
     iterator insert (iterator position, value_type const & val)
@@ -389,29 +378,6 @@ class vector {
     }
 
     /// @brief Insert by range (3)
-   // void insert (iterator position, iterator first, iterator last)
-   // {
-   //     // reallocate
-   //     if (_capacity - _size < static_cast<size_type>(last - first))
-   //     {
-   //         // because of reallocation, position need to be reset
-   //         size_type pos = position - begin();
-   //         reserve(_size + (last - first));
-   //         position = begin() + pos;
-   //     }
-   //     // insert
-   //     while (first != last)
-   //     {
-   //         _data[_size] = *position;
-   //         _data[position - begin()] = *first;
-   //         first++;
-   //         position++;
-   //         _size++;
-   //     }
-   // }
-
-    /// @todo why `type*` instead of `type` for enable_if unless constructor (3)
-    /// @brief Insert by range (3)
     template <class InputIterator>
     void insert (iterator position, InputIterator first, InputIterator last,
     typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
@@ -429,6 +395,7 @@ class vector {
             reserve(_size + n);
             position = begin() + pos;
         }
+
         // insert
         while (first != last)
         {
@@ -541,7 +508,6 @@ class vector {
         v._capacity = capacity;
     }
 
-    /// @todo why `type*` instead of `type`
     /// @brief Assign by range (1)
     template <typename InputIterator>
     void assign(InputIterator first, InputIterator last,
@@ -626,19 +592,11 @@ class vector {
 /*                                                                            */
 /******************************************************************************/
 
-/// @todo
 template <class T, class Alloc>
 bool operator== (vector<T, Alloc> const & lhs, vector<T, Alloc> const & rhs)
 {
-    if (lhs.size() != rhs.size())
-        return false;
-    for (typename vector<T, Alloc>::size_type i = 0; i < lhs.size(); i++) {
-        if (lhs.at(i) != rhs.at(i))
-            return false;
-    }
-    return true;
-//    return
-//    lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+    return
+    lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 template <class T, class Alloc>
