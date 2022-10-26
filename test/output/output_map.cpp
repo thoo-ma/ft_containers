@@ -1,46 +1,15 @@
 #include <map>
-#include <memory> // std::allocator
-#include <cassert>
-#include <utility> // std::pair
-#include <type_traits> // std::is_same std::is_const (c++11)
-#include <limits> // delete ?
 #include <list>
 #include <deque>
+#include <cassert>
+#include <memory> // std::allocator
+#include <type_traits> // std::is_same (c++11)
 
+#include <limits>
+
+#include "utils.hpp"
 #include "ft_map.hpp"
 #include "output_iterator.hpp"
-#include "utils.hpp"
-
-/// @todo delete
-template <typename T1, typename T2>
-void compare_maps(const ft::map<T1,T2> & a, const std::map<T1,T2> & b)
-{
-    assert(a.empty() == b.empty());
-    assert(a.size() == b.size());
-    //assert(a.max_size() == b.max_size());
-   // assert(typeid(a.key_comp()).name() == typeid(b.key_comp()).name());
-   // assert(typeid(a.value_comp()).name() == typeid(b.value_comp()).name());
-
-
-    /****** Compare ***********************************************************/
-
-    // verify default type of key_compare with std::map
-    assert((std::is_same<std::less<int>, std::map<int,char>::key_compare>::value));
-    assert((std::is_same<std::less<char>,std::map<char,int>::key_compare>::value));
-
-    // compare default type of key_compare
-    assert((std::is_same<std::less<int>, ft::map<int,char>::key_compare>::value));
-    assert((std::is_same<std::less<char>,ft::map<char,int>::key_compare>::value));
-
-    // default Compare type
-    assert((typeid(std::map<int,int>().key_comp()).name() == typeid(ft::map<int,int>().key_comp()).name()));
-    assert((typeid(std::map<char,int>().key_comp()).name() == typeid(ft::map<char,int>().key_comp()).name()));
-    assert((typeid(std::map<const char,int>().key_comp()).name() == typeid(ft::map<const char,int>().key_comp()).name()));
-
-    // custom Compare type
-    assert((typeid(ft::map<int,int,std::less<char>>().key_comp()).name() == typeid(std::less<char>).name()));
-    assert((typeid(ft::map<int,int,std::less<char>>().key_comp()).name() == typeid(std::map<char,int>().key_comp()).name()));
-}
 
 /****** Constructors test *****************************************************/
 
@@ -340,7 +309,7 @@ void size_test()
     log("size()");
 }
 
-/// @note this test kinda broken
+/// @todo this test kinda broken
 template <typename Map>
 void max_size_test()
 {
@@ -1559,42 +1528,6 @@ int main()
     map_test<int, char>();
 //  map_test<double, char>();
 //  map_test<A, B>();
-
-/*
-    {
-        std::cout << typeid(ft::map<int,int>::pointer).name() << std::endl;
-        std::cout << typeid(ft::map<int,int>::iterator::pointer).name() << std::endl;
-        std::cout << typeid(ft::map<int,int>::const_iterator::pointer).name() << std::endl;
-    }
-    {
-        ft::map<int,int> m;
-        ft::map<int,int>::const_iterator it1 = m.begin();
-        ft::map<int,int>::const_iterator it2(m.begin());
-    }
-    {
-        ft::map<int,int>::iterator a;
-        ft::map<int,int>::const_iterator b;
-        ft::map<int,int>::iterator c;
-        ft::map<int,int>::const_iterator d;
-
-        c = a;
-        b = d;
-        //a = b; // should not compile
-        b = a;
-    }
-    {
-        ft::pair<int,int> a;
-        ft::pair<int,int> * p = &a;
-        const ft::pair<int,int> b;
-    //    p = &b;
-    }
-    {
-        std::pair<int,int> a;
-        std::pair<int,int> * p = &a;
-        const std::pair<int,int> b;
-    //    p = &b;
-    }
-*/
 
     return 0;
 }
