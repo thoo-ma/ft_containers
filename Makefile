@@ -46,7 +46,10 @@ HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS) $(UTILITY)
 
 RM				=	rm -rf
 
-NAME			=   a.out
+NAME			=   c++98
+
+$(NAME):			scripts/iso_standard.sh
+					bash scripts/iso_standard.sh
 
 ################### TRAITS TARGETS  ############################################
 
@@ -110,7 +113,7 @@ timing:				timing_stack timing_vector timing_map
 
 traits:				bin/traits/is_integral.out
 
-all: 				timing output traits# $(NAME)
+all: 				timing output traits
 
 ################### UTILS TARGETS ##############################################
 
