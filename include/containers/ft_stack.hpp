@@ -26,9 +26,9 @@ class stack {
     /*                                                                        */
     /**************************************************************************/
 
-    private:
+    protected:
 
-    container_type _c;
+    container_type c;
 
     /**************************************************************************/
     /*                                                                        */
@@ -39,25 +39,25 @@ class stack {
     public:
 
     explicit stack(container_type const & container = container_type())
-    : _c(container) { }
+    : c(container) { }
 
     bool empty() const
-    { return _c.empty(); }
+    { return c.empty(); }
 
     size_type size() const
-    { return _c.size(); }
+    { return c.size(); }
 
     value_type & top()
-    { return _c.back(); }
+    { return c.back(); }
 
     const value_type & top() const
-    { return _c.back(); } ;
+    { return c.back(); } ;
 
     void push(value_type const & val)
-    { return _c.push_back(val); }
+    { return c.push_back(val); }
 
     void pop()
-    { return _c.pop_back(); }
+    { return c.pop_back(); }
 
     /// @note since the following operator is defined outside of `map` but still
     /// want to acces its private members, we declare it here as a `friend`.
@@ -83,7 +83,7 @@ class stack {
 template <class T, class Container>
 bool
 operator==(stack<T, Container> const & lhs, stack<T, Container> const & rhs)
-{ return lhs._c == rhs._c; }
+{ return lhs.c == rhs.c; }
 
 template <class T, class Container>
 bool
@@ -93,7 +93,7 @@ operator!=(stack<T, Container> const & lhs, stack<T, Container> const & rhs)
 template <class T, class Container>
 bool
 operator<(stack<T, Container> const & lhs, stack<T, Container> const & rhs)
-{ return lhs._c < rhs._c; }
+{ return lhs.c < rhs.c; }
 
 template <class T, class Container>
 bool
