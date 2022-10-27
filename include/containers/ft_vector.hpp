@@ -12,7 +12,6 @@
 #include "ft_equal.hpp"
 
 /// @todo (?) add some private functions like stl: _(re)allocate_and_copy, etc.
-/// @todo (?) do not set _capacity nor _size before calling allocate()
 
 namespace ft {
 
@@ -216,15 +215,12 @@ class vector {
     /// @brief Constructor by fill (2)
     explicit vector (size_type n, value_type const & val = value_type(),
         allocator_type const & alloc = allocator_type())
-    : _data(NULL), _size(n), _capacity(n), _alloc(alloc)
+    : _data(NULL), _size(0), _capacity(0), _alloc(alloc)
     {
-        if (n)
-        {
-            _data = _alloc.allocate(_size);
-            for (size_type i = 0; i < _size; i++)
-                _alloc.construct(&_data[i], val);
-        }
-        else { _data = NULL; }
+        _data = _alloc.allocate(n);
+        _capacity = n;
+        for (; _size < n; _size++)
+            _alloc.construct(&_data[_size], val);
     }
 
     /// @brief Constructor by iterator range (3)
@@ -235,13 +231,12 @@ class vector {
     typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
     : _data(NULL), _size(0), _capacity(0), _alloc(alloc)
     {
-        _size = 0;
-        for (InputIterator it = first; it != last; it++)
-            _size++;
-        _size ? _data = _alloc.allocate(_size) : _data = NULL;
-        for (size_type i = 0; i < _size; i++)
-            _alloc.construct(&_data[i], *(first++));
-        _capacity = _size;
+        size_type n = 0;
+        for (InputIterator it = first; it != last; it++) n++;
+        _data = _alloc.allocate(n);
+        _capacity = n;
+        for (; _size < n; _size++)
+            _alloc.construct(&_data[_size], *(first++));
     }
 
     /// @brief Constructor by copy (4)

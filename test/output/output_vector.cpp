@@ -1591,7 +1591,7 @@ void vector_test()
     modifiers_tests<T>();
     operators_tests<T>();
     iterators_tests<T>();
-//    exceptions_tests<T>();
+    exceptions_tests<T>();
 }
 
 /****** All tests *************************************************************/
