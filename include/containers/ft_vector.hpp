@@ -11,7 +11,6 @@
 #include "ft_lexicographical_compare.hpp"
 #include "ft_equal.hpp"
 
-/// @todo template iterator arguments (assert, assign, etc.)
 /// @todo (?) add some private functions like stl: _(re)allocate_and_copy, etc.
 /// @todo (?) do not set _capacity nor _size before calling allocate()
 
@@ -229,7 +228,7 @@ class vector {
     }
 
     /// @brief Constructor by iterator range (3)
-    /// @todo bad_alloc not well thrown and catched (same for std)
+    /// @note bad_alloc not well thrown and catched (same for std)
     template <class InputIterator>
     vector (InputIterator first, InputIterator last,
     allocator_type const & alloc = allocator_type(),
