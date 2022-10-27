@@ -46,7 +46,7 @@ HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS) $(UTILITY)
 
 RM				=	rm -rf
 
-NAME			=   c++98
+NAME			=   log_iso_standard.txt
 
 $(NAME):			scripts/iso_standard.sh
 					bash scripts/iso_standard.sh
@@ -119,7 +119,7 @@ all: 				timing output traits
 
 clean:			;	$(RM) $(OBJ_DIR)
 
-fclean:	clean	;	$(RM) $(BIN_DIR) *.csv
+fclean:	clean	;	$(RM) $(BIN_DIR) $(NAME) *.csv
 
 re:		fclean all
 
