@@ -1,6 +1,5 @@
 compile_flags.txt
 **/*.swp
-en.subject.pdf
 .vscode/
 html/
 latex/
