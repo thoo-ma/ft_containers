@@ -29,7 +29,6 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
     typedef T	                mapped_type;
     typedef pair<Key const, T>	value_type;
     typedef Compare	            key_compare;
-    typedef value_compare       value_compare;
     typedef Allocator           allocator_type; // not used (but still present!)
     typedef size_t              size_type;
     typedef ptrdiff_t           difference_type;
@@ -210,7 +209,9 @@ template <typename Key, typename T, typename Compare = std::less<Key>,
 
         public:
 
-        /// @note we shoudn't have this
+        /// @note We shoudn't have this. But we use it since this class need to
+        ///       be construted inside rbtree. We could also template it over
+        ///       `Compare` to give rbtree second type argument the right type.
         value_compare () { }
 
         typedef bool        result_type;

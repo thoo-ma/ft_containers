@@ -85,7 +85,6 @@ bool operator>=(pair<T1,T2> const & lhs, pair<T1,T2> const & rhs)
 
 /****** make_pair() ***********************************************************/
 
-/// @todo (?) add constness to `a` and `b`
 template <typename T1, typename T2>
 pair<T1,T2> make_pair(T1 a, T2 b)
 { return pair<T1,T2>(a, b); }

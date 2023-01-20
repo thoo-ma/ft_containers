@@ -332,7 +332,6 @@ void capacity_tests()
 
 /****** Accessors test ********************************************************/
 
-/// @todo bug
 template <typename Map>
 void operator_bracket_test()
 {
@@ -357,11 +356,13 @@ void operator_bracket_test()
         expect(m[21] == 21);
         expect(m[88] == 88);
 
-        /// @note each of those 3 insert causes infinite loop
-//        m.insert(value(key(33), mapped(33)));
-//        m.insert(value(key(99), mapped(99)));
-//        m.insert(value(key(16), mapped(16)));
+        m.insert(value(key(33), mapped(33)));
+        m.insert(value(key(99), mapped(99)));
+        m.insert(value(key(16), mapped(16)));
 
+        assert(m[33] == 33);
+        assert(m[99] == 99);
+        assert(m[16] == 16);
     }
     log("operator[]");
 }

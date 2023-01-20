@@ -22,7 +22,7 @@ void is_integral_test()
     // const float
     assert(std::is_integral<const float>::value == ft::is_integral<const float>::value);
 
-    // typeid -- // TODO
+    // typeid
     //assert(typeid(std::is_integral<int>::type).name() == typeid(ft::is_integral<int>::type).name());
 }
 

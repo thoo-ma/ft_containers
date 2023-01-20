@@ -46,7 +46,10 @@ HEADERS			=	$(CONTAINERS) $(ALGORITHMS) $(ITERATORS) $(UTILITY)
 
 RM				=	rm -rf
 
-NAME			=   a.out
+NAME			=   log_iso_standard.txt
+
+$(NAME):			scripts/iso_standard.sh
+					bash scripts/iso_standard.sh
 
 ################### TRAITS TARGETS  ############################################
 
@@ -110,13 +113,13 @@ timing:				timing_stack timing_vector timing_map
 
 traits:				bin/traits/is_integral.out
 
-all: 				timing output traits# $(NAME)
+all: 				timing output traits
 
 ################### UTILS TARGETS ##############################################
 
 clean:			;	$(RM) $(OBJ_DIR)
 
-fclean:	clean	;	$(RM) $(BIN_DIR) *.csv
+fclean:	clean	;	$(RM) $(BIN_DIR) $(NAME) *.csv
 
 re:		fclean all
 

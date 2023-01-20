@@ -11,22 +11,28 @@ iso_standard()
 {
     # creating main
     echo '
-    #include "ft_map.hpp"
+
+    // utility
+    #include "ft_pair.hpp"
     #include "rb_tree.hpp"
+
+    // containers
+    #include "ft_map.hpp"
     #include "ft_vector.hpp"
     #include "ft_stack.hpp"
-    #include "ft_type_traits.hpp"
-    #include "ft_iterator_base_types.hpp"
+
+    // algorithms
+    #include "ft_equal.hpp"
     #include "ft_lexicographical_compare.hpp"
 
-    int main()
-    {
-        ft::vector<int> v;
-        ft::rb_tree<int> t;
-        ft::map<int,int> m;
-        ft::stack<int> s;
-        return 0;
-    }
+    // iterators
+    #include "ft_type_traits.hpp"
+    #include "ft_iterator_base_types.hpp"
+
+    // traits
+    #include "ft_type_traits.hpp"
+
+    int main() { return 0; }
     ' > main.cpp
 
     # compiling + eventually create logfile
