@@ -36,10 +36,24 @@
 
 /****** Log *******************************************************************/
 
-inline void log(std::string const s)
-{
-    std::cout << s << GREEN << " OK" << RESET << std::endl;
+int test_status = 0;
+
+#define expect(expr)                                                           \
+if (!(expr)) {                                                                 \
+    std::cout <<                                                               \
+    static_cast<std::string>(__FILE__) + ":" + std::to_string(__LINE__) + ":" +\
+    static_cast<std::string>(__PRETTY_FUNCTION__) + " Assertion `" + #expr +   \
+    "` failed." << std::endl; test_status = 1;                                 \
 }
+
+inline void success(std::string const s)
+{ std::cout << s << GREEN << " OK" << RESET << std::endl; }
+
+inline void failure(std::string const s)
+{ std::cout << s << RED << " KO" << RESET << std::endl; test_status = 0; }
+
+inline void log(std::string const s)
+{ test_status ? failure(s) : success(s); }
 
 /****** Timing log ************************************************************/
 

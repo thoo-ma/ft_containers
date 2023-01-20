@@ -1,4 +1,3 @@
-#include <cassert>
 #include <utility>
 #include <iostream>
 
@@ -12,8 +11,8 @@
 template <typename T1, typename T2>
 void compare_pairs(const std::pair<T1,T2> & pr_1, const ft::pair<T1,T2> & pr_2)
 {
-    assert(pr_1.first == pr_2.first);
-    assert(pr_1.second == pr_2.second);
+    expect(pr_1.first == pr_2.first);
+    expect(pr_1.second == pr_2.second);
 }
 
 /****** Custom datatype *******************************************************/
@@ -133,18 +132,18 @@ void test_pair_assignation()
         ft::pair<int,int> a(42,42);
         ft::pair<int,int> b;
 
-        assert(a != b);
+        expect(a != b);
         b = a;
-        assert(a == b);
+        expect(a == b);
     }
     {
         // std
         std::pair<int,int> a(42,42);
         std::pair<int,int> b;
 
-        assert(a != b);
+        expect(a != b);
         b = a;
-        assert(a == b);
+        expect(a == b);
     }
     log("operator=");
 }

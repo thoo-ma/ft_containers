@@ -1,4 +1,3 @@
-#include <cassert>
 #include <iostream>
 
 #include "output_iterator.hpp"
@@ -21,18 +20,18 @@ void node_test()
         ft::rb_tree<int>::value_type a;
         ft::rb_tree<int>::value_type b;
 
-        assert(a.key == 0);
-        assert(b.key == 0);
+        expect(a.key == 0);
+        expect(b.key == 0);
 
         a.key = 42;
         b = a;
 
-        assert(a.key == 42);
-        assert(b.key == 42);
+        expect(a.key == 42);
+        expect(b.key == 42);
 
         ft::rb_tree<int>::value_type c(42);
 
-        assert(c.key == a.key);
+        expect(c.key == a.key);
     }
 }
 
@@ -94,14 +93,14 @@ void min_test()
 {
     Tree tree;
 
-    //assert(tree.min(tree.root()) == NULL);
-    //assert(tree.min(tree.root()) == tree.sentinel());
+    //expect(tree.min(tree.root()) == NULL);
+    //expect(tree.min(tree.root()) == tree.sentinel());
 
     for (int i = 10; i > 0; i--)
     {
         typename Tree::key_type key = key_type<Tree>(i);
         tree.insert(key);
-        assert(tree.min(tree.root()) && tree.min(tree.root())->key == key);
+        expect(tree.min(tree.root()) && tree.min(tree.root())->key == key);
     }
     log("min");
 }
@@ -111,14 +110,14 @@ void max_test()
 {
     Tree tree;
 
-   // assert(tree.min(tree.root()) == NULL);
-    //assert(tree.min(tree.root()) == tree.sentinel());
+   // expect(tree.min(tree.root()) == NULL);
+    //expect(tree.min(tree.root()) == tree.sentinel());
 
     for (int i = 0; i < 10; i++)
     {
         typename Tree::key_type key = key_type<Tree>(i);
         tree.insert(key);
-        assert(tree.min(tree.root()) && tree.max(tree.root())->key == key);
+        expect(tree.min(tree.root()) && tree.max(tree.root())->key == key);
     }
     log("max");
 }
@@ -138,8 +137,8 @@ void constructor_by_default_test()
 {
     Tree a;
 
-    assert(a.empty());
-    assert(a.size() == 0);
+    expect(a.empty());
+    expect(a.size() == 0);
 
     log("constructor by default");
 }
@@ -153,7 +152,7 @@ void constructor_by_copy_test()
         // from empty
         Tree a;
         Tree b(a);
-        assert(a == b);
+        expect(a == b);
     }
     {
         // from non-empty
@@ -161,7 +160,7 @@ void constructor_by_copy_test()
         a.insert(i);
         a.insert(j);
         Tree b(a);
-        assert(a == b);
+        expect(a == b);
     }
     log("constructor by copy");
 }
@@ -183,11 +182,11 @@ void empty_test()
     Tree t;
     {
         // by default
-        assert(t.empty());
+        expect(t.empty());
     }
     {
         // by copy
-        assert(Tree(t).empty());
+        expect(Tree(t).empty());
     }
     log("empty");
 }
@@ -198,15 +197,15 @@ void size_test()
 {
     {
         // constructed by default
-        assert(Tree().size() == 0);
+        expect(Tree().size() == 0);
     }
     {
         // constructed by copy
         Tree a, b;
         b.insert(typename Tree::value_type());
-        assert(a.size() != b.size());
-        assert(Tree(a).size() == a.size());
-        assert(Tree(b).size() == b.size());
+        expect(a.size() != b.size());
+        expect(Tree(a).size() == a.size());
+        expect(Tree(b).size() == b.size());
     }
     log("size");
 }
@@ -230,13 +229,13 @@ void find_test()
     typename Tree::key_type k = key_type<Tree>(42);
     typename Tree::key_type l = key_type<Tree>(21);
 
-    assert(t.find(k) == NULL);
+    expect(t.find(k) == NULL);
     t.insert(k);
-    assert(t.find(k) != NULL);
+    expect(t.find(k) != NULL);
 
-    assert(t.find(l) == NULL);
+    expect(t.find(l) == NULL);
     t.insert(l);
-    assert(t.find(l) != NULL);
+    expect(t.find(l) != NULL);
 
     log("find");
 }
@@ -300,11 +299,11 @@ void erase_test()
     {
         // by key
         Tree a, b;
-        assert(a == b);
+        expect(a == b);
         a.insert(typename Tree::value_type());
-        assert(a != b);
+        expect(a != b);
         a.erase(typename Tree::value_type().key);
-        assert(a == b);
+        expect(a == b);
     }
     log("erase");
 }
@@ -323,22 +322,22 @@ template <typename Tree>
 void equal_test()
 {
     /// @note This is important because right hand side Tree has to be const
-    { assert(Tree() == Tree()); }
+    { expect(Tree() == Tree()); }
 
     {
         Tree a, b;
         typename Tree::key_type k = key_type<Tree>(42);
         typename Tree::key_type l = key_type<Tree>(21);
 
-        assert(a == b);
+        expect(a == b);
 
         a.insert(k);
         b.insert(k);
-        assert(a == b);
+        expect(a == b);
 
         a.insert(l);
         b.insert(l);
-        assert(a == b);
+        expect(a == b);
     }
 
     log("operator==");
@@ -353,11 +352,11 @@ void not_equal_test()
         typename Tree::key_type l = key_type<Tree>(21);
 
         a.insert(k);
-        assert(a != b);
+        expect(a != b);
         b.insert(k);
 
         a.insert(l);
-        assert(a != b);
+        expect(a != b);
         b.insert(l);
     }
 

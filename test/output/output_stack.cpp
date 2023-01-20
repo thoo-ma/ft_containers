@@ -1,6 +1,5 @@
 #include <stack>
 #include <vector>
-#include <cassert>
 
 #include "ft_stack.hpp"
 #include "utils.hpp"
@@ -14,12 +13,12 @@ void stack_constructor_test()
     typedef typename Stack::container_type  Container;
 
     // Constructed by default
-    assert(Stack().size() == 0);
-    assert(Stack().empty() == true);
+    expect(Stack().size() == 0);
+    expect(Stack().empty() == true);
 
     // Constructed by fill
-    assert(Stack(Container(10, Value())).size() == 10);
-    assert(Stack(Container(10, Value())).empty() == false);
+    expect(Stack(Container(10, Value())).size() == 10);
+    expect(Stack(Container(10, Value())).empty() == false);
 
     log("constructor");
 }
@@ -30,13 +29,13 @@ template <typename Stack, typename Container, typename Value, typename Size>
 void stack_empty_test()
 {
     // underlying container constructed by default
-    assert(Stack().empty() == true);
+    expect(Stack().empty() == true);
 
     // underlying container constructed with size 0
-    assert(Stack(Container(0)).empty() == true);
+    expect(Stack(Container(0)).empty() == true);
 
     // underlying container constructed with size > 0
-    assert(Stack(Container(10)).empty() == false);
+    expect(Stack(Container(10)).empty() == false);
 
     log("empty()");
 }
@@ -44,20 +43,20 @@ void stack_empty_test()
 template <typename Stack, typename Container, typename Value, typename Size>
 void stack_size_test()
 {
-    assert(Stack().size() == 0);
-    assert(Stack(Container(10)).size() == 10);
+    expect(Stack().size() == 0);
+    expect(Stack(Container(10)).size() == 10);
 
     Stack stack;
 
     for (int i = 0; i < 10; i++)
     {
-        assert(stack.size() == static_cast<Size>(i));
+        expect(stack.size() == static_cast<Size>(i));
         stack.push(Value(i));
     }
 
     for (Size i = 0; i < 10; i++)
     {
-        assert(stack.size() == 10 - i);
+        expect(stack.size() == 10 - i);
         stack.pop();
     }
 
@@ -73,12 +72,12 @@ void stack_top_test()
     {
         Value val = Value(i);
         stack.push(val);
-        assert(stack.top() == val);
+        expect(stack.top() == val);
     }
 
     for (int i = 0; i < 10; i++)
     {
-        assert(stack.top() == Value(10 - i- 1));
+        expect(stack.top() == Value(10 - i- 1));
         stack.pop();
     }
 
@@ -92,15 +91,15 @@ void stack_pop_test()
 
     for (Size i = 0; i < 10; i++)
     {
-        assert(stack.size() == 10 - i);
+        expect(stack.size() == 10 - i);
         stack.pop();
     }
 
-    assert(stack.empty() == true);
+    expect(stack.empty() == true);
 
     /// @note If we pop again, std::stack won't remain empty whereas ft::stack will
     // stack.pop();
-    // assert(stack.empty() == true);
+    // expect(stack.empty() == true);
 
     log("pop()");
 }
@@ -113,9 +112,9 @@ void stack_push_test()
     for (int i = 0; i < 21; i++)
     {
         Value val(i);
-        assert(stack.size() == static_cast<Size>(i));
+        expect(stack.size() == static_cast<Size>(i));
         stack.push(val);
-        assert(stack.top() == val);
+        expect(stack.top() == val);
     }
 
     log("push()");
@@ -140,10 +139,10 @@ void stack_functions_test()
 template <typename Stack, typename Container>
 void stack_equal_test()
 {
-    assert(Stack() == Stack());
-    assert(Stack() == Stack(Container()));
-    assert(Stack(Container(10)) == Stack(Container(10)));
-    assert(Stack(Container(10,21)) == Stack(Container(10,21)));
+    expect(Stack() == Stack());
+    expect(Stack() == Stack(Container()));
+    expect(Stack(Container(10)) == Stack(Container(10)));
+    expect(Stack(Container(10,21)) == Stack(Container(10,21)));
 
     log("operator==");
 }
@@ -152,12 +151,12 @@ template <typename Stack, typename Container>
 void stack_not_equal_test()
 {
     // with different sizes
-    assert(Stack(Container()) != Stack(Container(1)));
-    assert(Stack(Container(0)) != Stack(Container(1)));
-    assert(Stack(Container(1)) != Stack(Container(10)));
+    expect(Stack(Container()) != Stack(Container(1)));
+    expect(Stack(Container(0)) != Stack(Container(1)));
+    expect(Stack(Container(1)) != Stack(Container(10)));
 
     // with different values
-    assert(Stack(Container(4,21)) != Stack(Container(4,42)));
+    expect(Stack(Container(4,21)) != Stack(Container(4,42)));
 
     log("operator!=");
 }
@@ -166,12 +165,12 @@ template <typename Stack, typename Container>
 void stack_less_than_test()
 {
     // with different sizes
-    assert(Stack(Container()) < Stack(Container(1)));
-    assert(Stack(Container(0)) < Stack(Container(1)));
-    assert(Stack(Container(1)) < Stack(Container(2)));
+    expect(Stack(Container()) < Stack(Container(1)));
+    expect(Stack(Container(0)) < Stack(Container(1)));
+    expect(Stack(Container(1)) < Stack(Container(2)));
 
     // with different values
-    assert(Stack(Container(1, 21)) < Stack(Container(1, 42)));
+    expect(Stack(Container(1, 21)) < Stack(Container(1, 42)));
 
     log("operator<");
 }
@@ -180,12 +179,12 @@ template <typename Stack, typename Container>
 void stack_greater_than_test()
 {
     // with different sizes
-    assert(Stack(Container(1)) > Stack(Container()));
-    assert(Stack(Container(1)) > Stack(Container(0)));
-    assert(Stack(Container(2)) > Stack(Container(1)));
+    expect(Stack(Container(1)) > Stack(Container()));
+    expect(Stack(Container(1)) > Stack(Container(0)));
+    expect(Stack(Container(2)) > Stack(Container(1)));
 
     // with different values
-    assert(Stack(Container(1, 42)) > Stack(Container(1, 21)));
+    expect(Stack(Container(1, 42)) > Stack(Container(1, 21)));
 
     log("operator>");
 }
@@ -194,17 +193,17 @@ template <typename Stack, typename Container>
 void stack_less_than_equal_test()
 {
     // with different sizes
-    assert(Stack(Container()) <= Stack(Container()));
-    assert(Stack(Container()) <= Stack(Container(1)));
-    assert(Stack(Container(0)) <= Stack(Container(0)));
-    assert(Stack(Container(0)) <= Stack(Container(1)));
-    assert(Stack(Container(1)) <= Stack(Container(1)));
-    assert(Stack(Container(1)) <= Stack(Container(2)));
+    expect(Stack(Container()) <= Stack(Container()));
+    expect(Stack(Container()) <= Stack(Container(1)));
+    expect(Stack(Container(0)) <= Stack(Container(0)));
+    expect(Stack(Container(0)) <= Stack(Container(1)));
+    expect(Stack(Container(1)) <= Stack(Container(1)));
+    expect(Stack(Container(1)) <= Stack(Container(2)));
 
     // with different values
-    assert(Stack(Container(1, 21)) <= Stack(Container(1, 21)));
-    assert(Stack(Container(1, 21)) <= Stack(Container(1, 42)));
-    assert(Stack(Container(1, 21)) <= Stack(Container(2, 21)));
+    expect(Stack(Container(1, 21)) <= Stack(Container(1, 21)));
+    expect(Stack(Container(1, 21)) <= Stack(Container(1, 42)));
+    expect(Stack(Container(1, 21)) <= Stack(Container(2, 21)));
 
     log("operator<=");
 }
@@ -213,17 +212,17 @@ template <typename Stack, typename Container>
 void stack_greater_than_equal_test()
 {
     // with different sizes
-    assert(Stack(Container()) >= Stack(Container()));
-    assert(Stack(Container(1)) >= Stack(Container()));
-    assert(Stack(Container(0)) >= Stack(Container(0)));
-    assert(Stack(Container(1)) >= Stack(Container(0)));
-    assert(Stack(Container(1)) >= Stack(Container(1)));
-    assert(Stack(Container(2)) >= Stack(Container(1)));
+    expect(Stack(Container()) >= Stack(Container()));
+    expect(Stack(Container(1)) >= Stack(Container()));
+    expect(Stack(Container(0)) >= Stack(Container(0)));
+    expect(Stack(Container(1)) >= Stack(Container(0)));
+    expect(Stack(Container(1)) >= Stack(Container(1)));
+    expect(Stack(Container(2)) >= Stack(Container(1)));
 
     // with different values
-    assert(Stack(Container(1, 21)) >= Stack(Container(1, 21)));
-    assert(Stack(Container(1, 42)) >= Stack(Container(1, 21)));
-    assert(Stack(Container(2, 21)) >= Stack(Container(1, 21)));
+    expect(Stack(Container(1, 21)) >= Stack(Container(1, 21)));
+    expect(Stack(Container(1, 42)) >= Stack(Container(1, 21)));
+    expect(Stack(Container(2, 21)) >= Stack(Container(1, 21)));
 
     log("operator>=");
 }

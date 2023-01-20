@@ -3,7 +3,6 @@
 
 #include <map>
 #include <vector>
-#include <cassert>
 #include <type_traits> // std::is_base_of
 
 #include "ft_type_traits.hpp"
@@ -134,9 +133,9 @@ void iterator_assignation_test()
         typename Container::iterator    a;
         typename Container::iterator    b = c.begin();
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
 
     {
@@ -144,18 +143,18 @@ void iterator_assignation_test()
         typename Container::const_iterator    a;
         typename Container::const_iterator    b = c.begin();
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
     {
         // const_it = it
         typename Container::const_iterator      a;
         typename Container::iterator            b = c.begin();
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
     {
         // it = const_it -- should not compile
@@ -181,9 +180,9 @@ void iterator_assignation_test()
         typename Container::reverse_iterator    b(a);
         typename Container::reverse_iterator    c;
 
-        assert(c != b);
+        expect(c != b);
         c = b;
-        assert(c == b);
+        expect(c == b);
     }
     {
         // rev_it = const_rev_it -- should not compile
@@ -209,9 +208,9 @@ void iterator_assignation_test()
         typename Container::reverse_iterator        b(a);
         typename Container::const_reverse_iterator  c;
 
-        assert(c != b);
+        expect(c != b);
         c = b;
-        assert(c == b);
+        expect(c == b);
     }
     {
         // const_rev_it = const_rev_it
@@ -219,9 +218,9 @@ void iterator_assignation_test()
         typename Container::const_reverse_iterator  b(a);
         typename Container::const_reverse_iterator  c;
 
-        assert(c != b);
+        expect(c != b);
         c = b;
-        assert(c == b);
+        expect(c == b);
     }
 
     log("assignation");
@@ -243,30 +242,30 @@ void iterator_increment_test()
         {
             // it
             typename Container::iterator it = c.begin();
-            assert(*it == a);
-            assert(*(++it) == b);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(++it) == b);
+            expect(*it == b);
         }
         {
             // const_it
             typename Container::const_iterator it = c.begin();
-            assert(*it == a);
-            assert(*(++it) == b);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(++it) == b);
+            expect(*it == b);
         }
         {
             // rev_it
             typename Container::reverse_iterator it = c.rbegin();
-            assert(it.base() == c.end());
+            expect(it.base() == c.end());
             ++it;
-            assert(it.base() == --c.end());
+            expect(it.base() == --c.end());
         }
         {
             // const_rev_it
             typename Container::const_reverse_iterator it = c.rbegin();
-            assert(it.base() == c.end());
+            expect(it.base() == c.end());
             ++it;
-            assert(it.base() == --c.end());
+            expect(it.base() == --c.end());
         }
     }
     {
@@ -274,30 +273,30 @@ void iterator_increment_test()
         {
             // it
             typename Container::iterator it = c.begin();
-            assert(*it == a);
-            assert(*(it++) == a);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(it++) == a);
+            expect(*it == b);
         }
         {
             // const_it
             typename Container::const_iterator it = c.begin();
-            assert(*it == a);
-            assert(*(it++) == a);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(it++) == a);
+            expect(*it == b);
         }
         {
             // rev_it
             typename Container::reverse_iterator it = c.rbegin();
-            assert(it.base() == c.end());
+            expect(it.base() == c.end());
             ++it;
-            assert(it.base() == --c.end());
+            expect(it.base() == --c.end());
         }
         {
             // const_rev_it
             typename Container::const_reverse_iterator it = c.rbegin();
-            assert(it.base() == c.end());
+            expect(it.base() == c.end());
             ++it;
-            assert(it.base() == --c.end());
+            expect(it.base() == --c.end());
         }
     }
     log("increment");
@@ -314,14 +313,14 @@ void reverse_iterator_base_test()
     c.insert(c.begin(), j);
     c.insert(c.begin(), i);
 
-    assert(c.rbegin().base() == c.end());
-    assert(c.rend().base() == c.begin());
+    expect(c.rbegin().base() == c.end());
+    expect(c.rend().base() == c.begin());
 
     typename Container::iterator it(c.begin());
     typename Container::reverse_iterator rit(it);
 
-    assert(rit.base() == it);
-    assert(&*(--(typename Container::iterator(rit.base()))) == &*rit);
+    expect(rit.base() == it);
+    expect(&*(--(typename Container::iterator(rit.base()))) == &*rit);
 
     log("base()");
 }
@@ -335,43 +334,43 @@ void iterator_equal_test_constructed_by_default()
         // it == it
         typename Container::iterator a;
         typename Container::iterator b;
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
     {
         // it == const_it && const_it == it
         typename Container::iterator	     a;
         typename Container::const_iterator   b;
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
     {
         // const_it == const_it
         typename Container::const_iterator   a;
         typename Container::const_iterator   b;
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
     {
         // rev_it = rev_it
         typename Container::reverse_iterator a;
         typename Container::reverse_iterator b;
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
     {
         // rev_it == const_rev_it && const_rev_it == rev_it
         typename Container::reverse_iterator	     a;
         typename Container::const_reverse_iterator   b;
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
     {
         // const_rev_it == const_rev_it
         typename Container::const_reverse_iterator   a;
         typename Container::const_reverse_iterator   b;
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
 }
 
@@ -382,43 +381,43 @@ void iterator_non_equal_test_constructed_by_default()
         // it != it
         typename Container::iterator a;
         typename Container::iterator b;
-        assert(!(a != b));
-        assert(!(b != a));
+        expect(!(a != b));
+        expect(!(b != a));
     }
     {
         // it != const_it && const_it != it
         typename Container::iterator	     a;
         typename Container::const_iterator   b;
-        assert(!(a != b));
-        assert(!(b != a));
+        expect(!(a != b));
+        expect(!(b != a));
     }
     {
         // const_it != const_it
         typename Container::const_iterator   a;
         typename Container::const_iterator   b;
-        assert(!(a != b));
-        assert(!(b != a));
+        expect(!(a != b));
+        expect(!(b != a));
     }
     {
         // rev_it != rev_it
         typename Container::reverse_iterator a;
         typename Container::reverse_iterator b;
-        assert(!(a != b));
-        assert(!(b != a));
+        expect(!(a != b));
+        expect(!(b != a));
     }
     {
         // rev_it != const_rev_it && const_rev_it != rev_it
         typename Container::reverse_iterator	     a;
         typename Container::const_reverse_iterator   b;
-        assert(!(a != b));
-        assert(!(b != a));
+        expect(!(a != b));
+        expect(!(b != a));
     }
     {
         // const_rev_it != const_rev_it
         typename Container::const_reverse_iterator   a;
         typename Container::const_reverse_iterator   b;
-        assert(!(a != b));
-        assert(!(b != a));
+        expect(!(a != b));
+        expect(!(b != a));
     }
 }
 
@@ -433,22 +432,22 @@ iterator_equal_test_constructed_by_pointer()
         // it == it
         typename Container::iterator a(p);
         typename Container::iterator b(p);
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
     {
         // it == const_it && const_it == it
         typename Container::iterator	    a(p);
         typename Container::const_iterator  b(p);
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
     {
         // const_it == const_it
         typename Container::const_iterator  a(p);
         typename Container::const_iterator  b(p);
-        assert(a == b);
-        assert(b == a);
+        expect(a == b);
+        expect(b == a);
     }
 }
 
@@ -478,23 +477,23 @@ iterator_non_equal_test_constructed_by_pointer()
         // it != it
         typename Container::iterator a(p);
         typename Container::iterator b(q);
-        assert(a != b);
-        assert(b != a);
+        expect(a != b);
+        expect(b != a);
     }
     {
         // it != const_it
         // const_it != it
         typename Container::iterator	    a(p);
         typename Container::const_iterator  b(q);
-        assert(a != b);
-        assert(b != a);
+        expect(a != b);
+        expect(b != a);
     }
     {
         // const_it != const_it
         typename Container::const_iterator	a(p);
         typename Container::const_iterator  b(q);
-        assert(a != b);
-        assert(b != a);
+        expect(a != b);
+        expect(b != a);
     }
 }
 
@@ -526,12 +525,12 @@ void iterator_equal_test_constructed_by_copy()
         typename Container::iterator a = c.begin();
         typename Container::iterator b(a);
 
-        assert(a == b);
-        assert(b == a);
-        assert(a == c.begin());
-        assert(b == c.begin());
-        assert(c.begin() == c.begin());
-        assert(c.end() == c.end());
+        expect(a == b);
+        expect(b == a);
+        expect(a == c.begin());
+        expect(b == c.begin());
+        expect(c.begin() == c.begin());
+        expect(c.end() == c.end());
     }
 
     // rev_it
@@ -539,13 +538,13 @@ void iterator_equal_test_constructed_by_copy()
         typename Container::reverse_iterator a = c.rend();
         typename Container::reverse_iterator b(a);
 
-        assert(a == b);
-        assert(b == a);
-        assert(a.base() == c.begin());
-        assert(b.base() == c.begin());
-        assert(a.base() == a.base());
-        assert(b.base() == b.base());
-        assert(c.rbegin().base() == c.end());
+        expect(a == b);
+        expect(b == a);
+        expect(a.base() == c.begin());
+        expect(b.base() == c.begin());
+        expect(a.base() == a.base());
+        expect(b.base() == b.base());
+        expect(c.rbegin().base() == c.end());
     }
 
     (void)i;
@@ -572,11 +571,11 @@ void iterator_non_equal_test_constructed_by_copy()
         typename Container::iterator a = c1.begin();
         typename Container::iterator b = c2.begin();
 
-        assert(a != b);
-        assert(a != c2.begin());
-        assert(b != c1.begin());
-        assert(c1.begin() != c2.begin());
-        assert(c1.end() != c2.end());
+        expect(a != b);
+        expect(a != c2.begin());
+        expect(b != c1.begin());
+        expect(c1.begin() != c2.begin());
+        expect(c1.end() != c2.end());
     }
 
     // rev_it
@@ -584,12 +583,12 @@ void iterator_non_equal_test_constructed_by_copy()
         typename Container::reverse_iterator a = c1.rend();
         typename Container::reverse_iterator b = c2.rend();
 
-        assert(a != b);
-        assert(a != c2.rend());
-        assert(b != c1.rend());
-        assert(c1.rbegin() != c2.rbegin());
-        assert(c1.rend() != c2.rend());
-        assert(a.base() != b.base());
+        expect(a != b);
+        expect(a != c2.rend());
+        expect(b != c1.rend());
+        expect(c1.rbegin() != c2.rbegin());
+        expect(c1.rend() != c2.rend());
+        expect(a.base() != b.base());
     }
 }
 
@@ -632,7 +631,7 @@ void iterator_dereference_test_constructed_by_default()
 {
     // segfault
     // typename Container::iterator a;
-    // assert(*a);
+    // expect(*a);
 }
 
 /// @note vector case
@@ -645,14 +644,14 @@ iterator_dereference_test_constructed_by_pointer()
     {
         // it
         typename Container::iterator a(p);
-        assert(*a == *p);
-        assert(*a ==  i);
+        expect(*a == *p);
+        expect(*a ==  i);
     }
     {
         // const_it
         typename Container::const_iterator a(p);
-        assert(*a == *p);
-        assert(*a ==  i);
+        expect(*a == *p);
+        expect(*a ==  i);
     }
 }
 
@@ -683,36 +682,36 @@ void iterator_dereference_test_constructed_by_container()
         typename Container::iterator a = c.begin();
         typename Container::iterator b(a);
 
-        assert(*a == *b);
-        assert(*a == *(c.begin()));
-        assert(*b == *(c.begin()));
-        assert(*(c.begin()) == *(c.begin()));
+        expect(*a == *b);
+        expect(*a == *(c.begin()));
+        expect(*b == *(c.begin()));
+        expect(*(c.begin()) == *(c.begin()));
     }
     {
         // const_it
         typename Container::const_iterator a = c.begin();
         typename Container::const_iterator b(a);
 
-        assert(*a == *b);
-        assert(*a == *(c.begin()));
-        assert(*b == *(c.begin()));
-        assert(*(c.begin()) == *(c.begin()));
+        expect(*a == *b);
+        expect(*a == *(c.begin()));
+        expect(*b == *(c.begin()));
+        expect(*(c.begin()) == *(c.begin()));
     }
     {
         // rev_it
         typename Container::iterator a = c.begin();
         typename Container::reverse_iterator b(a);
 
-        assert(*a == *(--b));
-        assert(*(++a) == *(--b));
+        expect(*a == *(--b));
+        expect(*(++a) == *(--b));
     }
     {
         // const_rev_it
         typename Container::iterator a = c.begin();
         typename Container::const_reverse_iterator b(a);
 
-        assert(*a == *(--b));
-        assert(*(++a) == *(--b));
+        expect(*a == *(--b));
+        expect(*(++a) == *(--b));
     }
 }
 
@@ -736,12 +735,12 @@ iterator_dereference_pointer_test_constructed_by_pointer()
     {
         // it
         typename Container::iterator a(p);
-        assert(a.operator->() == p);
+        expect(a.operator->() == p);
     }
     {
         // const_it
         typename Container::const_iterator a(p);
-        assert(a.operator->() == p);
+        expect(a.operator->() == p);
     }
 }
 
@@ -772,40 +771,40 @@ void iterator_dereference_pointer_test_constructed_by_container()
         typename Container::iterator a = c.begin();
         typename Container::iterator b(a);
 
-        assert(a.operator->() == &(*b));
-        assert(a.operator->() == &(*(c.begin())));
-        assert(b.operator->() == &(*(c.begin())));
-        assert(c.begin().operator->() == &(*c.begin()));
+        expect(a.operator->() == &(*b));
+        expect(a.operator->() == &(*(c.begin())));
+        expect(b.operator->() == &(*(c.begin())));
+        expect(c.begin().operator->() == &(*c.begin()));
     }
     {
         // const_it
         typename Container::const_iterator a = c.begin();
         typename Container::const_iterator b(a);
 
-        assert(a.operator->() == &(*b));
-        assert(a.operator->() == &(*(c.begin())));
-        assert(b.operator->() == &(*(c.begin())));
-        assert(c.begin().operator->() == &(*c.begin()));
+        expect(a.operator->() == &(*b));
+        expect(a.operator->() == &(*(c.begin())));
+        expect(b.operator->() == &(*(c.begin())));
+        expect(c.begin().operator->() == &(*c.begin()));
     }
     {
         // rev_it
         typename Container::iterator a = c.begin();
         typename Container::reverse_iterator b(a);
 
-        assert(a.operator->() == &(*(--b)));
-        assert(a.operator->() == &(*(c.begin())));
-        assert(b.operator->() == &(*(c.begin())));
-        assert(c.begin().operator->() == &(*c.begin()));
+        expect(a.operator->() == &(*(--b)));
+        expect(a.operator->() == &(*(c.begin())));
+        expect(b.operator->() == &(*(c.begin())));
+        expect(c.begin().operator->() == &(*c.begin()));
     }
     {
         // const_rev_it
         typename Container::iterator a = c.begin();
         typename Container::const_reverse_iterator b(a);
 
-        assert(a.operator->() == &(*(--b)));
-        assert(a.operator->() == &(*(c.begin())));
-        assert(b.operator->() == &(*(c.begin())));
-        assert(c.begin().operator->() == &(*c.begin()));
+        expect(a.operator->() == &(*(--b)));
+        expect(a.operator->() == &(*(c.begin())));
+        expect(b.operator->() == &(*(c.begin())));
+        expect(c.begin().operator->() == &(*c.begin()));
     }
 }
 
@@ -860,33 +859,33 @@ void iterator_decrement_test()
             // it
             typename Container::iterator it = c.end();
             --it;
-            assert(*it == b);
-            assert(*(--it) == a);
-            assert(*it == a);
+            expect(*it == b);
+            expect(*(--it) == a);
+            expect(*it == a);
         }
         {
             // const_it
             typename Container::const_iterator it = c.end();
             --it;
-            assert(*it == b);
-            assert(*(--it) == a);
-            assert(*it == a);
+            expect(*it == b);
+            expect(*(--it) == a);
+            expect(*it == a);
         }
         {
             // rev_it
             typename Container::reverse_iterator it = c.rend();
             --it;
-            assert(*it == a);
-            assert(*(--it) == b);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(--it) == b);
+            expect(*it == b);
         }
         {
             // const_rev_it
             typename Container::const_reverse_iterator it = c.rend();
             --it;
-            assert(*it == a);
-            assert(*(--it) == b);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(--it) == b);
+            expect(*it == b);
         }
     }
     {
@@ -895,33 +894,33 @@ void iterator_decrement_test()
             // it
             typename Container::iterator it = c.end();
             it--;
-            assert(*it == b);
-            assert(*(it--) == b);
-            assert(*it == a);
+            expect(*it == b);
+            expect(*(it--) == b);
+            expect(*it == a);
         }
         {
             // const_it
             typename Container::const_iterator it = c.end();
             it--;
-            assert(*it == b);
-            assert(*(it--) == b);
-            assert(*it == a);
+            expect(*it == b);
+            expect(*(it--) == b);
+            expect(*it == a);
         }
         {
             // rev_it
             typename Container::reverse_iterator it = c.rend();
             it--;
-            assert(*it == a);
-            assert(*(it--) == a);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(it--) == a);
+            expect(*it == b);
         }
         {
             // const_rev_it
             typename Container::const_reverse_iterator it = c.rend();
             it--;
-            assert(*it == a);
-            assert(*(it--) == a);
-            assert(*it == b);
+            expect(*it == a);
+            expect(*(it--) == a);
+            expect(*it == b);
         }
     }
     log("decrement");
@@ -957,53 +956,53 @@ void iterator_addition_test()
         // it
         typename Container::iterator it = ctn.begin();
 
-        assert(it + 0 == it);
-        assert(it + 1 == ++ctn.begin());
-        assert(it + 2 == it + 1 + 1);
-        assert(it + 3 == ctn.end());
+        expect(it + 0 == it);
+        expect(it + 1 == ++ctn.begin());
+        expect(it + 2 == it + 1 + 1);
+        expect(it + 3 == ctn.end());
 
-        assert(*(it + 0) == 21);
-        assert(*(it + 1) == 42);
-        assert(*(it + 2) == 55);
+        expect(*(it + 0) == 21);
+        expect(*(it + 1) == 42);
+        expect(*(it + 2) == 55);
     }
     {
         // const_it
         typename Container::const_iterator it = ctn.begin();
 
-        assert(it + 0 == it);
-        assert(it + 1 == ++ctn.begin());
-        assert(it + 2 == it + 1 + 1);
-        assert(it + 3 == ctn.end());
+        expect(it + 0 == it);
+        expect(it + 1 == ++ctn.begin());
+        expect(it + 2 == it + 1 + 1);
+        expect(it + 3 == ctn.end());
 
-        assert(*(it + 0) == 21);
-        assert(*(it + 1) == 42);
-        assert(*(it + 2) == 55);
+        expect(*(it + 0) == 21);
+        expect(*(it + 1) == 42);
+        expect(*(it + 2) == 55);
     }
     {
         // rev_it
         typename Container::reverse_iterator rit = ctn.rbegin();
 
-        assert(rit + 0 == rit);
-        assert(rit + 1 == ++ctn.rbegin());
-        assert(rit + 2 == rit + 1 + 1);
-        assert(rit + 3 == ctn.rend());
+        expect(rit + 0 == rit);
+        expect(rit + 1 == ++ctn.rbegin());
+        expect(rit + 2 == rit + 1 + 1);
+        expect(rit + 3 == ctn.rend());
 
-        assert(*(rit + 0) == 55);
-        assert(*(rit + 1) == 42);
-        assert(*(rit + 2) == 21);
+        expect(*(rit + 0) == 55);
+        expect(*(rit + 1) == 42);
+        expect(*(rit + 2) == 21);
     }
     {
         // const_rev_rit
         typename Container::const_reverse_iterator rit = ctn.rbegin();
 
-        assert(rit + 0 == rit);
-        assert(rit + 1 == ++ctn.rbegin());
-        assert(rit + 2 == rit + 1 + 1);
-        assert(rit + 3 == ctn.rend());
+        expect(rit + 0 == rit);
+        expect(rit + 1 == ++ctn.rbegin());
+        expect(rit + 2 == rit + 1 + 1);
+        expect(rit + 3 == ctn.rend());
 
-        assert(*(rit + 0) == 55);
-        assert(*(rit + 1) == 42);
-        assert(*(rit + 2) == 21);
+        expect(*(rit + 0) == 55);
+        expect(*(rit + 1) == 42);
+        expect(*(rit + 2) == 21);
     }
     log("operator+");
 }
@@ -1027,53 +1026,53 @@ void iterator_substraction_test()
             // it - n
             typename Container::iterator it = ctn.end();
 
-            assert(it - 0 == it);
-            assert(it - 1 == --ctn.end());
-            assert(it - 2 == it - 1 - 1);
-            assert(it - 3 == ctn.begin());
+            expect(it - 0 == it);
+            expect(it - 1 == --ctn.end());
+            expect(it - 2 == it - 1 - 1);
+            expect(it - 3 == ctn.begin());
 
-            assert(*(it - 1) == 55);
-            assert(*(it - 2) == 42);
-            assert(*(it - 3) == 21);
+            expect(*(it - 1) == 55);
+            expect(*(it - 2) == 42);
+            expect(*(it - 3) == 21);
         }
         {
             // const_it - n
             typename Container::const_iterator it = ctn.end();
 
-            assert(it - 0 == it);
-            assert(it - 1 == --ctn.end());
-            assert(it - 2 == it - 1 - 1);
-            assert(it - 3 == ctn.begin());
+            expect(it - 0 == it);
+            expect(it - 1 == --ctn.end());
+            expect(it - 2 == it - 1 - 1);
+            expect(it - 3 == ctn.begin());
 
-            assert(*(it - 1) == 55);
-            assert(*(it - 2) == 42);
-            assert(*(it - 3) == 21);
+            expect(*(it - 1) == 55);
+            expect(*(it - 2) == 42);
+            expect(*(it - 3) == 21);
         }
         {
             // rev_it - n
             typename Container::reverse_iterator it = ctn.rend();
 
-            assert(it - 0 == it);
-            assert(it - 1 == --ctn.rend());
-            assert(it - 2 == it - 1 - 1);
-            assert(it - 3 == ctn.rbegin());
+            expect(it - 0 == it);
+            expect(it - 1 == --ctn.rend());
+            expect(it - 2 == it - 1 - 1);
+            expect(it - 3 == ctn.rbegin());
 
-            assert(*(it - 1) == 21);
-            assert(*(it - 2) == 42);
-            assert(*(it - 3) == 55);
+            expect(*(it - 1) == 21);
+            expect(*(it - 2) == 42);
+            expect(*(it - 3) == 55);
         }
         {
             // const_rev_it - n
             typename Container::const_reverse_iterator it = ctn.rend();
 
-            assert(it - 0 == it);
-            assert(it - 1 == --ctn.rend());
-            assert(it - 2 == it - 1 - 1);
-            assert(it - 3 == ctn.rbegin());
+            expect(it - 0 == it);
+            expect(it - 1 == --ctn.rend());
+            expect(it - 2 == it - 1 - 1);
+            expect(it - 3 == ctn.rbegin());
 
-            assert(*(it - 1) == 21);
-            assert(*(it - 2) == 42);
-            assert(*(it - 3) == 55);
+            expect(*(it - 1) == 21);
+            expect(*(it - 2) == 42);
+            expect(*(it - 3) == 55);
         }
     }
     {
@@ -1083,10 +1082,10 @@ void iterator_substraction_test()
             typename Container::iterator it = ctn.begin();
             typename Container::iterator ite = ctn.end();
 
-            assert(it - it  == 0);
-            assert(ite - ite == 0);
-            assert(ite - it == 3);
-            assert(ite - it == static_cast<ptrdiff_t>(ctn.size()));
+            expect(it - it  == 0);
+            expect(ite - ite == 0);
+            expect(ite - it == 3);
+            expect(ite - it == static_cast<ptrdiff_t>(ctn.size()));
         }
         {
             // it - const_it
@@ -1094,8 +1093,8 @@ void iterator_substraction_test()
             typename Container::iterator ite = ctn.end();
             typename Container::const_iterator cit = ctn.begin();
 
-            assert(it - cit == 0);
-            assert(ite - cit == 3);
+            expect(it - cit == 0);
+            expect(ite - cit == 3);
         }
         {
             // const_it - it
@@ -1103,26 +1102,26 @@ void iterator_substraction_test()
             typename Container::const_iterator cit = ctn.begin();
             typename Container::const_iterator cite = ctn.end();
 
-            assert(cit - it == 0);
-            assert(cite - it == 3);
+            expect(cit - it == 0);
+            expect(cite - it == 3);
         }
         {
             // const_it - const_it
             typename Container::const_iterator it = ctn.begin();
             typename Container::const_iterator ite = ctn.end();
 
-            assert(it - it  == 0);
-            assert(ite - ite == 0);
-            assert(ite - it == 3);
+            expect(it - it  == 0);
+            expect(ite - ite == 0);
+            expect(ite - it == 3);
         }
         {
             // rev_it - rev_it
             typename Container::reverse_iterator it = ctn.rbegin();
             typename Container::reverse_iterator ite = ctn.rend();
 
-            assert(it - it  == 0);
-            assert(ite - ite == 0);
-            assert(ite - it == 3);
+            expect(it - it  == 0);
+            expect(ite - ite == 0);
+            expect(ite - it == 3);
         }
         {
             // rev_it - const_rev_it
@@ -1130,8 +1129,8 @@ void iterator_substraction_test()
             typename Container::reverse_iterator rite = ctn.rend();
             typename Container::const_reverse_iterator crit = ctn.rbegin();
 
-            assert(rit - crit == 0);
-            assert(rite - crit == 3);
+            expect(rit - crit == 0);
+            expect(rite - crit == 3);
         }
         {
             // const_rev_it - rev_it
@@ -1139,17 +1138,17 @@ void iterator_substraction_test()
             typename Container::const_reverse_iterator crit = ctn.rbegin();
             typename Container::const_reverse_iterator crite = ctn.rend();
 
-            assert(crit - rit == 0);
-            assert(crite - rit == 3);
+            expect(crit - rit == 0);
+            expect(crite - rit == 3);
         }
         {
             // const_rev_it - const_rev_it
             typename Container::const_reverse_iterator it = ctn.rbegin();
             typename Container::const_reverse_iterator ite = ctn.rend();
 
-            assert(it - it  == 0);
-            assert(ite - ite == 0);
-            assert(ite - it == 3);
+            expect(it - it  == 0);
+            expect(ite - ite == 0);
+            expect(ite - it == 3);
         }
         /// @note Operations between (const) iterators and (const) reverse
         ///       iterators are forbidden. It means each expression below should
@@ -1183,45 +1182,45 @@ void iterator_less_than_test()
         typename Container::iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
+        expect(it < ite);
+        expect(it < it + 1);
+        expect(it + 1 < it + 2);
     }
     {
         // it < const_it
         typename Container::iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
+        expect(it < ite);
+        expect(it < it + 1);
+        expect(it + 1 < it + 2);
     }
     {
         // const_it < it
         typename Container::const_iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
+        expect(it < ite);
+        expect(it < it + 1);
+        expect(it + 1 < it + 2);
     }
     {
         // const_it < const_it
         typename Container::const_iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(it < ite);
-        assert(it < it + 1);
-        assert(it + 1 < it + 2);
+        expect(it < ite);
+        expect(it < it + 1);
+        expect(it + 1 < it + 2);
     }
     {
         // rev_it < rev_it
         typename Container::reverse_iterator rit = c.rbegin();
         typename Container::reverse_iterator rite = c.rend();
 
-        assert(rit < rite);
-        assert(rit < rite + 1);
-        assert(rit + 1 < rite + 2);
+        expect(rit < rite);
+        expect(rit < rite + 1);
+        expect(rit + 1 < rite + 2);
     }
     {
         // rev_it < const_rev_it
@@ -1229,9 +1228,9 @@ void iterator_less_than_test()
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(rit < crite);
-        assert(rit < crit + 1);
-        assert(rit + 1 < crit + 2);
+        expect(rit < crite);
+        expect(rit < crit + 1);
+        expect(rit + 1 < crit + 2);
     }
     {
         // const_rev_it < rev_it
@@ -1239,18 +1238,18 @@ void iterator_less_than_test()
         typename Container::reverse_iterator rite = c.rend();
         typename Container::const_reverse_iterator crit = c.rbegin();
 
-        assert(crit < rite);
-        assert(crit < rit + 1);
-        assert(crit + 1 < rit + 2);
+        expect(crit < rite);
+        expect(crit < rit + 1);
+        expect(crit + 1 < rit + 2);
     }
     {
         // const_rev_it < const_rev_it
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(crit < crite);
-        assert(crit < crite + 1);
-        assert(crit + 1 < crite + 2);
+        expect(crit < crite);
+        expect(crit < crite + 1);
+        expect(crit + 1 < crite + 2);
     }
     /// @note Same than operator-. Operations between (const) iterators and
     ///       (const) reverse iterators are forbidden. It means each expression
@@ -1283,45 +1282,45 @@ void iterator_greather_than_test()
         typename Container::iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
+        expect(ite > it);
+        expect(it + 1 > it);
+        expect(it + 2 > it + 1);
     }
     {
         // it > const_it
         typename Container::iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
+        expect(ite > it);
+        expect(it + 1 > it);
+        expect(it + 2 > it + 1);
     }
     {
         // const_it > it
         typename Container::const_iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
+        expect(ite > it);
+        expect(it + 1 > it);
+        expect(it + 2 > it + 1);
     }
     {
         // const_it > const_it
         typename Container::const_iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(ite > it);
-        assert(it + 1 > it);
-        assert(it + 2 > it + 1);
+        expect(ite > it);
+        expect(it + 1 > it);
+        expect(it + 2 > it + 1);
     }
     {
         // rev_it > rev_it
         typename Container::reverse_iterator rit = c.rbegin();
         typename Container::reverse_iterator rite = c.rend();
 
-        assert(rite > rit);
-        assert(rit + 1 > rit);
-        assert(rit + 2 > rit + 1);
+        expect(rite > rit);
+        expect(rit + 1 > rit);
+        expect(rit + 2 > rit + 1);
     }
     {
         // rev_it > const_rev_it
@@ -1329,9 +1328,9 @@ void iterator_greather_than_test()
         typename Container::reverse_iterator rite = c.rend();
         typename Container::const_reverse_iterator crit = c.rbegin();
 
-        assert(rite > crit);
-        assert(rit + 1 > crit);
-        assert(rit + 2 > crit + 1);
+        expect(rite > crit);
+        expect(rit + 1 > crit);
+        expect(rit + 2 > crit + 1);
     }
     {
         // const_rev_it > rev_it
@@ -1339,18 +1338,18 @@ void iterator_greather_than_test()
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(crite > rit);
-        assert(crit + 1 > rit);
-        assert(crit + 2 > rit + 1);
+        expect(crite > rit);
+        expect(crit + 1 > rit);
+        expect(crit + 2 > rit + 1);
     }
     {
         // const_rev_it > const_rev_it
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(crite > crit);
-        assert(crit + 1 > crit);
-        assert(crit + 2 > crit + 1);
+        expect(crite > crit);
+        expect(crit + 1 > crit);
+        expect(crit + 2 > crit + 1);
     }
 
     log("operator>");
@@ -1372,55 +1371,55 @@ void iterator_less_than_or_equal_test()
         typename Container::iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
+        expect(it <= it);
+        expect(ite <= ite);
+        expect(it <= it + 1);
+        expect(it + 1 <= it + 2);
+        expect(it <= ite);
     }
     {
         // it <= const_it
         typename Container::iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
+        expect(it <= it);
+        expect(ite <= ite);
+        expect(it <= it + 1);
+        expect(it + 1 <= it + 2);
+        expect(it <= ite);
     }
     {
         // const_it <= it
         typename Container::const_iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
+        expect(it <= it);
+        expect(ite <= ite);
+        expect(it <= it + 1);
+        expect(it + 1 <= it + 2);
+        expect(it <= ite);
     }
     {
         // const_it <= const_it
         typename Container::const_iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(it <= it);
-        assert(ite <= ite);
-        assert(it <= it + 1);
-        assert(it + 1 <= it + 2);
-        assert(it <= ite);
+        expect(it <= it);
+        expect(ite <= ite);
+        expect(it <= it + 1);
+        expect(it + 1 <= it + 2);
+        expect(it <= ite);
     }
     {
         // rev_it <= rev_it
         typename Container::reverse_iterator rit = c.rbegin();
         typename Container::reverse_iterator rite = c.rend();
 
-        assert(rit <= rit);
-        assert(rite <= rite);
-        assert(rit <= rit + 1);
-        assert(rit + 1 <= rit + 2);
-        assert(rit <= rite);
+        expect(rit <= rit);
+        expect(rite <= rite);
+        expect(rit <= rit + 1);
+        expect(rit + 1 <= rit + 2);
+        expect(rit <= rite);
     }
     {
         // rev_it <= const_rev_it
@@ -1429,11 +1428,11 @@ void iterator_less_than_or_equal_test()
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(rit <= crit);
-        assert(rite <= crite);
-        assert(rit <= crit + 1);
-        assert(rit + 1 <= crit + 2);
-        assert(rit <= crite);
+        expect(rit <= crit);
+        expect(rite <= crite);
+        expect(rit <= crit + 1);
+        expect(rit + 1 <= crit + 2);
+        expect(rit <= crite);
     }
     {
         // const_rev_it <= rev_it
@@ -1442,22 +1441,22 @@ void iterator_less_than_or_equal_test()
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(crit <= rit);
-        assert(crite <= rite);
-        assert(crit <= rit + 1);
-        assert(crit + 1 <= rit + 2);
-        assert(crit <= rite);
+        expect(crit <= rit);
+        expect(crite <= rite);
+        expect(crit <= rit + 1);
+        expect(crit + 1 <= rit + 2);
+        expect(crit <= rite);
     }
     {
         // const_rev_it <= cnost_rev_it
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(crit <= crit);
-        assert(crite <= crite);
-        assert(crit <= crit + 1);
-        assert(crit + 1 <= crit + 2);
-        assert(crit <= crite);
+        expect(crit <= crit);
+        expect(crite <= crite);
+        expect(crit <= crit + 1);
+        expect(crit + 1 <= crit + 2);
+        expect(crit <= crite);
     }
     log("operator<=");
 }
@@ -1478,55 +1477,55 @@ void iterator_greather_than_or_equal_test()
         typename Container::iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
+        expect(it >= it);
+        expect(ite >= ite);
+        expect(it + 1 >= it);
+        expect(it + 2 >= it + 1);
+        expect(ite >= it);
     }
     {
         // it >= const_it
         typename Container::iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
+        expect(it >= it);
+        expect(ite >= ite);
+        expect(it + 1 >= it);
+        expect(it + 2 >= it + 1);
+        expect(ite >= it);
     }
     {
         // const_it >= it
         typename Container::const_iterator it = c.begin();
         typename Container::iterator ite = c.end();
 
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
+        expect(it >= it);
+        expect(ite >= ite);
+        expect(it + 1 >= it);
+        expect(it + 2 >= it + 1);
+        expect(ite >= it);
     }
     {
         // const_it >= const_it
         typename Container::const_iterator it = c.begin();
         typename Container::const_iterator ite = c.end();
 
-        assert(it >= it);
-        assert(ite >= ite);
-        assert(it + 1 >= it);
-        assert(it + 2 >= it + 1);
-        assert(ite >= it);
+        expect(it >= it);
+        expect(ite >= ite);
+        expect(it + 1 >= it);
+        expect(it + 2 >= it + 1);
+        expect(ite >= it);
     }
     {
         // rev_it >= rev_it
         typename Container::reverse_iterator rit = c.rbegin();
         typename Container::reverse_iterator rite = c.rend();
 
-        assert(rit >= rit);
-        assert(rite >= rite);
-        assert(rit + 1 >= rit);
-        assert(rit + 2 >= rit + 1);
-        assert(rite >= rit);
+        expect(rit >= rit);
+        expect(rite >= rite);
+        expect(rit + 1 >= rit);
+        expect(rit + 2 >= rit + 1);
+        expect(rite >= rit);
     }
     {
         // rev_it >= const_rev_it
@@ -1535,11 +1534,11 @@ void iterator_greather_than_or_equal_test()
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(rit >= crit);
-        assert(rite >= crite);
-        assert(rit + 1 >= crit);
-        assert(rit + 2 >= crit + 1);
-        assert(rite >= crit);
+        expect(rit >= crit);
+        expect(rite >= crite);
+        expect(rit + 1 >= crit);
+        expect(rit + 2 >= crit + 1);
+        expect(rite >= crit);
     }
     {
         // const_rev_it >= rev_it
@@ -1548,22 +1547,22 @@ void iterator_greather_than_or_equal_test()
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(crit >= rit);
-        assert(crite >= rite);
-        assert(crit + 1 >= rit);
-        assert(crit + 2 >= rit + 1);
-        assert(crite >= rit);
+        expect(crit >= rit);
+        expect(crite >= rite);
+        expect(crit + 1 >= rit);
+        expect(crit + 2 >= rit + 1);
+        expect(crite >= rit);
     }
     {
         // const_rev_it >= const_rev_it
         typename Container::const_reverse_iterator crit = c.rbegin();
         typename Container::const_reverse_iterator crite = c.rend();
 
-        assert(crit >= crit);
-        assert(crite >= crite);
-        assert(crit + 1 >= crit);
-        assert(crit + 2 >= crit + 1);
-        assert(crite >= crit);
+        expect(crit >= crit);
+        expect(crite >= crite);
+        expect(crit + 1 >= crit);
+        expect(crit + 2 >= crit + 1);
+        expect(crite >= crit);
     }
     log("operator>=");
 }
@@ -1583,33 +1582,33 @@ void iterator_add_then_assign_test()
         // it += n
         typename Container::iterator it = c.begin();
 
-        assert((it += 1) == c.begin() + 1);
-        assert((it += 1) == c.begin() + 2);
-        assert((it += 2) == c.begin() + 4);
+        expect((it += 1) == c.begin() + 1);
+        expect((it += 1) == c.begin() + 2);
+        expect((it += 2) == c.begin() + 4);
     }
     {
         // const_it += n
         typename Container::const_iterator it = c.begin();
 
-        assert((it += 1) == c.begin() + 1);
-        assert((it += 1) == c.begin() + 2);
-        assert((it += 2) == c.begin() + 4);
+        expect((it += 1) == c.begin() + 1);
+        expect((it += 1) == c.begin() + 2);
+        expect((it += 2) == c.begin() + 4);
     }
     {
         // rev_it += n
         typename Container::reverse_iterator it = c.rbegin();
 
-        assert((it += 1) == c.rbegin() + 1);
-        assert((it += 1) == c.rbegin() + 2);
-        assert((it += 2) == c.rbegin() + 4);
+        expect((it += 1) == c.rbegin() + 1);
+        expect((it += 1) == c.rbegin() + 2);
+        expect((it += 2) == c.rbegin() + 4);
     }
     {
         // const_rev_it += n
         typename Container::const_reverse_iterator it = c.rbegin();
 
-        assert((it += 1) == c.rbegin() + 1);
-        assert((it += 1) == c.rbegin() + 2);
-        assert((it += 2) == c.rbegin() + 4);
+        expect((it += 1) == c.rbegin() + 1);
+        expect((it += 1) == c.rbegin() + 2);
+        expect((it += 2) == c.rbegin() + 4);
     }
 
     log("operator+=");
@@ -1630,33 +1629,33 @@ void iterator_sub_then_assign_test()
         // it += n
         typename Container::iterator ite = c.end();
 
-        assert((ite -= 1) == c.end() - 1);
-        assert((ite -= 1) == c.end() - 2);
-        assert((ite -= 2) == c.end() - 4);
+        expect((ite -= 1) == c.end() - 1);
+        expect((ite -= 1) == c.end() - 2);
+        expect((ite -= 2) == c.end() - 4);
     }
     {
         // const_it -= n
         typename Container::const_iterator ite = c.end();
 
-        assert((ite -= 1) == c.end() - 1);
-        assert((ite -= 1) == c.end() - 2);
-        assert((ite -= 2) == c.end() - 4);
+        expect((ite -= 1) == c.end() - 1);
+        expect((ite -= 1) == c.end() - 2);
+        expect((ite -= 2) == c.end() - 4);
     }
     {
         // rev_it -= n
         typename Container::reverse_iterator ite = c.rend();
 
-        assert((ite -= 1) == c.rend() - 1);
-        assert((ite -= 1) == c.rend() - 2);
-        assert((ite -= 2) == c.rend() - 4);
+        expect((ite -= 1) == c.rend() - 1);
+        expect((ite -= 1) == c.rend() - 2);
+        expect((ite -= 2) == c.rend() - 4);
     }
     {
         // const_rev_it -= n
         typename Container::const_reverse_iterator ite = c.rend();
 
-        assert((ite -= 1) == c.rend() - 1);
-        assert((ite -= 1) == c.rend() - 2);
-        assert((ite -= 2) == c.rend() - 4);
+        expect((ite -= 1) == c.rend() - 1);
+        expect((ite -= 1) == c.rend() - 2);
+        expect((ite -= 2) == c.rend() - 4);
     }
 
     log("operator-=");
@@ -1679,33 +1678,33 @@ void iterator_brackets_operator_test()
         // it
         typename Container::iterator it = ctn.begin();
 
-        assert(it[0] == 21);
-        assert(it[1] == 42);
-        assert(it[2] == 55);
+        expect(it[0] == 21);
+        expect(it[1] == 42);
+        expect(it[2] == 55);
     }
     {
         // const_it
         typename Container::const_iterator it = ctn.begin();
 
-        assert(it[0] == 21);
-        assert(it[1] == 42);
-        assert(it[2] == 55);
+        expect(it[0] == 21);
+        expect(it[1] == 42);
+        expect(it[2] == 55);
     }
     {
         // rev_it
         typename Container::reverse_iterator it = ctn.rbegin();
 
-        assert(it[0] == 55);
-        assert(it[1] == 42);
-        assert(it[2] == 21);
+        expect(it[0] == 55);
+        expect(it[1] == 42);
+        expect(it[2] == 21);
     }
     {
         // const_rev_it
         typename Container::const_reverse_iterator it = ctn.rbegin();
 
-        assert(it[0] == 55);
-        assert(it[1] == 42);
-        assert(it[2] == 21);
+        expect(it[0] == 55);
+        expect(it[1] == 42);
+        expect(it[2] == 21);
     }
 
     /// @note doesn't throw anything but valgrind warns about invalid read

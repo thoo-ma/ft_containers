@@ -1,7 +1,6 @@
 #include <map>
 #include <list>
 #include <deque>
-#include <cassert>
 #include <memory> // std::allocator
 #include <type_traits> // std::is_same (c++11)
 
@@ -19,14 +18,14 @@ void constructor_by_default_test()
     {
         // mutable map
         Map a;
-        assert(a.empty());
-        assert(a.size() == 0);
+        expect(a.empty());
+        expect(a.size() == 0);
     }
     {
         // const map
         Map const a;
-        assert(a.empty());
-        assert(a.size() == 0);
+        expect(a.empty());
+        expect(a.size() == 0);
     }
     log("constructor by default");
 }
@@ -44,7 +43,7 @@ void constructor_by_copy_test()
             // from empty
             Map a;
             Map b(a);
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non-empty
@@ -53,7 +52,7 @@ void constructor_by_copy_test()
             a.insert(j);
             a.insert(k);
             Map b(a);
-            assert(a == b);
+            expect(a == b);
         }
     }
     {
@@ -62,7 +61,7 @@ void constructor_by_copy_test()
             // from empty
             Map const a;
             Map b(a);
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non-empty
@@ -71,9 +70,9 @@ void constructor_by_copy_test()
             a.insert(j);
             a.insert(k);
             Map const b(a);
-            assert(a == b);
+            expect(a == b);
             Map c(b);
-            assert(c == b);
+            expect(c == b);
         }
     }
     {
@@ -82,7 +81,7 @@ void constructor_by_copy_test()
             // from empty
             Map a;
             Map const b(a);
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non-empty
@@ -91,7 +90,7 @@ void constructor_by_copy_test()
             a.insert(j);
             a.insert(k);
             Map const b(a);
-            assert(a == b);
+            expect(a == b);
         }
     }
     {
@@ -100,7 +99,7 @@ void constructor_by_copy_test()
             // from empty
             Map const a;
             Map const b(a);
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non-empty
@@ -109,9 +108,9 @@ void constructor_by_copy_test()
             a.insert(j);
             a.insert(k);
             Map const b(a);
-            assert(a == b);
+            expect(a == b);
             Map const c(b);
-            assert(c == b);
+            expect(c == b);
         }
     }
 
@@ -130,7 +129,7 @@ void constructor_by_iterator_range_test()
             // from empty
             Map a;
             Map b(a.begin(), a.end());
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non empty
@@ -139,7 +138,7 @@ void constructor_by_iterator_range_test()
             a.insert(j);
             a.insert(k);
             Map b(a.begin(), a.end());
-            assert(a == b);
+            expect(a == b);
         }
     }
     {
@@ -148,7 +147,7 @@ void constructor_by_iterator_range_test()
             // from empty
             Map const a;
             Map b(a.begin(), a.end());
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non empty
@@ -158,7 +157,7 @@ void constructor_by_iterator_range_test()
             a.insert(k);
             Map const m(a);
             Map b(m.begin(), m.end());
-            assert(a == b);
+            expect(a == b);
         }
     }
     {
@@ -167,7 +166,7 @@ void constructor_by_iterator_range_test()
             // from empty
             Map a;
             Map const b(a.begin(), a.end());
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non empty
@@ -176,7 +175,7 @@ void constructor_by_iterator_range_test()
             a.insert(j);
             a.insert(k);
             Map const b(a.begin(), a.end());
-            assert(a == b);
+            expect(a == b);
         }
     }
     {
@@ -185,7 +184,7 @@ void constructor_by_iterator_range_test()
             // from empty
             Map const a;
             Map const b(a.begin(), a.end());
-            assert(a == b);
+            expect(a == b);
         }
         {
             // from non empty
@@ -195,7 +194,7 @@ void constructor_by_iterator_range_test()
             a.insert(k);
             Map const m(a);
             Map const b(m.begin(), m.end());
-            assert(a == b);
+            expect(a == b);
         }
     }
     {
@@ -211,7 +210,7 @@ void constructor_by_iterator_range_test()
         m.insert(m.begin(), j);
         m.insert(m.begin(), k);
 
-        assert(Map(l.begin(), l.end()) == m);
+        expect(Map(l.begin(), l.end()) == m);
     }
     log("constructor by iterator range");
 }
@@ -251,9 +250,9 @@ void get_allocator_test()
     typedef typename Map::key_type      key_type;
     typedef typename Map::mapped_type   mapped_type;
 
-    assert((Map().get_allocator() == std::allocator<std::pair<key_type,mapped_type>>()));
+    expect((Map().get_allocator() == std::allocator<std::pair<key_type,mapped_type>>()));
 
-  //  assert((std::is_same<
+  //  expect((std::is_same<
   //              typename Map::allocator_type::value_type,
   //              typename std::allocator<std::pair<typename std::add_const<key_type>::type,mapped_type>>::value_type
   //          >::value));
@@ -276,15 +275,15 @@ void empty_test()
     Map m;
     {
         // by default
-        assert(m.empty());
+        expect(m.empty());
     }
     {
         // by copy
-        assert(Map(m).empty());
+        expect(Map(m).empty());
     }
     {
         // by iterator range
-        assert(Map(m.begin(), m.end()).empty());
+        expect(Map(m.begin(), m.end()).empty());
     }
     log("empty()");
 }
@@ -295,16 +294,16 @@ void size_test()
     Map m;
 
     // constructed by default
-    assert(m.size() == 0);
+    expect(m.size() == 0);
 
     m.insert(typename Map::value_type());
-    assert(m.size() == 1);
+    expect(m.size() == 1);
 
     // constructed by iterator copy
-    assert(Map(m).size() == m.size());
+    expect(Map(m).size() == m.size());
 
     // constructed by iterator range
-    assert(Map(m.begin(), m.end()).size() == m.size());
+    expect(Map(m.begin(), m.end()).size() == m.size());
 
     log("size()");
 }
@@ -353,10 +352,10 @@ void operator_bracket_test()
         m.insert(value(key(21), mapped(21)));
         m.insert(value(key(88), mapped(88)));
 
-        assert(m[65] == 65);
-        assert(m[79] == 79);
-        assert(m[21] == 21);
-        assert(m[88] == 88);
+        expect(m[65] == 65);
+        expect(m[79] == 79);
+        expect(m[21] == 21);
+        expect(m[88] == 88);
 
         /// @note each of those 3 insert causes infinite loop
 //        m.insert(value(key(33), mapped(33)));
@@ -387,23 +386,23 @@ void insert_test()
     {
         Map a, b;
 
-        assert(a == b);
+        expect(a == b);
 
         /// @note not the same result if interverting two `==` operands as below
-        //  assert(a.begin() == a.insert(typename Map::value_type()).first);
-        //  assert(a.insert(typename Map::value_type()).first == a.begin());
+        //  expect(a.begin() == a.insert(typename Map::value_type()).first);
+        //  expect(a.insert(typename Map::value_type()).first == a.begin());
 
-        assert(a.insert(typename Map::value_type()).second == true);
-        assert(a != b);
+        expect(a.insert(typename Map::value_type()).second == true);
+        expect(a != b);
 
-        assert(b.insert(typename Map::value_type()).second == true);
-        assert(a == b);
+        expect(b.insert(typename Map::value_type()).second == true);
+        expect(a == b);
 
-        assert(a.insert(typename Map::value_type()).second == false);
-        assert(b.insert(typename Map::value_type()).second == false);
+        expect(a.insert(typename Map::value_type()).second == false);
+        expect(b.insert(typename Map::value_type()).second == false);
 
-        assert(a.insert(typename Map::value_type()).first == a.begin());
-        assert(b.insert(typename Map::value_type()).first == b.begin());
+        expect(a.insert(typename Map::value_type()).first == a.begin());
+        expect(b.insert(typename Map::value_type()).first == b.begin());
 
         log("insert by value");
     }
@@ -411,35 +410,35 @@ void insert_test()
     {
         Map a, b;
 
-        assert(a == b);
+        expect(a == b);
 
         /// @note may fail depending on compiler when interverting `==` operands
-    //    assert(a.insert(a.begin(), typename Map::value_type()) == a.begin());
-    //    assert(a != b);
+    //    expect(a.insert(a.begin(), typename Map::value_type()) == a.begin());
+    //    expect(a != b);
 
         /// @note may fail depending on compiler when interverting `==` operands
-    //    assert(b.insert(b.begin(), typename Map::value_type()) == b.begin());
-    //    assert(a == b);
+    //    expect(b.insert(b.begin(), typename Map::value_type()) == b.begin());
+    //    expect(a == b);
 
         /// @note doesn't fail depending on compiler since insert fails anyway
-    //    assert(a.insert(a.begin(), typename Map::value_type()) == a.begin());
-    //    assert(b.insert(b.begin(), typename Map::value_type()) == b.begin());
+    //    expect(a.insert(a.begin(), typename Map::value_type()) == a.begin());
+    //    expect(b.insert(b.begin(), typename Map::value_type()) == b.begin());
 
         log("insert by hint");
     }
     // insert by range (3)
     {
         Map a, b;
-        assert(a == b);
+        expect(a == b);
 
         a.insert(a.begin(), a.end());
-        assert(a == b);
+        expect(a == b);
 
         a.insert(typename Map::value_type());
-        assert(a != b);
+        expect(a != b);
 
         b.insert(a.begin(), a.end());
-        assert(a == b);
+        expect(a == b);
 
         log("insert by range");
     }
@@ -452,31 +451,31 @@ void erase_test()
     {
         // by iterator position
         Map a, b;
-        assert(a == b);
+        expect(a == b);
         a.insert(typename Map::value_type());
-        assert(a != b);
+        expect(a != b);
         a.erase(a.begin());
-        assert(a == b);
+        expect(a == b);
     }
     {
         // by key
         Map a, b;
-        assert(a == b);
+        expect(a == b);
         a.insert(typename Map::value_type());
-        assert(a != b);
+        expect(a != b);
         a.erase(typename Map::key_type());
-        assert(a == b);
+        expect(a == b);
     }
     {
         // by iterator range
         Map a, b;
-        assert(a == b);
+        expect(a == b);
         a.insert(typename Map::value_type());
-        assert(a != b);
+        expect(a != b);
         a.erase(a.begin(), a.begin());
-        assert(a != b);
+        expect(a != b);
         a.erase(a.begin(), a.end());
-        assert(a == b);
+        expect(a == b);
     }
     log("erase()");
 }
@@ -499,19 +498,19 @@ void swap_test()
         b.insert(j);
         b.insert(k);
 
-        assert(a.size() == 2);
-        assert(b.size() == 2);
+        expect(a.size() == 2);
+        expect(b.size() == 2);
 
         Map c(a);
         Map d(b);
 
-        assert(c == a);
-        assert(d == b);
+        expect(c == a);
+        expect(d == b);
 
         c.swap(d);
 
-        assert(c == b);
-        assert(d == a);
+        expect(c == b);
+        expect(d == a);
     }
     {
         // test iterators
@@ -520,24 +519,24 @@ void swap_test()
         a.insert(i);
         b.insert(j);
 
-        assert(*a.begin() == i);
-        assert(*b.begin() == j);
+        expect(*a.begin() == i);
+        expect(*b.begin() == j);
 
         a.swap(b);
 
-        assert(*a.begin() == j);
-        assert(*b.begin() == i);
+        expect(*a.begin() == j);
+        expect(*b.begin() == i);
 
         a.insert(k);
         b.insert(l);
 
         a.swap(b);
 
-        assert(*a.begin() == i);
-        assert(*b.begin() == j);
+        expect(*a.begin() == i);
+        expect(*b.begin() == j);
 
-        assert(*(++(a.begin())) == l);
-        assert(*(++(b.begin())) == k);
+        expect(*(++(a.begin())) == l);
+        expect(*(++(b.begin())) == k);
     }
     log("swap()");
 }
@@ -553,9 +552,9 @@ void clear_test()
     {
         // empty map
         Map m;
-        assert(m.size() == 0);
+        expect(m.size() == 0);
         m.clear();
-        assert(m.size() == 0);
+        expect(m.size() == 0);
     }
     {
         // non-empty map
@@ -566,9 +565,9 @@ void clear_test()
         m.insert(k);
         m.insert(l);
 
-        assert(m.size() == 4);
+        expect(m.size() == 4);
         m.clear();
-        assert(m.size() == 0);
+        expect(m.size() == 0);
     }
     log("clear()");
 }
@@ -603,14 +602,14 @@ void key_comp_test()
     typedef typename Map::key_compare key_compare;
 
     /// @todo (?) move to type tests
-    assert((std::is_same<key_compare, std::less<key_type>>::value));
+    expect((std::is_same<key_compare, std::less<key_type>>::value));
 
     key_type i(21);
     key_type j(42);
 
-    assert(std::less<int>()(i,j));
-    assert(Map().key_comp()(i,j));
-    assert(key_compare()(i,j));
+    expect(std::less<int>()(i,j));
+    expect(Map().key_comp()(i,j));
+    expect(key_compare()(i,j));
 
     log("key_comp()");
 }
@@ -624,9 +623,9 @@ void value_comp_test()
     typedef typename Map::value_compare::result_type result;
 
     /// @todo (?) move to type tests
-    assert((std::is_same<result, bool>::value));
-    assert((std::is_same<first,  value_type>::value));
-    assert((std::is_same<second, value_type>::value));
+    expect((std::is_same<result, bool>::value));
+    expect((std::is_same<first,  value_type>::value));
+    expect((std::is_same<second, value_type>::value));
 
     /// @note should not compile
     // typename Map::value_compare x;
@@ -637,10 +636,10 @@ void value_comp_test()
     value_type k(42, 21);
 
     // same key
-    assert(!Map().value_comp()(i,j));
+    expect(!Map().value_comp()(i,j));
 
     // different key
-    assert(Map().value_comp()(i,k));
+    expect(Map().value_comp()(i,k));
 
     log("value_comp()");
 }
@@ -669,21 +668,21 @@ void find_test()
     {
         Map m;
 
-        assert(m.find(k.first) == m.end());
+        expect(m.find(k.first) == m.end());
         m.insert(k);
-        assert(m.find(k.first) != m.end());
+        expect(m.find(k.first) != m.end());
 
-        assert(m.find(l.first) == m.end());
+        expect(m.find(l.first) == m.end());
         m.insert(l);
-        assert(m.find(l.first) != m.end());
+        expect(m.find(l.first) != m.end());
     }
 
     // const
     {
         const Map m;
 
-        assert(m.find(k.first) == m.end());
-        assert(m.find(l.first) == m.end());
+        expect(m.find(k.first) == m.end());
+        expect(m.find(l.first) == m.end());
     }
 
     log("find()");
@@ -697,30 +696,30 @@ void count_test()
     typename Map::value_type k(42, 42);
     typename Map::value_type l(21, 21);
 
-    assert(m.count(0)  == 0);
-    assert(m.count(21) == 0);
-    assert(m.count(42) == 0);
+    expect(m.count(0)  == 0);
+    expect(m.count(21) == 0);
+    expect(m.count(42) == 0);
 
     m.insert(l);
 
-    assert(m.count(0)  == 0);
-    assert(m.count(21) == 1);
-    assert(m.count(42) == 0);
+    expect(m.count(0)  == 0);
+    expect(m.count(21) == 1);
+    expect(m.count(42) == 0);
 
     m.insert(k);
 
-    assert(m.count(0)  == 0);
-    assert(m.count(21) == 1);
-    assert(m.count(42) == 1);
+    expect(m.count(0)  == 0);
+    expect(m.count(21) == 1);
+    expect(m.count(42) == 1);
 
     m.insert(l);
     m.insert(l);
     m.insert(k);
     m.insert(k);
 
-    assert(m.count(0)  == 0);
-    assert(m.count(21) == 1);
-    assert(m.count(42) == 1);
+    expect(m.count(0)  == 0);
+    expect(m.count(21) == 1);
+    expect(m.count(42) == 1);
 
     log("count()");
 }
@@ -735,24 +734,24 @@ void lower_bound_test()
     {
         Map m;
 
-        assert(m.lower_bound(0)  == m.end());
-        assert(m.lower_bound(21) == m.end());
-        assert(m.lower_bound(42) == m.end());
-        assert(m.lower_bound(55) == m.end());
+        expect(m.lower_bound(0)  == m.end());
+        expect(m.lower_bound(21) == m.end());
+        expect(m.lower_bound(42) == m.end());
+        expect(m.lower_bound(55) == m.end());
 
         m.insert(l);
 
-        assert(m.lower_bound(0)  == m.begin());
-        assert(m.lower_bound(21) == m.begin());
-        assert(m.lower_bound(42) == m.end());
-        assert(m.lower_bound(55) == m.end());
+        expect(m.lower_bound(0)  == m.begin());
+        expect(m.lower_bound(21) == m.begin());
+        expect(m.lower_bound(42) == m.end());
+        expect(m.lower_bound(55) == m.end());
 
         m.insert(k);
 
-        assert(m.lower_bound(0)  == m.begin());
-        assert(m.lower_bound(21) == m.begin());
-        assert(m.lower_bound(42) == ++m.begin());
-        assert(m.lower_bound(55) == m.end());
+        expect(m.lower_bound(0)  == m.begin());
+        expect(m.lower_bound(21) == m.begin());
+        expect(m.lower_bound(42) == ++m.begin());
+        expect(m.lower_bound(55) == m.end());
     }
 
     // mutable
@@ -760,26 +759,26 @@ void lower_bound_test()
         Map m;
 
         Map const a(m);
-        assert(a.lower_bound(0)  == a.end());
-        assert(a.lower_bound(21) == a.end());
-        assert(a.lower_bound(42) == a.end());
-        assert(a.lower_bound(55) == a.end());
+        expect(a.lower_bound(0)  == a.end());
+        expect(a.lower_bound(21) == a.end());
+        expect(a.lower_bound(42) == a.end());
+        expect(a.lower_bound(55) == a.end());
 
         m.insert(l);
 
         Map const b(m);
-        assert(b.lower_bound(0)  == b.begin());
-        assert(b.lower_bound(21) == b.begin());
-        assert(b.lower_bound(42) == b.end());
-        assert(b.lower_bound(55) == b.end());
+        expect(b.lower_bound(0)  == b.begin());
+        expect(b.lower_bound(21) == b.begin());
+        expect(b.lower_bound(42) == b.end());
+        expect(b.lower_bound(55) == b.end());
 
         m.insert(k);
 
         Map const c(m);
-        assert(c.lower_bound(0)  == c.begin());
-        assert(c.lower_bound(21) == c.begin());
-        assert(c.lower_bound(42) == ++c.begin());
-        assert(c.lower_bound(55) == c.end());
+        expect(c.lower_bound(0)  == c.begin());
+        expect(c.lower_bound(21) == c.begin());
+        expect(c.lower_bound(42) == ++c.begin());
+        expect(c.lower_bound(55) == c.end());
     }
 
     log("lower_bound()");
@@ -795,24 +794,24 @@ void upper_bound_test()
     {
         Map m;
 
-        assert(m.upper_bound(0)  == m.begin());
-        assert(m.upper_bound(21) == m.begin());
-        assert(m.upper_bound(42) == m.begin());
-        assert(m.upper_bound(55) == m.begin());
+        expect(m.upper_bound(0)  == m.begin());
+        expect(m.upper_bound(21) == m.begin());
+        expect(m.upper_bound(42) == m.begin());
+        expect(m.upper_bound(55) == m.begin());
 
         m.insert(l);
 
-        assert(m.upper_bound(0)  == m.begin());
-        assert(m.upper_bound(21) == m.end());
-        assert(m.upper_bound(42) == m.end());
-        assert(m.upper_bound(55) == m.end());
+        expect(m.upper_bound(0)  == m.begin());
+        expect(m.upper_bound(21) == m.end());
+        expect(m.upper_bound(42) == m.end());
+        expect(m.upper_bound(55) == m.end());
 
         m.insert(k);
 
-        assert(m.upper_bound(0)  == m.begin());
-        assert(m.upper_bound(21) == ++m.begin());
-        assert(m.upper_bound(42) == m.end());
-        assert(m.upper_bound(55) == m.end());
+        expect(m.upper_bound(0)  == m.begin());
+        expect(m.upper_bound(21) == ++m.begin());
+        expect(m.upper_bound(42) == m.end());
+        expect(m.upper_bound(55) == m.end());
     }
 
     // const
@@ -820,32 +819,32 @@ void upper_bound_test()
         Map m;
 
         Map const a(m);
-        assert(a.upper_bound(0)  == a.begin());
-        assert(a.upper_bound(21) == a.begin());
-        assert(a.upper_bound(42) == a.begin());
-        assert(a.upper_bound(55) == a.begin());
+        expect(a.upper_bound(0)  == a.begin());
+        expect(a.upper_bound(21) == a.begin());
+        expect(a.upper_bound(42) == a.begin());
+        expect(a.upper_bound(55) == a.begin());
 
         m.insert(l);
 
         Map const b(m);
-        assert(b.upper_bound(0)  == b.begin());
-        assert(b.upper_bound(21) == b.end());
-        assert(b.upper_bound(42) == b.end());
-        assert(b.upper_bound(55) == b.end());
+        expect(b.upper_bound(0)  == b.begin());
+        expect(b.upper_bound(21) == b.end());
+        expect(b.upper_bound(42) == b.end());
+        expect(b.upper_bound(55) == b.end());
 
         m.insert(k);
 
         Map const c(m);
-        assert(c.upper_bound(0)  == c.begin());
-        assert(c.upper_bound(21) == ++c.begin());
-        assert(c.upper_bound(42) == c.end());
-        assert(c.upper_bound(55) == c.end());
+        expect(c.upper_bound(0)  == c.begin());
+        expect(c.upper_bound(21) == ++c.begin());
+        expect(c.upper_bound(42) == c.end());
+        expect(c.upper_bound(55) == c.end());
     }
 
     log("upper_bound()");
 }
 
-/// @todo last `assert` fails for `ft` but not for `std`
+/// @todo last `expect` fails for `ft` but not for `std`
 template <typename Map, typename IteratorPair, typename ConstIteratorPair>
 void equal_range_test()
 {
@@ -857,27 +856,27 @@ void equal_range_test()
     {
         Map m;
 
-        assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
-        assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
+        expect((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
+        expect((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
 
         m.insert(i);
 
-        assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
-        assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
-        assert((m.equal_range(21) == IteratorPair(m.begin(),m.end())));
-        assert((m.equal_range(22) == IteratorPair(m.end(),m.end())));
+        expect((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
+        expect((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
+        expect((m.equal_range(21) == IteratorPair(m.begin(),m.end())));
+        expect((m.equal_range(22) == IteratorPair(m.end(),m.end())));
 
         m.insert(j);
         m.insert(k);
 
-        assert((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
-        assert((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
-        assert((m.equal_range(21) == IteratorPair(m.begin(),++m.begin())));
-        assert((m.equal_range(22) == IteratorPair(++m.begin(),++m.begin())));
-        assert((m.equal_range(42) == IteratorPair(++m.begin(),++(++m.begin()))));
-        assert((m.equal_range(45) == IteratorPair(++(++m.begin()),++(++m.begin()))));
-        assert((m.equal_range(55) == IteratorPair(++(++m.begin()),m.end())));
-        //assert((m.equal_range(55) == IteratorPair(--m.end(),m.end())));
+        expect((m.equal_range(0) == IteratorPair(m.begin(),m.begin())));
+        expect((m.equal_range(5) == IteratorPair(m.begin(),m.begin())));
+        expect((m.equal_range(21) == IteratorPair(m.begin(),++m.begin())));
+        expect((m.equal_range(22) == IteratorPair(++m.begin(),++m.begin())));
+        expect((m.equal_range(42) == IteratorPair(++m.begin(),++(++m.begin()))));
+        expect((m.equal_range(45) == IteratorPair(++(++m.begin()),++(++m.begin()))));
+        expect((m.equal_range(55) == IteratorPair(++(++m.begin()),m.end())));
+        //expect((m.equal_range(55) == IteratorPair(--m.end(),m.end())));
     }
 
     // const
@@ -885,29 +884,29 @@ void equal_range_test()
         Map m;
 
         Map const a(m);
-        assert((a.equal_range(0) == ConstIteratorPair(a.begin(),a.begin())));
-        assert((a.equal_range(5) == ConstIteratorPair(a.begin(),a.begin())));
+        expect((a.equal_range(0) == ConstIteratorPair(a.begin(),a.begin())));
+        expect((a.equal_range(5) == ConstIteratorPair(a.begin(),a.begin())));
 
         m.insert(i);
 
         Map const b(m);
-        assert((b.equal_range(0) == ConstIteratorPair(b.begin(),b.begin())));
-        assert((b.equal_range(5) == ConstIteratorPair(b.begin(),b.begin())));
-        assert((b.equal_range(21) == ConstIteratorPair(b.begin(),b.end())));
-        assert((b.equal_range(22) == ConstIteratorPair(b.end(),b.end())));
+        expect((b.equal_range(0) == ConstIteratorPair(b.begin(),b.begin())));
+        expect((b.equal_range(5) == ConstIteratorPair(b.begin(),b.begin())));
+        expect((b.equal_range(21) == ConstIteratorPair(b.begin(),b.end())));
+        expect((b.equal_range(22) == ConstIteratorPair(b.end(),b.end())));
 
         m.insert(j);
         m.insert(k);
 
         Map const c(m);
-        assert((c.equal_range(0) == ConstIteratorPair(c.begin(),c.begin())));
-        assert((c.equal_range(5) == ConstIteratorPair(c.begin(),c.begin())));
-        assert((c.equal_range(21) == ConstIteratorPair(c.begin(),++c.begin())));
-        assert((c.equal_range(22) == ConstIteratorPair(++c.begin(),++c.begin())));
-        assert((c.equal_range(42) == ConstIteratorPair(++c.begin(),++(++c.begin()))));
-        assert((c.equal_range(45) == ConstIteratorPair(++(++c.begin()),++(++c.begin()))));
-        assert((c.equal_range(55) == ConstIteratorPair(++(++c.begin()),c.end())));
-        //assert((c.equal_range(55) == ConstIteratorPair(--c.end(),c.end())));
+        expect((c.equal_range(0) == ConstIteratorPair(c.begin(),c.begin())));
+        expect((c.equal_range(5) == ConstIteratorPair(c.begin(),c.begin())));
+        expect((c.equal_range(21) == ConstIteratorPair(c.begin(),++c.begin())));
+        expect((c.equal_range(22) == ConstIteratorPair(++c.begin(),++c.begin())));
+        expect((c.equal_range(42) == ConstIteratorPair(++c.begin(),++(++c.begin()))));
+        expect((c.equal_range(45) == ConstIteratorPair(++(++c.begin()),++(++c.begin()))));
+        expect((c.equal_range(55) == ConstIteratorPair(++(++c.begin()),c.end())));
+        //expect((c.equal_range(55) == ConstIteratorPair(--c.end(),c.end())));
     }
 
     log("equal_range()");
@@ -958,9 +957,9 @@ void assignation_test()
         a.insert(i);
         b.insert(j);
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
     {
         // upper size
@@ -968,9 +967,9 @@ void assignation_test()
 
         b.insert(i);
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
     {
         // lower size
@@ -980,9 +979,9 @@ void assignation_test()
         a.insert(j);
         b.insert(k);
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
     {
         // assign from empty
@@ -990,9 +989,9 @@ void assignation_test()
 
         a.insert(i);
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
     {
         // assign to empty
@@ -1000,9 +999,9 @@ void assignation_test()
 
         b.insert(i);
 
-        assert(a != b);
+        expect(a != b);
         a = b;
-        assert(a == b);
+        expect(a == b);
     }
     log("operator=");
 }
@@ -1015,41 +1014,41 @@ void equal_test()
     Value k(3,3);
 
     Map a, b;
-    assert(a == b);
+    expect(a == b);
 
     a.insert(i);
-    assert(!(a == b));
+    expect(!(a == b));
 
     b.insert(i);
-    assert(a == b);
+    expect(a == b);
 
     a.insert(k);
-    assert(!(a == b));
+    expect(!(a == b));
 
     b.insert(k);
-    assert(a == b);
+    expect(a == b);
 
     a.insert(j);
-    assert(!(a == b));
+    expect(!(a == b));
 
     b.insert(j);
-    assert(a == b);
+    expect(a == b);
 
     // insert duplicate pair (don't insert)
     b.insert(i);
-    assert(a == b);
+    expect(a == b);
 
     // insert duplicate pair (don't insert)
     a.insert(k);
-    assert(a == b);
+    expect(a == b);
 
     // insert duplicate key (don't insert)
     a.insert(Value(1,42));
-    assert(a == b);
+    expect(a == b);
 
     // insert duplicate mapped (do insert)
     a.insert(Value(9,2));
-    assert(!(a == b));
+    expect(!(a == b));
 
     log("operator==");
 }
@@ -1062,41 +1061,41 @@ void not_equal_test()
     Value k(3,3);
 
     Map a, b;
-    assert(!(a != b));
+    expect(!(a != b));
 
     a.insert(i);
-    assert(a != b);
+    expect(a != b);
 
     b.insert(i);
-    assert(!(a != b));
+    expect(!(a != b));
 
     a.insert(k);
-    assert(a != b);
+    expect(a != b);
 
     b.insert(k);
-    assert(!(a != b));
+    expect(!(a != b));
 
     a.insert(j);
-    assert(a != b);
+    expect(a != b);
 
     b.insert(j);
-    assert(!(a != b));
+    expect(!(a != b));
 
     // insert duplicate pair (don't insert)
     b.insert(i);
-    assert(!(a != b));
+    expect(!(a != b));
 
     // insert duplicate pair (don't insert)
     a.insert(k);
-    assert(!(a != b));
+    expect(!(a != b));
 
     // insert duplicate key (don't insert)
     a.insert(Value(1,42));
-    assert(!(a != b));
+    expect(!(a != b));
 
     // insert duplicate mapped (do insert)
     a.insert(Value(42,1));
-    assert(a != b);
+    expect(a != b);
 
     log("operator!=");
 }
@@ -1107,18 +1106,18 @@ void less_than_test()
     Map a, b;
 
     // empty maps
-    assert(!(a < b));
-    assert(!(b < a));
+    expect(!(a < b));
+    expect(!(b < a));
 
     // different size
     a.insert(Value(1, 1));
-    assert(b < a);
-    assert(!(a < b));
+    expect(b < a);
+    expect(!(a < b));
 
     // same size, same values
     b.insert(Value(1, 1));
-    assert(!(b < a));
-    assert(!(a < b));
+    expect(!(b < a));
+    expect(!(a < b));
 
     // same size, different key values
     {
@@ -1126,8 +1125,8 @@ void less_than_test()
         Map d(a);
         c.insert(Value(2, 42));
         d.insert(Value(3, 42));
-        assert(c < d);
-        assert(!(d < c));
+        expect(c < d);
+        expect(!(d < c));
     }
 
     // same size, different mapped values
@@ -1136,8 +1135,8 @@ void less_than_test()
         Map d(a);
         c.insert(Value(4, 21));
         d.insert(Value(4, 42));
-        assert(c < d);
-        assert(!(d < c));
+        expect(c < d);
+        expect(!(d < c));
     }
 
     log("operator<");
@@ -1149,18 +1148,18 @@ void greater_than_test()
     Map a, b;
 
     // empty maps
-    assert(!(a > b));
-    assert(!(b > a));
+    expect(!(a > b));
+    expect(!(b > a));
 
     // different size
     a.insert(Value(1, 1));
-    assert(a > b);
-    assert(!(b > a));
+    expect(a > b);
+    expect(!(b > a));
 
     // same size, same values
     b.insert(Value(1, 1));
-    assert(!(a > b));
-    assert(!(b > a));
+    expect(!(a > b));
+    expect(!(b > a));
 
     // same size, different key values
     {
@@ -1168,8 +1167,8 @@ void greater_than_test()
         Map d(a);
         c.insert(Value(2, 42));
         d.insert(Value(3, 42));
-        assert(d > c);
-        assert(!(c > d));
+        expect(d > c);
+        expect(!(c > d));
     }
 
     // same size, different mapped values
@@ -1178,8 +1177,8 @@ void greater_than_test()
         Map d(a);
         c.insert(Value(4, 21));
         d.insert(Value(4, 42));
-        assert(d > c);
-        assert(!(c > d));
+        expect(d > c);
+        expect(!(c > d));
     }
 
     log("operator>");
@@ -1191,18 +1190,18 @@ void less_than_equal_test()
     Map a, b;
 
     // empty maps
-    assert(a <= b);
-    assert(b <= a);
+    expect(a <= b);
+    expect(b <= a);
 
     // different size
     a.insert(Value(1, 1));
-    assert(b <= a);
-    assert(!(a <= b));
+    expect(b <= a);
+    expect(!(a <= b));
 
     // same size, same values
     b.insert(Value(1, 1));
-    assert(b <= a);
-    assert(a <= b);
+    expect(b <= a);
+    expect(a <= b);
 
     // same size, different key values
     {
@@ -1210,8 +1209,8 @@ void less_than_equal_test()
         Map d(a);
         c.insert(Value(2, 42));
         d.insert(Value(3, 42));
-        assert(c <= d);
-        assert(!(d <= c));
+        expect(c <= d);
+        expect(!(d <= c));
     }
 
     // same size, different mapped values
@@ -1220,8 +1219,8 @@ void less_than_equal_test()
         Map d(a);
         c.insert(Value(4, 21));
         d.insert(Value(4, 42));
-        assert(c <= d);
-        assert(!(d <= c));
+        expect(c <= d);
+        expect(!(d <= c));
     }
 
     log("operator<=");
@@ -1233,18 +1232,18 @@ void greater_than_equal_test()
     Map a, b;
 
     // empty maps
-    assert(a >= b);
-    assert(b >= a);
+    expect(a >= b);
+    expect(b >= a);
 
     // different size
     a.insert(Value(1, 1));
-    assert(a >= b);
-    assert(!(b >= a));
+    expect(a >= b);
+    expect(!(b >= a));
 
     // same size, same values
     b.insert(Value(1, 1));
-    assert(a >= b);
-    assert(b >= a);
+    expect(a >= b);
+    expect(b >= a);
 
     // same size, different key values
     {
@@ -1252,8 +1251,8 @@ void greater_than_equal_test()
         Map d(a);
         c.insert(Value(2, 42));
         d.insert(Value(3, 42));
-        assert(d >= c);
-        assert(!(c >= d));
+        expect(d >= c);
+        expect(!(c >= d));
     }
 
     // same size, different mapped values
@@ -1262,8 +1261,8 @@ void greater_than_equal_test()
         Map d(a);
         c.insert(Value(4, 21));
         d.insert(Value(4, 42));
-        assert(d >= c);
-        assert(!(c >= d));
+        expect(d >= c);
+        expect(!(c >= d));
     }
 
     log("operator>=");
@@ -1312,28 +1311,28 @@ void begin_test()
         // iterator from mutable map
         Map m; m.insert(p);
         iterator it = m.begin();
-        assert(*it == p);
+        expect(*it == p);
         it++;
     }
     {
         // const_iterator from mutable map
         Map m; m.insert(p);
         const_iterator it = m.begin();
-        assert(*it == p);
+        expect(*it == p);
         it++;
     }
     {
         // iterator from const map -- sould not compile
         // Map m; m.insert(p); const Map n(m);
         // iterator it = n.begin();
-        // assert(*it == p);
+        // expect(*it == p);
         // (void)it;
     }
     {
         // const_iterator from const map
         Map m; m.insert(p); const Map n(m);
         const_iterator it = n.begin();
-        assert(*it == p);
+        expect(*it == p);
         it++;
     }
     log("begin");
@@ -1351,20 +1350,20 @@ void end_test()
         Map m; m.insert(p);
         iterator it = m.end();
         it--;
-        assert(*it == p);
+        expect(*it == p);
     }
     {
         // const_iterator from mutable map
         Map m; m.insert(p);
         const_iterator it = m.end();
         it--;
-        assert(*it == p);
+        expect(*it == p);
     }
     {
         // iterator from const map -- should not compile
         // Map m; m.insert(p); Map n(m);
         // iterator it = n.end();
-        // assert(*it == p);
+        // expect(*it == p);
         // (void)it;
     }
     {
@@ -1372,7 +1371,7 @@ void end_test()
         Map m; m.insert(p); const Map n(m);
         const_iterator it = n.end();
         it--;
-        assert(*it == p);
+        expect(*it == p);
     }
     log("end");
 }
@@ -1388,33 +1387,33 @@ void rbegin_test()
         // reverse_iterator from mutable map
         Map m; m.insert(p);
         reverse_iterator it = m.rbegin();
-        assert(it.base() == m.end());
+        expect(it.base() == m.end());
         it++;
-        assert(it.base() == m.begin());
+        expect(it.base() == m.begin());
     }
     {
         // const_reverse_iterator from mutable map
         Map m; m.insert(p);
         const_reverse_iterator it = m.rbegin();
-        assert(it.base() == m.end());
+        expect(it.base() == m.end());
         it++;
-        assert(it.base() == m.begin());
+        expect(it.base() == m.begin());
     }
     {
         // reverse_iterator from const map -- should not compile
     //    Map m; m.insert(p); const Map n(m);
     //    reverse_iterator it = n.rbegin();
-    //    assert(it.base() == n.end());
+    //    expect(it.base() == n.end());
     //    it++;
-    //    assert(it.base() == m.begin());
+    //    expect(it.base() == m.begin());
     }
     {
         // const_reverse_iterator from const map
         Map m; m.insert(p); const Map n(m);
         const_reverse_iterator it = n.rbegin();
-        assert(it.base() == n.end());
+        expect(it.base() == n.end());
         it++;
-        assert(it.base() == n.begin());
+        expect(it.base() == n.begin());
     }
     log("rbegin");
 }
@@ -1430,33 +1429,33 @@ void rend_test()
         // reverse_iterator from mutable map
         Map m; m.insert(p);
         reverse_iterator it = m.rend();
-        assert(it.base() == m.begin());
+        expect(it.base() == m.begin());
         it++;
-        assert(*it == p);
+        expect(*it == p);
     }
     {
         // const_reverse_iterator from mutable map
         Map m; m.insert(p);
         const_reverse_iterator it = m.rend();
-        assert(it.base() == m.begin());
+        expect(it.base() == m.begin());
         it++;
-        assert(*it == p);
+        expect(*it == p);
     }
     {
         // reverse_iterator from const map -- should not compile
     //    Map m; m.insert(p); const Map n(m);
     //    reverse_iterator it = n.rend();
-    //    assert(it.base() == n.begin());
+    //    expect(it.base() == n.begin());
     //    it++;
-    //    assert(*it == p);
+    //    expect(*it == p);
     }
     {
         // const_reverse_iterator from const map
         Map m; m.insert(p); const Map n(m);
         const_reverse_iterator it = n.rend();
-        assert(it.base() == n.begin());
+        expect(it.base() == n.begin());
         it++;
-        assert(*it == p);
+        expect(*it == p);
     }
     log("rend");
 }
